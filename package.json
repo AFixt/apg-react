@@ -1,0 +1,18 @@
+{
+  "name": "apg-react",
+  "version": "0.1.0",
+  "private": true,
+  "author": {
+    "name": "Karl Groves",
+    "email": "karlgroves@gmail.com",
+    "url": "https://www.karlgroves.com"
+  },
+  "dependencies": {
+  },
+  "scripts": {
+    "docs": "jsdoc -c jsdoc.json",
+    "markdownlint": "markdownlint **/*.md --ignore node_modules"
+  },
+  "devDependencies": {
+  }
+}
