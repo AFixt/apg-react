@@ -16,7 +16,6 @@ import "./Article.css";
 const Article = ({ article, ariaPosinset, ariaSetsize }) => {
     return (
         <article
-            role="article"
             aria-posinset={ariaPosinset}
             aria-setsize={ariaSetsize}
         >
