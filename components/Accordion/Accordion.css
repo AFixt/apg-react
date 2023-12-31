@@ -1,18 +1,46 @@
+/* Styles for the Accordion container */
+.accordion {
+    margin: 0;
+    padding: 0;
+    list-style: none; /* Remove default list styling */
+}
+
+/* Styles for each Accordion item */
+.accordion div {
+    margin-bottom: 5px; /* Space between accordion items */
+    border: 1px solid #ddd; /* Light border for each item */
+    border-radius: 4px; /* Rounded corners */
+}
+
+/* Styles for the Accordion headers (buttons) */
 .accordion-header {
-    background-color: #eee;
-    border: none;
-    padding: 10px;
-    text-align: left;
     width: 100%;
-    cursor: pointer;
+    padding: 10px 15px;
+    background-color: #f7f7f7; /* Light grey background */
+    border: none;
+    text-align: left; /* Align text to the left */
+    cursor: pointer; /* Cursor to pointer to indicate it's clickable */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 1rem; /* Font size */
+    transition: background-color 0.3s ease; /* Transition for background color change */
 }
 
+.accordion-header:hover,
+.accordion-header[aria-expanded="true"] {
+    background-color: #e7e7e7; /* Slightly darker shade on hover/when expanded */
+}
+
+/* Styles for the Accordion body/content */
 .accordion-body {
-    padding: 10px;
-    display: none;
-    border-top: 1px solid #ddd;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background-color: white; /* White background for the content */
 }
 
+/* Styles when Accordion body/content is open */
 .accordion-body.open {
-    display: block;
+    padding: 15px;
+    max-height: 1000px; /* Adjust as necessary for your content */
 }

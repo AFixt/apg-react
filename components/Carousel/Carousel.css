@@ -1,0 +1,67 @@
+/* Styles for the carousel container */
+.carousel {
+    position: relative;
+    width: 100%; /* Full width of the carousel */
+    overflow: hidden; /* Hide the overflowing content */
+}
+
+/* Styles for the slides */
+.carousel .slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out; /* Smooth transition for slide change */
+}
+
+.carousel .slides > div {
+    flex: 0 0 100%; /* Each slide takes up full width of the container */
+    overflow: hidden; /* Hide overflowing content inside each slide */
+}
+
+/* Styles for the navigation buttons */
+.carousel button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.carousel button:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Positioning the navigation buttons */
+.carousel button:first-child {
+    left: 10px;
+}
+
+.carousel button:last-child {
+    right: 10px;
+}
+
+/* Styles for the slide selectors (indicators) */
+.carousel .slide-selectors {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+}
+
+.carousel .slide-selectors button {
+    border: none;
+    background-color: #ddd;
+    margin: 0 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.carousel .slide-selectors button:hover,
+.carousel .slide-selectors button[disabled] {
+    background-color: #333;
+}

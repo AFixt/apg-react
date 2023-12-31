@@ -42,7 +42,6 @@ const Checkbox = ({
                 }
                 aria-labelledby={ariaLabelledby}
                 aria-describedby={ariaDescribedby}
-                role="checkbox"
             />
             <label>{label}</label>
         </div>

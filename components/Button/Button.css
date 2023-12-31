@@ -1,0 +1,36 @@
+/* Styles for the button */
+.button {
+    background-color: #007bff; /* Blue background color */
+    color: white; /* White text color */
+    padding: 10px 15px; /* Padding inside the button */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 1rem; /* Font size */
+    cursor: pointer; /* Cursor to pointer to indicate it's clickable */
+    transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for hover and focus effects */
+    outline: none; /* Remove default focus outline */
+    display: inline-block; /* Inline-block for proper sizing and positioning */
+    text-align: center; /* Center the text inside the button */
+    text-decoration: none; /* Remove text decoration for link-styled buttons */
+}
+
+/* Styles for the button when hovered */
+.button:hover {
+    background-color: #0056b3; /* Slightly darker shade of blue on hover */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+}
+
+/* Styles for the button when focused or active */
+.button:focus,
+.button:active {
+    background-color: #004085; /* Even darker shade of blue for focus/active state */
+    box-shadow: 0 0 0 3px rgba(38, 143, 255, 0.6); /* Glow effect for focus */
+}
+
+/* Styles for the button when disabled */
+.button:disabled {
+    background-color: #cccccc; /* Gray background for disabled state */
+    color: #666666; /* Dark gray text color for disabled state */
+    cursor: not-allowed; /* Cursor to indicate the button is not clickable */
+    box-shadow: none; /* No shadow for disabled state */
+}

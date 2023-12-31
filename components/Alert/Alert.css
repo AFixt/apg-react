@@ -1,0 +1,46 @@
+/* Base styles for the alert */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px; /* Space below each alert */
+    border: 1px solid transparent; /* Transparent border for maintaining the box size */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 1rem; /* Font size */
+    line-height: 1.5; /* Line height for better readability */
+}
+
+/* Styles for different types of alerts */
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Styles for the dismiss button */
+.alert button {
+    background: none;
+    border: none;
+    color: inherit; /* Inherits the color from the alert */
+    padding: 0;
+    cursor: pointer;
+    float: right; /* Positions the button to the right */
+    font-size: 1.2rem;
+}
+
+/* Optional: Hover and focus styles for the dismiss button */
+.alert button:hover,
+.alert button:focus {
+    color: #333; /* Darken color for visibility */
+    text-decoration: none; /* Remove text decoration */
+}

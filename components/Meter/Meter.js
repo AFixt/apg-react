@@ -15,43 +15,50 @@
  * @param {Function} [props.userFriendlyText] - A function that returns a user-friendly text representation of the value.
  * @returns {JSX.Element} The rendered meter component.
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import './Meter.css';
+import React from "react";
+import PropTypes from "prop-types";
+import "./Meter.css";
 
-const Meter = ({ value, minValue, maxValue, label, labelId, userFriendlyText }) => {
-  const getAriaValueText = () => {
-    return userFriendlyText ? userFriendlyText(value) : `${value}`;
-  };
+const Meter = ({
+    value,
+    minValue,
+    maxValue,
+    label,
+    labelId,
+    userFriendlyText,
+}) => {
+    const getAriaValueText = () => {
+        return userFriendlyText ? userFriendlyText(value) : `${value}`;
+    };
 
-  return (
-    <div className="meter-container">
-      {label && <label id={labelId}>{label}</label>}
-      <meter
-        role="meter"
-        aria-valuenow={value}
-        aria-valuemin={minValue}
-        aria-valuemax={maxValue}
-        aria-valuetext={getAriaValueText()}
-        aria-labelledby={label ? labelId : undefined}
-      />
-    </div>
-  );
+    return (
+        <div className="meter-container">
+            {label && <label id={labelId}>{label}</label>}
+            <meter
+                role="meter"
+                aria-valuenow={value}
+                aria-valuemin={minValue}
+                aria-valuemax={maxValue}
+                aria-valuetext={getAriaValueText()}
+                aria-labelledby={label ? labelId : undefined}
+            />
+        </div>
+    );
 };
 
 Meter.propTypes = {
-  value: PropTypes.number.isRequired,
-  minValue: PropTypes.number,
-  maxValue: PropTypes.number,
-  label: PropTypes.string,
-  labelId: PropTypes.string,
-  userFriendlyText: PropTypes.func,
+    value: PropTypes.number.isRequired,
+    minValue: PropTypes.number,
+    maxValue: PropTypes.number,
+    label: PropTypes.string,
+    labelId: PropTypes.string,
+    userFriendlyText: PropTypes.func,
 };
 
 Meter.defaultProps = {
-  minValue: 0,
-  maxValue: 100,
-  labelId: 'meter-label',
+    minValue: 0,
+    maxValue: 100,
+    labelId: "meter-label",
 };
 
 export default Meter;

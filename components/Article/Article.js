@@ -15,10 +15,7 @@ import "./Article.css";
 
 const Article = ({ article, ariaPosinset, ariaSetsize }) => {
     return (
-        <article
-            aria-posinset={ariaPosinset}
-            aria-setsize={ariaSetsize}
-        >
+        <article aria-posinset={ariaPosinset} aria-setsize={ariaSetsize}>
             <h2 id={`article-title-${article.id}`}>{article.title}</h2>
             <div>{article.content}</div>
         </article>
