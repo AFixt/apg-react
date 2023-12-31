@@ -10,35 +10,34 @@
  * @param {('info'|'warning'|'error')} props.type - The type of the alert.
  * @returns {JSX.Element|null} The rendered Alert component.
  */
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import './Alert.css';
-
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import "./Alert.css";
 
 const Alert = ({ message, type }) => {
-  const [isVisible, setIsVisible] = useState(true);
+    const [isVisible, setIsVisible] = useState(true);
 
-  const handleClose = () => {
-    setIsVisible(false);
-  };
+    const handleClose = () => {
+        setIsVisible(false);
+    };
 
-  if (!isVisible) return null;
+    if (!isVisible) return null;
 
-  return (
-    <div
-      role="alert"
-      aria-live="assertive"
-      className={`alert alert-${type}`}
-    >
-      <span>{message}</span>
-      <button onClick={handleClose}>Dismiss</button>
-    </div>
-  );
+    return (
+        <div
+            role="alert"
+            aria-live="assertive"
+            className={`alert alert-${type}`}
+        >
+            <span>{message}</span>
+            <button onClick={handleClose}>Dismiss</button>
+        </div>
+    );
 };
 
 Alert.propTypes = {
-  message: PropTypes.string.isRequired,
-  type: PropTypes.oneOf(['info', 'warning', 'error']).isRequired,
+    message: PropTypes.string.isRequired,
+    type: PropTypes.oneOf(["info", "warning", "error"]).isRequired,
 };
 
 export default Alert;

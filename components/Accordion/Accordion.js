@@ -1,6 +1,3 @@
-
-
-
 /**
  * Handles the keydown event for the accordion buttons.
  * @param {Event} event - The keydown event object.
@@ -10,17 +7,17 @@ const handleKeyDown = (event, index) => {
     const totalItems = items.length;
     let newIndex = index;
 
-    switch(event.key) {
-        case 'ArrowDown':
+    switch (event.key) {
+        case "ArrowDown":
             newIndex = (index + 1) % totalItems;
             break;
-        case 'ArrowUp':
+        case "ArrowUp":
             newIndex = (index - 1 + totalItems) % totalItems;
             break;
-        case 'Home':
+        case "Home":
             newIndex = 0;
             break;
-        case 'End':
+        case "End":
             newIndex = totalItems - 1;
             break;
         default:
@@ -47,14 +44,15 @@ return (
                         onKeyDown={(e) => handleKeyDown(e, index)}
                         aria-expanded={openIndex === index}
                         aria-controls={`panel-${index}`}
-                        role="button"
                     >
                         {item.title}
                     </button>
                 </h2>
                 <div
                     id={`panel-${index}`}
-                    className={`accordion-body ${openIndex === index ? 'open' : ''}`}
+                    className={`accordion-body ${
+                        openIndex === index ? "open" : ""
+                    }`}
                     role="region"
                     aria-labelledby={`accordion-header-${index}`}
                 >
