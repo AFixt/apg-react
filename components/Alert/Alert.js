@@ -1,5 +1,8 @@
 /**
  * Represents an alert component that displays a message with a dismiss button.
+ *  This is a basic implementation. Depending on the specific requirements and
+ *  styles of your application, you might need to further customize the component,
+ *  especially its styling and the way it integrates into your application's overall user interface.
  *
  * @component
  * @param {Object} props - The properties of the Alert component.

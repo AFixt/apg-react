@@ -1,5 +1,9 @@
 /**
  * Breadcrumb component for displaying a breadcrumb navigation.
+ *  This implementation assumes the use of React Router for navigation,
+ *  and it should be styled appropriately with CSS to ensure the correct
+ *  visual representation. Additionally, you may need to customize this
+ *  component further based on the specific routing and styling requirements of your application.
  *
  * @component
  * @param {Object[]} items - An array of breadcrumb items.

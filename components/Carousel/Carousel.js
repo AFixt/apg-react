@@ -1,5 +1,9 @@
 /**
  * A carousel component that displays a slideshow of slides.
+ *  This implementation assumes a simple carousel structure.
+ *  For a production environment, additional features like animation,
+ *  better focus management, and responsive design may be necessary.
+ *  This is just a foundational implementation.
  *
  * @component
  * @param {Object[]} slides - An array of slide objects.

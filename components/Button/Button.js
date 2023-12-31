@@ -1,5 +1,11 @@
 /**
  * Button component.
+ *  This implementation assumes that the action function passed
+ *  as a prop handles the specific action to be performed by the button.
+ *  For a complete, production-ready component, additional logic for
+ *  handling focus after dialog interactions and more sophisticated
+ *  state management would be necessary.
+ *  This is just a foundational implementation.
  *
  * @component
  * @param {Object} props - The component props.

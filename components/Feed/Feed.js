@@ -1,5 +1,14 @@
 /**
  * A component that displays a feed of articles.
+ *  This implementation assumes the presence of a
+ *  fetchArticles function that asynchronously
+ *  retrieves more articles. Additionally, the CSS files
+ *  (Feed.css, Article.css) need to be created to style
+ *  the components according to your design.
+ *  For real-world applications, further development is
+ *  needed for complete keyboard navigation and management
+ *  of focus, especially when navigating between nested
+ *  feeds or managing focus after loading new content.
  *
  * @component
  * @param {Object} props - The component props.
@@ -10,7 +19,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import Article from './Article'; // Assume Article is a separate component
-import './Feed.css'; // Assume appropriate CSS for styling
+import './Feed.css';
 
 const Feed = ({ fetchArticles }) => {
   const [articles, setArticles] = useState([]);

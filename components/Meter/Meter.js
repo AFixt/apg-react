@@ -1,5 +1,9 @@
 /**
  * A meter component that displays a value within a specified range.
+ *  The userFriendlyText function should be implemented to provide
+ *  meaningful interpretations of the meter value if needed.
+ *  This implementation provides a foundational structure for a meter component,
+ *  and you may need to adjust it to fit the specific requirements and context of your application.
  *
  * @component
  * @param {Object} props - The component props.
@@ -13,7 +17,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Meter.css'; // Assume appropriate CSS for styling
+import './Meter.css';
 
 const Meter = ({ value, minValue, maxValue, label, labelId, userFriendlyText }) => {
   const getAriaValueText = () => {

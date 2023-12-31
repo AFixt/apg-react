@@ -1,5 +1,10 @@
 /**
  * Represents an alert dialog component.
+ *  The actual CSS and further JavaScript logic for handling keyboard navigation,
+ *  focus trapping within the dialog, and more sophisticated state management
+ *  (like handling multiple dialogs or integrating with application state) would
+ *  be necessary for a complete, production-ready component.
+ *  This is just a foundational implementation.
  *
  * @component
  * @param {Object} props - The component props.
