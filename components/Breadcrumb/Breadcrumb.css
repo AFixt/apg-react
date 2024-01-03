@@ -1,0 +1,40 @@
+/* Styles for the breadcrumb navigation */
+.breadcrumb-nav {
+    display: flex;
+    list-style: none; /* Remove default list styling */
+    padding: 0; /* Remove default padding */
+}
+
+/* Styles for each breadcrumb item */
+.breadcrumb-item {
+    margin-right: 10px; /* Space between breadcrumb items */
+}
+
+/* Styles for the breadcrumb links */
+.breadcrumb-item a {
+    color: #007bff; /* Color of the breadcrumb links */
+    text-decoration: none; /* Remove underline from links */
+    transition: color 0.3s ease; /* Smooth transition for color change on hover */
+}
+
+.breadcrumb-item a:hover {
+    color: #0056b3; /* Darker color on hover */
+}
+
+/* Styles for the current breadcrumb item */
+.breadcrumb-item span[aria-current="page"] {
+    color: #666; /* Different color for the current page */
+    font-weight: bold; /* Make the current page bold */
+}
+
+/* Optional: Styles for breadcrumb separators */
+.breadcrumb-item::after {
+    content: "/"; /* Separator character */
+    margin-left: 10px; /* Space after the separator */
+    color: #999; /* Color of the separator */
+}
+
+/* Remove the separator after the last item */
+.breadcrumb-item:last-child::after {
+    content: none;
+}

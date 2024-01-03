@@ -1,0 +1,53 @@
+/* Base styles for the spinbutton container */
+.spinbutton-container {
+    display: inline-block;
+    position: relative;
+}
+
+/* Styles for the input field of the spin button */
+.spinbutton-container input[type="text"] {
+    width: 80px; /* Width of the input field */
+    height: 30px; /* Height of the input field */
+    border: 1px solid #ccc; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    padding: 0 10px; /* Padding inside the input field */
+    font-size: 1rem; /* Font size */
+    text-align: center; /* Center the text */
+}
+
+/* Styling for when the input is invalid */
+.spinbutton-container input[type="text"].is-invalid {
+    border-color: red; /* Red border for invalid input */
+}
+
+/* Optional: Styles for up/down arrows or buttons for increment/decrement */
+.spinbutton-container .spinbutton-arrow {
+    position: absolute;
+    width: 20px; /* Width of the arrow/button */
+    height: 15px; /* Height of the arrow/button */
+    background-color: #f5f5f5; /* Background color */
+    border: 1px solid #ccc; /* Border color */
+    text-align: center; /* Center the arrow symbol */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+/* Positioning the up arrow/button */
+.spinbutton-container .spinbutton-arrow-up {
+    right: 0;
+    top: 0;
+    border-bottom: none; /* Remove bottom border */
+}
+
+/* Positioning the down arrow/button */
+.spinbutton-container .spinbutton-arrow-down {
+    right: 0;
+    bottom: 0;
+    border-top: none; /* Remove top border */
+}
+
+/* Styling for arrow symbols or icons (if used) */
+.spinbutton-container .spinbutton-arrow::before {
+    content: ""; /* Add arrow symbols or use background-image for icons */
+    display: block;
+    /* Additional styling for the arrow symbol/icon */
+}

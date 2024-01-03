@@ -1,0 +1,54 @@
+/* Base styles for the switch container */
+.switch-container {
+    display: inline-block;
+    position: relative;
+}
+
+/* Styles for the switch label */
+.switch-container label {
+    cursor: pointer;
+    display: inline-block;
+}
+
+/* Base styles for the switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px; /* Width of the switch */
+    height: 34px; /* Height of the switch */
+}
+
+/* Styles for the sliding thumb inside the switch */
+.switch:before {
+    content: "";
+    position: absolute;
+    height: 26px; /* Height of the thumb */
+    width: 26px; /* Width of the thumb */
+    left: 4px;
+    bottom: 4px;
+    background-color: white; /* Color of the thumb */
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+/* Styles for when the switch is turned on */
+.switch-on:before {
+    transform: translateX(26px); /* Move the thumb to the right */
+}
+
+/* Styles for the switch when it's focused or hovered */
+.switch-container span:focus,
+.switch-container span:hover {
+    box-shadow: 0 0 1px #2196f3; /* Glow effect for focus/hover */
+}
+
+/* Styles for the switch background */
+.switch {
+    background-color: #ccc; /* Background of the switch when it's off */
+    border-radius: 34px; /* Roundness of the switch */
+    transition: background-color 0.4s;
+}
+
+.switch-on {
+    background-color: #2196f3; /* Background of the switch when it's on */
+}

@@ -1,0 +1,58 @@
+/* Base styles for the slider container */
+.slider-container {
+    position: relative;
+    width: 100%; /* Full width of the container */
+    height: 2em; /* Height of the container */
+    user-select: none; /* Prevent text selection */
+}
+
+/* Styles for the slider track */
+.slider-container::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 4px; /* Height of the track */
+    background-color: #ddd; /* Color of the track */
+    transform: translateY(-50%);
+    border-radius: 2px; /* Slightly rounded corners for the track */
+}
+
+/* Styles for the slider thumb */
+.slider-container [role="slider"] {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 20px; /* Width of the thumb */
+    height: 20px; /* Height of the thumb */
+    background-color: #007bff; /* Color of the thumb */
+    border-radius: 50%; /* Circular thumb */
+    transform: translate(-50%, -50%);
+    cursor: pointer; /* Cursor changes to pointer when hovering over the thumb */
+    transition: background-color 0.3s; /* Smooth background color transition for interaction */
+}
+
+/* Styles for the slider thumb when hovered */
+.slider-container [role="slider"]:hover {
+    background-color: #0056b3; /* Darken the thumb color slightly when hovered */
+}
+
+/* Styles for vertical slider */
+.slider-container.vertical {
+    width: 2em; /* Width of the container for vertical slider */
+    height: 100%; /* Full height of the container for vertical slider */
+}
+
+.slider-container.vertical::before {
+    top: 0;
+    left: 50%;
+    width: 4px; /* Width of the track for vertical slider */
+    height: 100%;
+    transform: translateX(-50%);
+}
+
+.slider-container.vertical [role="slider"] {
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
