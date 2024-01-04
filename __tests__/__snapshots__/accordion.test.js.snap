@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Accordion Component matches the snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="accordion"
+  >
+    <div>
+      <h2>
+        <button
+          aria-controls="panel-0"
+          aria-expanded="false"
+          class="accordion-header"
+          id="accordion-header-0"
+        >
+          Section 1
+        </button>
+      </h2>
+      <div
+        aria-labelledby="accordion-header-0"
+        class="accordion-body "
+        id="panel-0"
+        role="region"
+      >
+        Content 1
+      </div>
+    </div>
+    <div>
+      <h2>
+        <button
+          aria-controls="panel-1"
+          aria-expanded="false"
+          class="accordion-header"
+          id="accordion-header-1"
+        >
+          Section 2
+        </button>
+      </h2>
+      <div
+        aria-labelledby="accordion-header-1"
+        class="accordion-body "
+        id="panel-1"
+        role="region"
+      >
+        Content 2
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

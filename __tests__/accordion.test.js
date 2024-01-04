@@ -21,6 +21,12 @@ const renderAccordion = (props = {}) =>
     );
 
 describe("Accordion Component", () => {
+
+    test("matches the snapshot", () => {
+        const { asFragment } = renderAccordion();
+        expect(asFragment()).toMatchSnapshot();
+    });
+
     test("renders all items", () => {
         renderAccordion();
         sampleItems.forEach((item) => {
