@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tooltip Component Tooltip snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="tooltip-container"
+    tabindex="0"
+  >
+    <button>
+      Hover or Focus Me
+    </button>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Tooltip Component renders Tooltip correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="tooltip-container"
+    tabindex="0"
+  >
+    <button>
+      Hover or Focus Me
+    </button>
+  </div>
+</DocumentFragment>
+`;
