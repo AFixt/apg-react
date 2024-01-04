@@ -41,7 +41,10 @@ describe("Accordion Component", () => {
         const firstHeaderButton = screen.getByText(sampleItems[0].title);
         firstHeaderButton.focus();
         fireEvent.keyDown(firstHeaderButton, { key: "ArrowDown" });
-        expect(document.activeElement).toHaveAttribute("id", "accordion-header-1");
+        expect(document.activeElement).toHaveAttribute(
+            "id",
+            "accordion-header-1"
+        );
     });
 
     test("header button should have correct ARIA attributes", () => {
@@ -78,8 +81,14 @@ describe("Accordion Component", () => {
         sampleItems.forEach((item, index) => {
             const headerButton = screen.getByText(item.title);
             const isExpanded = index === 1;
-            expect(headerButton).toHaveAttribute("aria-expanded", isExpanded.toString());
-            expect(headerButton).toHaveAttribute("aria-controls", `panel-${index}`);
+            expect(headerButton).toHaveAttribute(
+                "aria-expanded",
+                isExpanded.toString()
+            );
+            expect(headerButton).toHaveAttribute(
+                "aria-controls",
+                `panel-${index}`
+            );
         });
     });
 });
