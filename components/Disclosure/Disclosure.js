@@ -33,7 +33,6 @@ const Disclosure = ({ title, children }) => {
                 onKeyDown={handleKeyPress}
                 aria-expanded={isOpen}
                 aria-controls="disclosure-content"
-                role="button"
             >
                 {title}
                 <span className="indicator">{isOpen ? "▲" : "▼"}</span>
