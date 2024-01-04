@@ -16,18 +16,11 @@ const Tooltip = ({ children, text, position }) => {
     const [isVisible, setIsVisible] = useState(false);
     const tooltipRef = useRef(null);
 
-    const showTooltip = () => {
-        setIsVisible(true);
-    };
-
-    const hideTooltip = () => {
-        setIsVisible(false);
-    };
+    const showTooltip = () => setIsVisible(true);
+    const hideTooltip = () => setIsVisible(false);
 
     const handleKeyPress = (e) => {
-        if (e.key === "Escape") {
-            hideTooltip();
-        }
+        if (e.key === "Escape") hideTooltip();
     };
 
     return (
