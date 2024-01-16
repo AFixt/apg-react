@@ -8,6 +8,18 @@ describe("AlertDialog Component", () => {
     const message = "This is an important alert message.";
     const mockOnClose = jest.fn();
 
+    test("Alert Dialog Snapshot", () => {
+        const { asFragment } = render(
+            <AlertDialog
+                isOpen={true}
+                title={title}
+                message={message}
+                onClose={mockOnClose}
+            />
+        );
+        expect(asFragment()).toMatchSnapshot();
+    });
+
     test("Alert Dialog Role and Properties", () => {
         render(
             <AlertDialog

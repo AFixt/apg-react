@@ -7,6 +7,11 @@ describe("Alert Component", () => {
     const message = "This is a test alert";
     const type = "info";
 
+    test("Alert Snapshot", () => {
+        const { asFragment } = render(<Alert message={message} type={type} />);
+        expect(asFragment()).toMatchSnapshot();
+    });
+
     test("Alert Role and Accessibility", () => {
         render(<Alert message={message} type={type} />);
         const alert = screen.getByRole("alert");
