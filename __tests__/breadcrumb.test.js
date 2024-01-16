@@ -19,6 +19,11 @@ describe("Breadcrumb Component", () => {
             </Router>
         );
 
+    test("Breadcrumb Snapshot", () => {
+        const { asFragment } = renderBreadcrumb(breadcrumbItems);
+        expect(asFragment()).toMatchSnapshot();
+    });
+
     test("Breadcrumb Containment in a Navigation Landmark Region", () => {
         renderBreadcrumb(breadcrumbItems);
         const navElement = screen.getByRole("navigation");

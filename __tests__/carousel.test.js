@@ -18,6 +18,22 @@ describe("Carousel Component", () => {
         jest.useRealTimers();
     });
 
+    test("Carousel Initial Render Snapshot", () => {
+        const { asFragment } = render(<Carousel slides={slides} />);
+        expect(asFragment()).toMatchSnapshot();
+    });
+
+    test("Carousel Snapshot After Navigation", () => {
+        const { asFragment } = render(<Carousel slides={slides} />);
+        const nextButton = screen.getByLabelText(/next/i);
+
+        act(() => {
+            fireEvent.click(nextButton);
+        });
+
+        expect(asFragment()).toMatchSnapshot();
+    });
+
     test("Controlling Carousel Slide Rotation", () => {
         render(<Carousel slides={slides} />);
         const rotationButton = screen.getByLabelText(/pause/i);

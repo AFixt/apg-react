@@ -8,7 +8,11 @@ describe("Disclosure Component", () => {
     const content = "Disclosure Content";
 
     test("Toggling the Visibility of Content with Keyboard", () => {
-        render(<Disclosure title={title}>{content}</Disclosure>);
+
+        const { asFragment } = render(<Disclosure title={title}>{content}</Disclosure>);
+
+        // Snapshot before interaction
+        expect(asFragment()).toMatchSnapshot();
 
         // Adjust the query to include the visual indicator
         const button = screen.getByRole("button", {
@@ -19,12 +23,19 @@ describe("Disclosure Component", () => {
         fireEvent.keyDown(button, { key: "Enter" });
         expect(screen.getByText(content)).toBeInTheDocument();
 
+        // Snapshot after opening
+        expect(asFragment()).toMatchSnapshot();
+
         fireEvent.keyDown(button, { key: "Enter" });
         expect(screen.queryByText(content)).not.toBeInTheDocument();
+
+        // Snapshot after closing
+        expect(asFragment()).toMatchSnapshot();
     });
 
     test("Accessibility Features of the Disclosure Control", () => {
-        render(<Disclosure title={title}>{content}</Disclosure>);
+        const { asFragment } = render(<Disclosure title={title}>{content}</Disclosure>);
+        expect(asFragment()).toMatchSnapshot();
 
         const button = screen.getByRole("button", {
             name: /Disclosure Title ▼/,

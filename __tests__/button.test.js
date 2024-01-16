@@ -13,6 +13,25 @@ describe("Button Component", () => {
 
     afterEach(cleanup);
 
+    test("Button Snapshot", () => {
+        const { asFragment } = render(
+            <Button action={mockAction} label={label} />
+        );
+        expect(asFragment()).toMatchSnapshot();
+    });
+
+    test("Toggle Button Snapshot", () => {
+        const { asFragment } = render(
+            <Button
+                action={mockAction}
+                label={label}
+                isToggleButton={true}
+                toggleState={false}
+            />
+        );
+        expect(asFragment()).toMatchSnapshot();
+    });
+
     test("Activating a Button", () => {
         render(<Button action={mockAction} label={label} />);
         const button = screen.getByRole("button", { name: label });
