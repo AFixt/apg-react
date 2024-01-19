@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Spinbutton - Snapshot Tests renders correctly with all props 1`] = `
+<div
+  className="spinbutton-container"
+>
+  <input
+    aria-invalid={false}
+    aria-labelledby="label-id"
+    aria-valuemax={10}
+    aria-valuemin={0}
+    aria-valuenow={5}
+    aria-valuetext={5}
+    onChange={[Function]}
+    onKeyDown={[Function]}
+    role="spinbutton"
+    type="text"
+    value={5}
+  />
+</div>
+`;
+
+exports[`Spinbutton - Snapshot Tests renders correctly with default props 1`] = `
+<div
+  className="spinbutton-container"
+>
+  <input
+    aria-invalid={false}
+    aria-valuemax={10}
+    aria-valuemin={0}
+    aria-valuenow={0}
+    aria-valuetext={0}
+    onChange={[Function]}
+    onKeyDown={[Function]}
+    role="spinbutton"
+    type="text"
+    value={0}
+  />
+</div>
+`;
