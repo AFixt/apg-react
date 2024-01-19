@@ -12,16 +12,3 @@ exports[`Tooltip Component Tooltip snapshot 1`] = `
   </div>
 </DocumentFragment>
 `;
-
-exports[`Tooltip Component renders Tooltip correctly 1`] = `
-<DocumentFragment>
-  <div
-    class="tooltip-container"
-    tabindex="0"
-  >
-    <button>
-      Hover or Focus Me
-    </button>
-  </div>
-</DocumentFragment>
-`;

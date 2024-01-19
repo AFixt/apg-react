@@ -21,7 +21,7 @@ const Switch = ({ label, ariaLabelledby, ariaDescribedby, initialChecked }) => {
     };
 
     const handleKeyPress = (e) => {
-        if (e.key === " " || e.key === "Enter") {
+        if (e.keyCode === 32 || e.key === "Enter") {
             e.preventDefault();
             toggleSwitch();
         }

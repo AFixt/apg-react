@@ -23,5 +23,5 @@ Like any project, there are bound to be bugs or things that could be done better
 * Modal Dialog
 * Slider
 * Spinbutton
-* Switch
+* [Switch](./components/Switch/)
 * [Tooltip](./components/Tooltip/)
