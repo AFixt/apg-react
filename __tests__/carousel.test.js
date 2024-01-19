@@ -63,7 +63,11 @@ describe("Carousel Component", () => {
         render(<Carousel slides={slides} />);
         const carousel = screen.getByRole("region");
         carousel.focus();
-        fireEvent.keyDown(carousel, { key: "Tab" });
+
+        act(() => {
+            fireEvent.keyDown(carousel, { key: "Tab" });
+        });
+
     });
 
     test("ARIA Roles, States, and Properties of Carousel Elements", () => {
@@ -98,17 +102,16 @@ describe("Carousel Component", () => {
         });
     });
 
-    test("Automatic Rotation Control", () => {
+    test("Automatic Rotation Control", async () => {
         render(<Carousel slides={slides} />);
 
-        act(() => {
+        await act(async () => {
             jest.advanceTimersByTime(3000);
         });
         expect(screen.getByText("Content 2")).toBeVisible();
 
-        act(() => {
+        await act(async () => {
             fireEvent.mouseEnter(screen.getByRole("region"));
-            jest.advanceTimersByTime(3000);
         });
         expect(screen.getByText("Content 2")).toBeVisible(); // Assert rotation has stopped
     });

@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Breadcrumb Component Breadcrumb Snapshot 1`] = `
+<DocumentFragment>
+  <nav
+    aria-label="Breadcrumb"
+    class="breadcrumb-nav"
+  >
+    <ol
+      class="breadcrumb-list"
+    >
+      <li
+        class="breadcrumb-item"
+      >
+        <a
+          href="/"
+        >
+          Home
+        </a>
+      </li>
+      <li
+        class="breadcrumb-item"
+      >
+        <a
+          href="/about"
+        >
+          About
+        </a>
+      </li>
+      <li
+        class="breadcrumb-item"
+      >
+        <span
+          aria-current="page"
+        >
+          Contact
+        </span>
+      </li>
+    </ol>
+  </nav>
+</DocumentFragment>
+`;

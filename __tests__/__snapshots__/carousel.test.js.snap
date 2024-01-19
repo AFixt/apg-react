@@ -1,0 +1,161 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Carousel Component Carousel Initial Render Snapshot 1`] = `
+<DocumentFragment>
+  <div
+    aria-roledescription="carousel"
+    class="carousel"
+    role="region"
+    tabindex="0"
+  >
+    <button
+      aria-label="Previous slide"
+    >
+      Prev
+    </button>
+    <button
+      aria-label="Next slide"
+    >
+      Next
+    </button>
+    <button
+      aria-label="Pause rotation"
+    >
+      Pause
+    </button>
+    <div
+      class="slides"
+    >
+      <div
+        aria-label="Slide 1"
+        aria-roledescription="slide"
+        role="group"
+      >
+        <div>
+          Content 1
+        </div>
+      </div>
+      <div
+        aria-label="Slide 2"
+        aria-roledescription="slide"
+        hidden=""
+        role="group"
+      >
+        <div>
+          Content 2
+        </div>
+      </div>
+      <div
+        aria-label="Slide 3"
+        aria-roledescription="slide"
+        hidden=""
+        role="group"
+      >
+        <div>
+          Content 3
+        </div>
+      </div>
+    </div>
+    <div
+      class="slide-selectors"
+    >
+      <button
+        aria-label="Select slide 1"
+        disabled=""
+      >
+        1
+      </button>
+      <button
+        aria-label="Select slide 2"
+      >
+        2
+      </button>
+      <button
+        aria-label="Select slide 3"
+      >
+        3
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`Carousel Component Carousel Snapshot After Navigation 1`] = `
+<DocumentFragment>
+  <div
+    aria-roledescription="carousel"
+    class="carousel"
+    role="region"
+    tabindex="0"
+  >
+    <button
+      aria-label="Previous slide"
+    >
+      Prev
+    </button>
+    <button
+      aria-label="Next slide"
+    >
+      Next
+    </button>
+    <button
+      aria-label="Start rotation"
+    >
+      Play
+    </button>
+    <div
+      class="slides"
+    >
+      <div
+        aria-label="Slide 1"
+        aria-roledescription="slide"
+        hidden=""
+        role="group"
+      >
+        <div>
+          Content 1
+        </div>
+      </div>
+      <div
+        aria-label="Slide 2"
+        aria-roledescription="slide"
+        role="group"
+      >
+        <div>
+          Content 2
+        </div>
+      </div>
+      <div
+        aria-label="Slide 3"
+        aria-roledescription="slide"
+        hidden=""
+        role="group"
+      >
+        <div>
+          Content 3
+        </div>
+      </div>
+    </div>
+    <div
+      class="slide-selectors"
+    >
+      <button
+        aria-label="Select slide 1"
+      >
+        1
+      </button>
+      <button
+        aria-label="Select slide 2"
+        disabled=""
+      >
+        2
+      </button>
+      <button
+        aria-label="Select slide 3"
+      >
+        3
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;
