@@ -22,6 +22,6 @@ Like any project, there are bound to be bugs or things that could be done better
 * Meter
 * Modal Dialog
 * Slider
-* Spinbutton
+* [Spinbutton](./components/Spinbutton/)
 * [Switch](./components/Switch/)
 * [Tooltip](./components/Tooltip/)
