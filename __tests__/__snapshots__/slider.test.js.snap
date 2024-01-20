@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Slider Component renders correctly 1`] = `
+<DocumentFragment>
+  <div
+    aria-orientation="horizontal"
+    aria-valuemax="100"
+    aria-valuemin="0"
+    aria-valuenow="0"
+    aria-valuetext="0"
+    role="slider"
+    tabindex="0"
+  />
+</DocumentFragment>
+`;

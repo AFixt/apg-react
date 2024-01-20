@@ -27,7 +27,11 @@ const Slider = ({
     const [value, setValue] = useState(initialValue || min);
 
     const handleChange = (newValue) => {
-        if (newValue >= min && newValue <= max) {
+        if (newValue > max) {
+            setValue(max);
+        } else if (newValue < min) {
+            setValue(min);
+        } else {
             setValue(newValue);
         }
     };
