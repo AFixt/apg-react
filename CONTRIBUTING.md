@@ -1,6 +1,6 @@
 # Contributing
 
-Below, you'll find our guidelines for contributing to this repository. Your involvement is crucial in making this project more effective and accessible.
+Below, you'll find our guidelines for contributing to this repository. 
 
 ## Workflow
 

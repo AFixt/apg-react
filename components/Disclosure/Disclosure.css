@@ -39,4 +39,13 @@
     border-radius: 4px; /* Rounded corners for the content box */
     margin-top: 10px; /* Space above the content box */
     background-color: #f8f9fa; /* Light background for the content */
+    display: none; /* Hide by default */
+}
+
+.disclosure-content.hidden {
+    display: none;
+}
+
+.disclosure-content:not(.hidden) {
+    display: block;
 }

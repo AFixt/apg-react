@@ -2,14 +2,17 @@
 .accordion {
     margin: 0;
     padding: 0;
-    list-style: none; /* Remove default list styling */
+}
+
+.accordion h2 {
+    margin: 0;
+    padding: 0;
 }
 
 /* Styles for each Accordion item */
 .accordion div {
     margin-bottom: 5px; /* Space between accordion items */
     border: 1px solid #ddd; /* Light border for each item */
-    border-radius: 4px; /* Rounded corners */
 }
 
 /* Styles for the Accordion headers (buttons) */
@@ -20,14 +23,13 @@
     border: none;
     text-align: left; /* Align text to the left */
     cursor: pointer; /* Cursor to pointer to indicate it's clickable */
-    border-radius: 4px; /* Rounded corners */
     font-size: 1rem; /* Font size */
-    transition: background-color 0.3s ease; /* Transition for background color change */
 }
 
 .accordion-header:hover,
+.accordion-header:focus,
 .accordion-header[aria-expanded="true"] {
-    background-color: #e7e7e7; /* Slightly darker shade on hover/when expanded */
+    background-color: #e7e7e7; /* Slightly darker shade on hover/focus and when expanded */
 }
 
 /* Styles for the Accordion body/content */
@@ -35,12 +37,11 @@
     padding: 0;
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease-out;
     background-color: white; /* White background for the content */
 }
 
 /* Styles when Accordion body/content is open */
 .accordion-body.open {
-    padding: 15px;
+    padding: 1em;
     max-height: 1000px; /* Adjust as necessary for your content */
 }

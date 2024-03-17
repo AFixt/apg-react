@@ -10,6 +10,7 @@
   "scripts": {
     "test": "jest",
     "docs": "jsdoc -c jsdoc.json",
+    "serve": "http-server -o ./demos/",
     "markdownlint": "markdownlint **/*.md --ignore node_modules"
   },
   "devDependencies": {

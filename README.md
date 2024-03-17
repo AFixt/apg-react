@@ -19,7 +19,7 @@ Like any project, there are bound to be bugs or things that could be done better
 * [Disclosure](./components/Disclosure/)
 * Feed
 * Link
-* Meter
+* [Meter](./components/Meter/)
 * Modal Dialog
 * [Slider](./components/Slider/)
 * [Spinbutton](./components/Spinbutton/)
