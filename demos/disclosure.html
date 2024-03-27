@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disclosure Widget Demo</title>
+    <style>
+/* Base styles for the disclosure widget */
+.disclosure-widget {
+    margin-bottom: 20px; /* Space at the bottom of each disclosure widget */
+}
+
+/* Styles for the disclosure control (button) */
+.disclosure-control {
+    background-color: #007bff; /* Background color of the button */
+    color: white; /* Text color of the button */
+    padding: 10px 15px; /* Padding inside the button */
+    border: none; /* No border for the button */
+    border-radius: 4px; /* Rounded corners for the button */
+    font-size: 1rem; /* Font size for the button text */
+    cursor: pointer; /* Cursor to pointer to indicate it's clickable */
+    display: inline-block; /* Inline block for proper alignment */
+    margin-bottom: 5px; /* Margin at the bottom of the button */
+    transition: background-color 0.3s; /* Transition for hover effect */
+}
+
+.disclosure-control:hover {
+    background-color: #0056b3; /* Darker background on hover */
+}
+
+/* Styles for the indicator icon in the button */
+.disclosure-control .indicator {
+    float: right; /* Position the indicator to the right */
+    transition: transform 0.3s; /* Smooth transition for the indicator rotation */
+}
+
+/* Rotate the indicator when the content is visible */
+.disclosure-control[aria-expanded="true"] .indicator {
+    transform: rotate(180deg); /* Rotate the indicator arrow */
+}
+
+/* Styles for the disclosure content */
+.disclosure-content {
+    padding: 15px; /* Padding around the content */
+    border: 1px solid #ddd; /* Border around the content */
+    border-radius: 4px; /* Rounded corners for the content box */
+    margin-top: 10px; /* Space above the content box */
+    background-color: #f8f9fa; /* Light background for the content */
+    display: none; /* Hide by default */
+}
+
+.disclosure-content.hidden {
+    display: none;
+}
+
+.disclosure-content:not(.hidden) {
+    display: block;
+}
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/react@17/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone"></script>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const Disclosure = ({ title, children }) => {
+            const [isOpen, setIsOpen] = useState(false);
+
+            const toggleVisibility = () => {
+                setIsOpen(!isOpen);
+            };
+
+            const handleKeyPress = (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    toggleVisibility();
+                }
+            };
+
+            return (
+                <div className="disclosure-widget">
+                    <button
+                        className="disclosure-control"
+                        onClick={toggleVisibility}
+                        onKeyDown={handleKeyPress}
+                        aria-expanded={isOpen}
+                        aria-controls="disclosure-content"
+                    >
+                        {title}
+                        <span className="indicator">{isOpen ? "▲" : "▼"}</span>
+                    </button>
+                    <div className={`disclosure-content ${!isOpen ? 'hidden' : ''}`} id="disclosure-content">
+                        {children}
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(
+            <Disclosure title="Click Me">
+                <p>This is the content to be displayed when the disclosure is open.</p>
+            </Disclosure>,
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>

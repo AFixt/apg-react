@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>APG-React Accordion Demo</title>
+        <style>
+            /* Styles for the Accordion container */
+            .accordion {
+                margin: 0;
+                padding: 0;
+                border: 1px solid #dcdcdc; /* Border */
+            }
+
+            .accordion h2 {
+                margin: 0;
+                padding: 0;
+            }
+
+            /* Styles for each Accordion item */
+            .accordion div {
+            }
+
+            /* Styles for the Accordion headers (buttons) */
+            .accordion-header {
+                width: 100%;
+                padding: 10px 15px;
+                background-color: #f7f7f7; /* Light grey background */
+                border: none;
+                text-align: left; /* Align text to the left */
+                cursor: pointer; /* Cursor to pointer to indicate it's clickable */
+                font-size: 1rem; /* Font size */
+            }
+
+            .accordion-header:hover,
+            .accordion-header:focus,
+            .accordion-header[aria-expanded="true"] {
+                background-color: #e7e7e7; /* Slightly darker shade on hover/focus and when expanded */
+            }
+
+            /* Styles for the Accordion body/content */
+            .accordion-body {
+                padding: 0;
+                max-height: 0;
+                overflow: hidden;
+                background-color: white; /* White background for the content */
+            }
+
+            /* Styles when Accordion body/content is open */
+            .accordion-body.open {
+                padding: 1em;
+                max-height: 1000px; /* Adjust as necessary for your content */
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script
+            crossorigin
+            src="https://unpkg.com/react@17/umd/react.development.js"
+        ></script>
+        <script
+            crossorigin
+            src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+        ></script>
+        <script
+            crossorigin
+            src="https://unpkg.com/@babel/standalone/babel.min.js"
+        ></script>
+        <script type="text/babel">
+
+
+            const Accordion = ({ items, toggleItem, openIndex }) => {
+                const handleKeyDown = (event, index) => {
+                    const totalItems = items.length;
+                    let newIndex = index;
+
+                    switch (event.key) {
+                        case "ArrowDown":
+                            newIndex = (index + 1) % totalItems;
+                            break;
+                        case "ArrowUp":
+                            newIndex = (index - 1 + totalItems) % totalItems;
+                            break;
+                        case "Home":
+                            newIndex = 0;
+                            break;
+                        case "End":
+                            newIndex = totalItems - 1;
+                            break;
+                        default:
+                            return;
+                    }
+
+                    document
+                        .getElementById(`accordion-header-${newIndex}`)
+                        .focus();
+                };
+
+                return (
+                    <div className="accordion">
+                        {items.map((item, index) => (
+                            <div key={index}>
+                                <h2>
+                                    <button
+                                        id={`accordion-header-${index}`}
+                                        className="accordion-header"
+                                        onClick={() => toggleItem(index)}
+                                        onKeyDown={(e) =>
+                                            handleKeyDown(e, index)
+                                        }
+                                        aria-expanded={openIndex === index}
+                                        aria-controls={`panel-${index}`}
+                                    >
+                                        {item.title}
+                                    </button>
+                                </h2>
+                                <div
+                                    id={`panel-${index}`}
+                                    className={`accordion-body ${
+                                        openIndex === index ? "open" : ""
+                                    }`}
+                                    role="region"
+                                    aria-labelledby={`accordion-header-${index}`}
+                                >
+                                    {item.content}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                );
+            };
+
+            const App = () => {
+                const [openIndex, setOpenIndex] = React.useState(null);
+                const toggleItem = (index) => {
+                    setOpenIndex(openIndex === index ? null : index);
+                };
+
+                const items = [
+                    { title: "Section 1", content: "Content 1" },
+                    { title: "Section 2", content: "Content 2" },
+                    { title: "Section 3", content: "Content 3" },
+                ];
+
+                return (
+                    <Accordion
+                        items={items}
+                        toggleItem={toggleItem}
+                        openIndex={openIndex}
+                    />
+                );
+            };
+
+            ReactDOM.render(<App />, document.getElementById("root"));
+        </script>
+    </body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APG-React Alert Component Demo</title>
+    <style>
+/* Base styles for the alert */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px; /* Space below each alert */
+    border: 1px solid transparent; /* Transparent border for maintaining the box size */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 1rem; /* Font size */
+    line-height: 1.5; /* Line height for better readability */
+}
+
+/* Styles for different types of alerts */
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Styles for the dismiss button */
+.alert button {
+    background: none;
+    border: none;
+    color: inherit; /* Inherits the color from the alert */
+    padding: 0;
+    cursor: pointer;
+    float: right; /* Positions the button to the right */
+    font-size: .9rem;
+}
+
+/* Optional: Hover and focus styles for the dismiss button */
+.alert button:hover,
+.alert button:focus {
+    color: #333; /* Darken color for visibility */
+    text-decoration: none; /* Remove text decoration */
+}
+
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- Load React and ReactDOM -->
+    <script src="https://unpkg.com/react/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom/umd/react-dom.development.js"></script>
+    <!-- Load Babel Compiler -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const Alert = ({ message, type }) => {
+            const [isVisible, setIsVisible] = useState(true);
+
+            const handleClose = () => {
+                setIsVisible(false);
+            };
+
+            if (!isVisible) return null;
+
+            return (
+                <div
+                    role="alert"
+                    aria-live="assertive"
+                    className={`alert alert-${type}`}
+                >
+                    <span>{message}</span>
+                    <button onClick={handleClose}>Dismiss</button>
+                </div>
+            );
+        };
+
+        const App = () => (
+            <div>
+                <Alert message="This is an info alert!" type="info" />
+                <Alert message="Warning! Something might go wrong!" type="warning" />
+                <Alert message="Error! Something went wrong!" type="error" />
+            </div>
+        );
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
