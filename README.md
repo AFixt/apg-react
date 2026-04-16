@@ -1,6 +1,8 @@
 # apg-react
 
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![npm](https://img.shields.io/npm/v/@afixt/apg-react)](https://www.npmjs.com/package/@afixt/apg-react)
+[![Storybook](https://img.shields.io/badge/storybook-live%20demo-ff4785)](https://afixt.github.io/apg-react/)
 
 **Accessible React components implementing every pattern in the [W3C ARIA Authoring Practices Guide (APG)](https://www.w3.org/WAI/ARIA/apg/patterns/).**
 
@@ -93,7 +95,7 @@ Every component implements the full keyboard model specified by its APG pattern.
 - **Focus return** on dialog dismiss: `ModalDialog`, `AlertDialog`, `MenuButton`, `Menubar`.
 - **Escape** closes popups: `ModalDialog`, `AlertDialog`, `MenuButton`, `Menubar`, `Combobox`, `Tooltip`.
 
-Run `npm run storybook` to see every keyboard path for every component, complete with step-by-step Storybook `play` interactions.
+Explore the [live Storybook demo](https://afixt.github.io/apg-react/) or run `npm run storybook` locally to see every keyboard path with step-by-step `play` interactions.
 
 ## Styling
 
