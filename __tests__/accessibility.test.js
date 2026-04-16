@@ -156,11 +156,11 @@ describe("Accessibility contracts (no external a11y libs)", () => {
     });
 
     describe("Button", () => {
-        test("has accessible name and correct aria-disabled state", () => {
+        test("has accessible name and is disabled via native attribute", () => {
             render(<Button action={() => {}} label="Submit" isDisabled />);
             const btn = screen.getByRole("button");
             expect(getAccessibleName(btn)).toBe("Submit");
-            expect(btn).toHaveAttribute("aria-disabled", "true");
+            expect(btn).toBeDisabled();
         });
         test("toggle button surfaces valid aria-pressed", () => {
             render(
@@ -364,7 +364,7 @@ describe("Accessibility contracts (no external a11y libs)", () => {
                 <ModalDialog
                     isOpen
                     onClose={() => {}}
-                    ariaLabel="modal-title"
+                    ariaLabelledby="modal-title"
                     ariaDescribedby="modal-desc"
                 >
                     <h2 id="modal-title">Title</h2>
@@ -613,11 +613,11 @@ describe("Accessibility contracts (no external a11y libs)", () => {
     });
 
     describe("Cross-cutting rules", () => {
-        test("every disabled button also surfaces aria-disabled=true (for AT)", () => {
+        test("disabled button uses native disabled attribute (not aria-disabled)", () => {
             render(<Button action={() => {}} label="X" isDisabled />);
             const btn = screen.getByRole("button");
             expect(btn).toBeDisabled();
-            expect(btn).toHaveAttribute("aria-disabled", "true");
+            expect(btn).not.toHaveAttribute("aria-disabled");
         });
 
         test("aria-hidden=true subtree is not in the accessibility tree", () => {

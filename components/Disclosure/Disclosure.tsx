@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 import "./Disclosure.css";
 
 interface DisclosureProps {
@@ -8,6 +8,8 @@ interface DisclosureProps {
 
 const Disclosure: React.FC<DisclosureProps> = ({ title, children }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const uid = useId();
+    const contentId = `disclosure-content-${uid}`;
 
     const toggleVisibility = () => {
         setIsOpen(!isOpen);
@@ -27,12 +29,12 @@ const Disclosure: React.FC<DisclosureProps> = ({ title, children }) => {
                 onClick={toggleVisibility}
                 onKeyDown={handleKeyPress}
                 aria-expanded={isOpen}
-                aria-controls="disclosure-content"
+                aria-controls={contentId}
             >
                 {title}
-                <span className="indicator">{isOpen ? "▲" : "▼"}</span>
+                <span className="indicator" aria-hidden="true">{isOpen ? "▲" : "▼"}</span>
             </button>
-            <div className={`disclosure-content ${!isOpen ? 'hidden' : ''}`} id="disclosure-content">
+            <div className={`disclosure-content ${!isOpen ? 'hidden' : ''}`} id={contentId}>
                 {children}
             </div>
         </div>

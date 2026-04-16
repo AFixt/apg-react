@@ -1,20 +1,12 @@
 /**
- * Represents an alert dialog component.
- *  The actual CSS and further JavaScript logic for handling keyboard navigation,
- *  focus trapping within the dialog, and more sophisticated state management
- *  (like handling multiple dialogs or integrating with application state) would
- *  be necessary for a complete, production-ready component.
- *  This is just a foundational implementation.
+ * AlertDialog — APG: https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/
  *
- * @component
- * @param {Object} props - The component props.
- * @param {boolean} props.isOpen - Indicates whether the dialog is open or not.
- * @param {string} props.title - The title of the dialog.
- * @param {string} props.message - The message content of the dialog.
- * @param {function} props.onClose - The callback function to be called when the dialog is closed.
- * @returns {JSX.Element|null} The JSX element representing the alert dialog.
+ * - role=alertdialog, aria-modal=true
+ * - Focus trapped inside the dialog
+ * - Escape closes and returns focus to the invoking element
+ * - Initial focus placed on the close button
  */
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useId, useRef } from "react";
 import "./AlertDialog.css";
 
 interface AlertDialogProps {
@@ -25,27 +17,54 @@ interface AlertDialogProps {
 }
 
 const AlertDialog: React.FC<AlertDialogProps> = ({ isOpen, title, message, onClose }) => {
+    const uid = useId();
+    const titleId = `alertdialog-title-${uid}`;
+    const descId = `alertdialog-desc-${uid}`;
     const dialogRef = useRef<HTMLDivElement>(null);
+    const closeBtnRef = useRef<HTMLButtonElement>(null);
+    const invokingElementRef = useRef<Element | null>(null);
 
-    // Focus management
+    // Save invoking element and set initial focus on open.
     useEffect(() => {
         if (isOpen) {
-            dialogRef.current?.focus();
+            invokingElementRef.current = document.activeElement;
+            closeBtnRef.current?.focus();
         }
     }, [isOpen]);
 
-    // Document-level Escape handler so the key works regardless of focus target.
+    const closeAndRestoreFocus = () => {
+        const invoker = invokingElementRef.current as HTMLElement | null;
+        if (invoker && typeof invoker.focus === "function") {
+            invoker.focus();
+        }
+        onClose();
+    };
+
+    // Document-level Escape handler.
     useEffect(() => {
         if (!isOpen) return;
         const onKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
                 e.stopPropagation();
-                onClose();
+                closeAndRestoreFocus();
             }
         };
         document.addEventListener("keydown", onKeyDown);
         return () => document.removeEventListener("keydown", onKeyDown);
     }, [isOpen, onClose]);
+
+    // Focus trap — keep focus inside the dialog.
+    useEffect(() => {
+        if (!isOpen) return;
+        const handleFocusTrap = (e: FocusEvent) => {
+            if (dialogRef.current && !dialogRef.current.contains(e.target as Node)) {
+                e.stopPropagation();
+                closeBtnRef.current?.focus();
+            }
+        };
+        document.addEventListener("focus", handleFocusTrap, true);
+        return () => document.removeEventListener("focus", handleFocusTrap, true);
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
@@ -54,15 +73,15 @@ const AlertDialog: React.FC<AlertDialogProps> = ({ isOpen, title, message, onClo
             className="dialog-overlay"
             role="alertdialog"
             aria-modal="true"
-            aria-labelledby="dialogTitle"
-            aria-describedby="dialogDesc"
+            aria-labelledby={titleId}
+            aria-describedby={descId}
             tabIndex={-1}
             ref={dialogRef}
         >
             <div className="dialog-content">
-                <h2 id="dialogTitle">{title}</h2>
-                <p id="dialogDesc">{message}</p>
-                <button onClick={onClose}>Close</button>
+                <h2 id={titleId}>{title}</h2>
+                <p id={descId}>{message}</p>
+                <button ref={closeBtnRef} onClick={closeAndRestoreFocus}>Close</button>
             </div>
         </div>
     );

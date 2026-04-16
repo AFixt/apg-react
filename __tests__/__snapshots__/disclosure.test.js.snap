@@ -6,12 +6,13 @@ exports[`Disclosure Component (APG disclosure pattern) matches the snapshot (clo
     class="disclosure-widget"
   >
     <button
-      aria-controls="disclosure-content"
+      aria-controls="disclosure-content-:r7:"
       aria-expanded="false"
       class="disclosure-control"
     >
       More details
       <span
+        aria-hidden="true"
         class="indicator"
       >
         ▼
@@ -19,7 +20,7 @@ exports[`Disclosure Component (APG disclosure pattern) matches the snapshot (clo
     </button>
     <div
       class="disclosure-content hidden"
-      id="disclosure-content"
+      id="disclosure-content-:r7:"
     >
       Hidden content
     </div>

@@ -66,8 +66,8 @@
 }
 
 .carousel-control-play {
-    top: auto;
-    bottom: var(--apg-space-sm);
+    top: var(--apg-space-sm);
+    bottom: auto;
     left: var(--apg-space-sm);
     right: auto;
     transform: none;
@@ -120,7 +120,7 @@
     background-color: var(--apg-color-white);
 }
 
-.carousel .slide-selectors button[disabled] {
+.carousel .slide-selectors button[aria-current="true"] {
     opacity: 1;
     background-color: var(--apg-color-white);
     color: var(--apg-color-primary);

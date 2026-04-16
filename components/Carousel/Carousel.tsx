@@ -31,10 +31,12 @@ interface CarouselLabels {
 
 interface CarouselProps {
     slides: CarouselSlide[];
+    /** Accessible name for the carousel region. Required for ARIA compliance. */
+    ariaLabel: string;
     labels?: CarouselLabels;
 }
 
-const Carousel: React.FC<CarouselProps> = ({ slides, labels }) => {
+const Carousel: React.FC<CarouselProps> = ({ slides, ariaLabel, labels }) => {
     const defaultLabels: CarouselLabels = {
         previousSlide: "Previous slide",
         nextSlide: "Next slide",
@@ -84,11 +86,19 @@ const Carousel: React.FC<CarouselProps> = ({ slides, labels }) => {
             className="carousel"
             role="region"
             aria-roledescription="carousel"
+            aria-label={ariaLabel}
             ref={carouselRef}
             onMouseEnter={stopRotation}
             onFocus={stopRotation}
             tabIndex={0}
         >
+            <button
+                className="carousel-control carousel-control-play"
+                onClick={toggleRotation}
+                aria-label={isRotating ? l.pauseRotation : l.startRotation}
+            >
+                {isRotating ? "\u2016" : "\u25B6"}
+            </button>
             <button
                 className="carousel-control carousel-control-prev"
                 onClick={prevSlide}
@@ -102,13 +112,6 @@ const Carousel: React.FC<CarouselProps> = ({ slides, labels }) => {
                 aria-label={l.nextSlide}
             >
                 <span aria-hidden="true">&#x203A;</span>
-            </button>
-            <button
-                className="carousel-control carousel-control-play"
-                onClick={toggleRotation}
-                aria-label={isRotating ? l.pauseRotation : l.startRotation}
-            >
-                {isRotating ? "\u2016" : "\u25B6"}
             </button>
             <div className="slides">
                 {slides.map((slide, index) => (
@@ -129,7 +132,7 @@ const Carousel: React.FC<CarouselProps> = ({ slides, labels }) => {
                         key={index}
                         onClick={() => selectSlide(index)}
                         aria-label={l.selectSlide!(index + 1)}
-                        disabled={index === activeIndex}
+                        aria-current={index === activeIndex ? "true" : undefined}
                     >
                         {index + 1}
                     </button>

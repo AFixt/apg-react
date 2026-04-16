@@ -22,19 +22,25 @@ interface GridColumn {
 }
 
 interface GridProps {
-    caption?: React.ReactNode;
+    /** The accessible name for the grid. When `showCaption` is true this also
+     *  renders as a visible caption above the grid and is referenced via
+     *  `aria-labelledby` (preferred). Otherwise it's applied as `aria-label`. */
+    label: string;
+    /** When true, `label` is rendered as a visible caption element above the
+     *  grid and the grid references it via `aria-labelledby`. Default: false. */
+    showCaption?: boolean;
     columns: GridColumn[];
     rows: Record<string, React.ReactNode | string | number>[];
-    label: string;
     idPrefix?: string;
 }
 
-const Grid: React.FC<GridProps> = ({ caption, columns, rows, label, idPrefix }) => {
+const Grid: React.FC<GridProps> = ({ label, showCaption = false, columns, rows, idPrefix }) => {
     const totalRows = rows.length;
     const totalCols = columns.length;
     const [focusPos, setFocusPos] = useState({ row: 0, col: 0 });
     const cellRefs = useRef<Record<string, HTMLDivElement | null>>({});
     const prefix = idPrefix || "grid";
+    const captionId = `${prefix}-caption`;
 
     const moveTo = (row: number, col: number) => {
         const r = Math.max(0, Math.min(totalRows, row));
@@ -83,10 +89,13 @@ const Grid: React.FC<GridProps> = ({ caption, columns, rows, label, idPrefix }) 
 
     return (
         <div className="grid-wrapper">
-            {caption && <div className="grid-caption">{caption}</div>}
+            {showCaption && (
+                <div id={captionId} className="grid-caption">{label}</div>
+            )}
             <div
                 role="grid"
-                aria-label={label}
+                aria-label={showCaption ? undefined : label}
+                aria-labelledby={showCaption ? captionId : undefined}
                 aria-rowcount={totalRows + 1}
                 aria-colcount={totalCols}
                 className="grid"

@@ -24,7 +24,7 @@ const rows = [
 export const Default = {
   args: {
     label: 'Notable engineers',
-    caption: 'A small sample of historical figures.',
+    showCaption: true,
     columns,
     rows,
   },

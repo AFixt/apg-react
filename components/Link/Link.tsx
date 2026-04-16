@@ -39,8 +39,6 @@ const AccessibleLink: React.FC<LinkProps> = ({ to, children, onClick, ...props }
         <RouterLink
             to={to as string}
             {...props}
-            role="link"
-            tabIndex={0}
             onKeyDown={handleKeyDown}
         >
             {children}

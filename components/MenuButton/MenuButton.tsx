@@ -12,7 +12,7 @@
  *   - Escape: close menu, return focus to button.
  *   - Tab: close menu and let focus proceed.
  */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import "./MenuButton.css";
 
 interface MenuItem {
@@ -28,11 +28,14 @@ interface MenuButtonProps {
 }
 
 const MenuButton: React.FC<MenuButtonProps> = ({ label, items, idPrefix }) => {
+    const uid = useId();
+    const prefix = idPrefix || `menu-${uid}`;
     const [open, setOpen] = useState(false);
     const [focusIndex, setFocusIndex] = useState(0);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
-    const menuId = `${idPrefix || "menu"}-list`;
+    const buttonId = `${prefix}-btn`;
+    const menuId = `${prefix}-list`;
 
     const openMenu = (index: number) => {
         setOpen(true);
@@ -122,6 +125,7 @@ const MenuButton: React.FC<MenuButtonProps> = ({ label, items, idPrefix }) => {
         <div className="menu-button-container">
             <button
                 ref={buttonRef}
+                id={buttonId}
                 type="button"
                 className="menu-button"
                 aria-haspopup="menu"
@@ -138,7 +142,7 @@ const MenuButton: React.FC<MenuButtonProps> = ({ label, items, idPrefix }) => {
                     id={menuId}
                     role="menu"
                     className="menu"
-                    aria-label={typeof label === "string" ? label : undefined}
+                    aria-labelledby={buttonId}
                 >
                     {items.map((item, i) => (
                         <li key={item.id} role="none">

@@ -220,6 +220,7 @@ const Combobox: React.FC<ComboboxProps> = ({
                         ref={listRef}
                         id={listId}
                         role="listbox"
+                        aria-labelledby={label ? `combobox-input-${uid}` : undefined}
                         className="combobox-list"
                     >
                         {filtered.map((opt, i) => (

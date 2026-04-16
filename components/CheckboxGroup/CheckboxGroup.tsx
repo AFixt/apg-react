@@ -8,7 +8,7 @@
  * @param {string} label - The label for the checkbox group.
  * @returns {JSX.Element} The rendered tri-state checkbox group component.
  */
-import React, { useState, useEffect } from "react";
+import React, { useId, useState, useEffect } from "react";
 import Checkbox from "../Checkbox/Checkbox";
 import "./CheckboxGroup.css";
 
@@ -23,6 +23,8 @@ interface CheckboxGroupProps {
 }
 
 const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ items, label }) => {
+    const uid = useId();
+    const groupLabelId = `checkbox-group-label-${uid}`;
     const [checkedItems, setCheckedItems] = useState(
         new Array(items.length).fill(false)
     );
@@ -49,8 +51,8 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ items, label }) => {
     };
 
     return (
-        <div className="checkbox-group" role="group" aria-labelledby="group-label">
-            <h3 id="group-label">{label}</h3>
+        <div className="checkbox-group" role="group" aria-labelledby={groupLabelId}>
+            <h3 id={groupLabelId}>{label}</h3>
             <Checkbox
                 label="All"
                 checked={groupState}
