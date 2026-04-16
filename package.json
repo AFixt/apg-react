@@ -1,6 +1,6 @@
 {
   "name": "@afixt/apg-react",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Accessible React components implementing every pattern in the WAI-ARIA Authoring Practices Guide (APG)",
   "keywords": [
     "react",
@@ -21,6 +21,9 @@
     "url": "https://www.karlgroves.com"
   },
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AFixt/apg-react.git"
