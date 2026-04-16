@@ -2,14 +2,34 @@
  * A customizable spin button component.
  */
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import "./Spinbutton.css";
 
-const Spinbutton = ({ min, max, step, ariaLabel, ariaLabelledby, initialValue }) => {
+interface SpinbuttonLabels {
+    increaseValue?: string;
+    decreaseValue?: string;
+}
+
+interface SpinbuttonProps {
+    min: number;
+    max: number;
+    step?: number;
+    ariaLabel?: string;
+    ariaLabelledby?: string;
+    initialValue?: number;
+    labels?: SpinbuttonLabels;
+}
+
+const defaultLabels = {
+    increaseValue: "Increase value",
+    decreaseValue: "Decrease value",
+};
+
+const Spinbutton: React.FC<SpinbuttonProps> = ({ min, max, step = 1, ariaLabel, ariaLabelledby, initialValue, labels }) => {
+    const l = { ...defaultLabels, ...labels };
     const [value, setValue] = useState(initialValue ?? min ?? 0);
     const [isInvalid, setIsInvalid] = useState(false);
 
-    const changeValue = (newValue) => {
+    const changeValue = (newValue: number) => {
         if (newValue >= min && newValue <= max) {
             setValue(newValue);
             setIsInvalid(false);
@@ -18,7 +38,7 @@ const Spinbutton = ({ min, max, step, ariaLabel, ariaLabelledby, initialValue })
         }
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent) => {
         switch (e.key) {
             case "ArrowUp":
                 e.preventDefault();
@@ -49,7 +69,7 @@ const Spinbutton = ({ min, max, step, ariaLabel, ariaLabelledby, initialValue })
         }
     };
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = parseInt(e.target.value, 10);
         if (!isNaN(newValue)) {
             changeValue(newValue);
@@ -78,7 +98,7 @@ const Spinbutton = ({ min, max, step, ariaLabel, ariaLabelledby, initialValue })
             <button
                 type="button"
                 className="spinbutton-arrow spinbutton-arrow-up"
-                aria-label="Increase value"
+                aria-label={l.increaseValue}
                 tabIndex={-1}
                 onClick={() => changeValue(value + step)}
             >
@@ -87,7 +107,7 @@ const Spinbutton = ({ min, max, step, ariaLabel, ariaLabelledby, initialValue })
             <button
                 type="button"
                 className="spinbutton-arrow spinbutton-arrow-down"
-                aria-label="Decrease value"
+                aria-label={l.decreaseValue}
                 tabIndex={-1}
                 onClick={() => changeValue(value - step)}
             >
@@ -95,19 +115,6 @@ const Spinbutton = ({ min, max, step, ariaLabel, ariaLabelledby, initialValue })
             </button>
         </div>
     );
-};
-
-Spinbutton.propTypes = {
-    min: PropTypes.number.isRequired,
-    max: PropTypes.number.isRequired,
-    step: PropTypes.number,
-    ariaLabel: PropTypes.string,
-    ariaLabelledby: PropTypes.string,
-    initialValue: PropTypes.number,
-};
-
-Spinbutton.defaultProps = {
-    step: 1,
 };
 
 export default Spinbutton;

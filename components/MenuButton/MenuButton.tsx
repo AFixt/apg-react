@@ -13,17 +13,28 @@
  *   - Tab: close menu and let focus proceed.
  */
 import React, { useEffect, useRef, useState } from "react";
-import PropTypes from "prop-types";
 import "./MenuButton.css";
 
-const MenuButton = ({ label, items, idPrefix }) => {
+interface MenuItem {
+    id: string;
+    label: React.ReactNode;
+    onSelect?: () => void;
+}
+
+interface MenuButtonProps {
+    label: React.ReactNode;
+    items: MenuItem[];
+    idPrefix?: string;
+}
+
+const MenuButton: React.FC<MenuButtonProps> = ({ label, items, idPrefix }) => {
     const [open, setOpen] = useState(false);
     const [focusIndex, setFocusIndex] = useState(0);
-    const buttonRef = useRef(null);
-    const itemRefs = useRef([]);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
     const menuId = `${idPrefix || "menu"}-list`;
 
-    const openMenu = (index) => {
+    const openMenu = (index: number) => {
         setOpen(true);
         setFocusIndex(index);
     };
@@ -39,7 +50,7 @@ const MenuButton = ({ label, items, idPrefix }) => {
         }
     }, [open, focusIndex]);
 
-    const handleButtonKey = (e) => {
+    const handleButtonKey = (e: React.KeyboardEvent<HTMLButtonElement>) => {
         switch (e.key) {
             case "Enter":
             case " ":
@@ -56,12 +67,12 @@ const MenuButton = ({ label, items, idPrefix }) => {
         }
     };
 
-    const activate = (i) => {
+    const activate = (i: number) => {
         items[i].onSelect?.();
         closeMenu(true);
     };
 
-    const handleMenuKey = (e, i) => {
+    const handleMenuKey = (e: React.KeyboardEvent<HTMLButtonElement>, i: number) => {
         const last = items.length - 1;
         let handled = true;
         switch (e.key) {
@@ -95,10 +106,10 @@ const MenuButton = ({ label, items, idPrefix }) => {
 
     useEffect(() => {
         if (!open) return;
-        const onDocClick = (e) => {
+        const onDocClick = (e: MouseEvent) => {
             if (
-                !buttonRef.current?.contains(e.target) &&
-                !itemRefs.current.some((el) => el?.contains(e.target))
+                !buttonRef.current?.contains(e.target as Node) &&
+                !itemRefs.current.some((el) => el?.contains(e.target as Node))
             ) {
                 closeMenu(false);
             }
@@ -148,18 +159,6 @@ const MenuButton = ({ label, items, idPrefix }) => {
             )}
         </div>
     );
-};
-
-MenuButton.propTypes = {
-    label: PropTypes.node.isRequired,
-    items: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: PropTypes.string.isRequired,
-            label: PropTypes.node.isRequired,
-            onSelect: PropTypes.func,
-        })
-    ).isRequired,
-    idPrefix: PropTypes.string,
 };
 
 export default MenuButton;

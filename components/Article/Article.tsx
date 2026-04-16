@@ -10,22 +10,27 @@
  */
 
 import React from "react";
-import PropTypes from "prop-types";
 import "./Article.css";
 
-const Article = ({ article, ariaPosinset, ariaSetsize }) => {
+interface ArticleData {
+    id: string;
+    title: React.ReactNode;
+    content: React.ReactNode;
+}
+
+interface ArticleProps {
+    article: ArticleData;
+    ariaPosinset: number;
+    ariaSetsize: number;
+}
+
+const Article: React.FC<ArticleProps> = ({ article, ariaPosinset, ariaSetsize }) => {
     return (
         <article aria-posinset={ariaPosinset} aria-setsize={ariaSetsize}>
             <h2 id={`article-title-${article.id}`}>{article.title}</h2>
             <div>{article.content}</div>
         </article>
     );
-};
-
-Article.propTypes = {
-    article: PropTypes.object.isRequired,
-    ariaPosinset: PropTypes.number.isRequired,
-    ariaSetsize: PropTypes.number.isRequired,
 };
 
 export default Article;

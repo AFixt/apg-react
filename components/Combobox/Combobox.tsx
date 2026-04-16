@@ -19,25 +19,38 @@
  *   - Tab: close popup and move focus away.
  */
 import React, { useEffect, useId, useMemo, useRef, useState } from "react";
-import PropTypes from "prop-types";
 import "./Combobox.css";
 
-const Combobox = ({
+interface ComboboxOption {
+    value: string;
+    label: string;
+}
+
+interface ComboboxProps {
+    options: ComboboxOption[];
+    value?: string;
+    onChange?: (next: string) => void;
+    label?: string;
+    autocomplete?: "none" | "list" | "both";
+    placeholder?: string;
+}
+
+const Combobox: React.FC<ComboboxProps> = ({
     options,
     value,
     onChange,
     label,
-    autocomplete,
+    autocomplete = "list",
     placeholder,
 }) => {
     const [inputText, setInputText] = useState(value ?? "");
     const [open, setOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
-    const inputRef = useRef(null);
-    const listRef = useRef(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const listRef = useRef<HTMLUListElement>(null);
     const uid = useId();
     const listId = `combobox-list-${uid}`;
-    const optionId = (i) => `combobox-opt-${uid}-${i}`;
+    const optionId = (i: number) => `combobox-opt-${uid}-${i}`;
 
     useEffect(() => {
         if (value !== undefined) setInputText(value);
@@ -49,12 +62,12 @@ const Combobox = ({
         return options.filter((o) => o.label.toLowerCase().includes(q));
     }, [options, inputText, autocomplete]);
 
-    const commit = (text) => {
+    const commit = (text: string) => {
         setInputText(text);
         onChange?.(text);
     };
 
-    const selectAt = (i) => {
+    const selectAt = (i: number) => {
         const opt = filtered[i];
         if (!opt) return;
         commit(opt.label);
@@ -67,7 +80,7 @@ const Combobox = ({
         setActiveIndex(Math.min(index, filtered.length - 1));
     };
 
-    const inlineComplete = (text) => {
+    const inlineComplete = (text: string) => {
         if (autocomplete !== "both" || !text) return;
         const match = options.find((o) =>
             o.label.toLowerCase().startsWith(text.toLowerCase())
@@ -83,7 +96,7 @@ const Combobox = ({
         }
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const next = e.target.value;
         setInputText(next);
         onChange?.(next);
@@ -92,7 +105,7 @@ const Combobox = ({
         inlineComplete(next);
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         const last = filtered.length - 1;
         switch (e.key) {
             case "ArrowDown":
@@ -143,10 +156,10 @@ const Combobox = ({
 
     useEffect(() => {
         if (!open) return;
-        const onDocClick = (e) => {
+        const onDocClick = (e: MouseEvent) => {
             if (
-                !inputRef.current?.contains(e.target) &&
-                !listRef.current?.contains(e.target)
+                !inputRef.current?.contains(e.target as Node) &&
+                !listRef.current?.contains(e.target as Node)
             ) {
                 setOpen(false);
                 setActiveIndex(-1);
@@ -232,24 +245,6 @@ const Combobox = ({
             </div>
         </div>
     );
-};
-
-Combobox.propTypes = {
-    options: PropTypes.arrayOf(
-        PropTypes.shape({
-            value: PropTypes.string.isRequired,
-            label: PropTypes.string.isRequired,
-        })
-    ).isRequired,
-    value: PropTypes.string,
-    onChange: PropTypes.func,
-    label: PropTypes.string,
-    autocomplete: PropTypes.oneOf(["none", "list", "both"]),
-    placeholder: PropTypes.string,
-};
-
-Combobox.defaultProps = {
-    autocomplete: "list",
 };
 
 export default Combobox;

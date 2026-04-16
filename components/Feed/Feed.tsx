@@ -17,15 +17,24 @@
  */
 
 import React, { useState, useEffect, useRef } from "react";
-import PropTypes from "prop-types";
 import Article from "../Article/Article";
 import "./Feed.css";
 
-const Feed = ({ fetchArticles }) => {
-    const [articles, setArticles] = useState([]);
+interface ArticleData {
+    id: string;
+    title: React.ReactNode;
+    content: React.ReactNode;
+}
+
+interface FeedProps {
+    fetchArticles: () => Promise<ArticleData[]>;
+}
+
+const Feed: React.FC<FeedProps> = ({ fetchArticles }) => {
+    const [articles, setArticles] = useState<ArticleData[]>([]);
     const [loading, setLoading] = useState(false);
-    const feedEndRef = useRef(null);
-    const articleRefs = useRef([]);
+    const feedEndRef = useRef<HTMLDivElement>(null);
+    const articleRefs = useRef<(HTMLElement | null)[]>([]);
 
     // Function to load more articles
     const loadMoreArticles = async () => {
@@ -45,19 +54,19 @@ const Feed = ({ fetchArticles }) => {
             },
             { threshold: 1.0 }
         );
-        observer.observe(feedEndRef.current);
+        observer.observe(feedEndRef.current!);
         return () => observer.disconnect();
     }, []);
 
     // Focus management for articles
-    const focusArticle = (index) => {
+    const focusArticle = (index: number) => {
         if (index >= 0 && index < articles.length) {
             articleRefs.current[index]?.focus();
         }
     };
 
     // Keyboard navigation handling
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         const focusedIndex = articleRefs.current.findIndex(
             (ref) => ref === document.activeElement
         );
@@ -91,16 +100,12 @@ const Feed = ({ fetchArticles }) => {
                 <Article
                     key={article.id}
                     article={article}
-                    ref={(el) => (articleRefs.current[index] = el)}
+                    ref={(el: HTMLElement | null) => (articleRefs.current[index] = el)}
                 />
             ))}
             <div ref={feedEndRef} />
         </div>
     );
-};
-
-Feed.propTypes = {
-    fetchArticles: PropTypes.func.isRequired,
 };
 
 export default Feed;

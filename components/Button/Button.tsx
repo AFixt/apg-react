@@ -19,10 +19,19 @@
  * @returns {JSX.Element} The rendered Button component.
  */
 import React, { useState, useEffect, useRef } from "react";
-import PropTypes from "prop-types";
 import "./Button.css";
 
-const Button = ({
+interface ButtonProps {
+    action: () => void;
+    label: string;
+    shortcutKey?: string;
+    ariaDescribedby?: string;
+    isDisabled?: boolean;
+    isToggleButton?: boolean;
+    toggleState?: boolean;
+}
+
+const Button: React.FC<ButtonProps> = ({
     action,
     label,
     shortcutKey,
@@ -32,10 +41,10 @@ const Button = ({
     toggleState,
 }) => {
     const [pressed, setPressed] = useState(toggleState);
-    const buttonRef = useRef(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
     // Handle keydown events for Enter, Space, and shortcut keys
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: KeyboardEvent | React.KeyboardEvent) => {
         if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             buttonAction();
@@ -64,9 +73,9 @@ const Button = ({
 
     useEffect(() => {
         if (shortcutKey) {
-            window.addEventListener("keydown", handleKeyDown);
+            window.addEventListener("keydown", handleKeyDown as EventListener);
             return () => {
-                window.removeEventListener("keydown", handleKeyDown);
+                window.removeEventListener("keydown", handleKeyDown as EventListener);
             };
         }
     }, [shortcutKey]);
@@ -87,16 +96,6 @@ const Button = ({
             {label}
         </button>
     );
-};
-
-Button.propTypes = {
-    action: PropTypes.func.isRequired,
-    label: PropTypes.string.isRequired,
-    shortcutKey: PropTypes.string,
-    ariaDescribedby: PropTypes.string,
-    isDisabled: PropTypes.bool,
-    isToggleButton: PropTypes.bool,
-    toggleState: PropTypes.bool,
 };
 
 export default Button;

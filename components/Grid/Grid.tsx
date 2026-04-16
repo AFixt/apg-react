@@ -14,24 +14,36 @@
  *   - PageUp / PageDown: jump ±5 rows.
  */
 import React, { useRef, useState } from "react";
-import PropTypes from "prop-types";
 import "./Grid.css";
 
-const Grid = ({ caption, columns, rows, label, idPrefix }) => {
+interface GridColumn {
+    key: string;
+    label: React.ReactNode;
+}
+
+interface GridProps {
+    caption?: React.ReactNode;
+    columns: GridColumn[];
+    rows: Record<string, React.ReactNode | string | number>[];
+    label: string;
+    idPrefix?: string;
+}
+
+const Grid: React.FC<GridProps> = ({ caption, columns, rows, label, idPrefix }) => {
     const totalRows = rows.length;
     const totalCols = columns.length;
     const [focusPos, setFocusPos] = useState({ row: 0, col: 0 });
-    const cellRefs = useRef({});
+    const cellRefs = useRef<Record<string, HTMLDivElement | null>>({});
     const prefix = idPrefix || "grid";
 
-    const moveTo = (row, col) => {
+    const moveTo = (row: number, col: number) => {
         const r = Math.max(0, Math.min(totalRows, row));
         const c = Math.max(0, Math.min(totalCols - 1, col));
         setFocusPos({ row: r, col: c });
         cellRefs.current[`${r}:${c}`]?.focus();
     };
 
-    const handleKeyDown = (e, r, c) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>, r: number, c: number) => {
         let handled = true;
         switch (e.key) {
             case "ArrowRight":
@@ -66,7 +78,7 @@ const Grid = ({ caption, columns, rows, label, idPrefix }) => {
         if (handled) e.preventDefault();
     };
 
-    const cellTabIndex = (r, c) =>
+    const cellTabIndex = (r: number, c: number) =>
         r === focusPos.row && c === focusPos.col ? 0 : -1;
 
     return (
@@ -100,7 +112,7 @@ const Grid = ({ caption, columns, rows, label, idPrefix }) => {
                 const r = rIdx + 1;
                 return (
                     <div
-                        key={row.id ?? rIdx}
+                        key={(row.id as string) ?? rIdx}
                         role="row"
                         aria-rowindex={r + 1}
                         className="grid-row"
@@ -125,19 +137,6 @@ const Grid = ({ caption, columns, rows, label, idPrefix }) => {
             </div>
         </div>
     );
-};
-
-Grid.propTypes = {
-    caption: PropTypes.node,
-    label: PropTypes.string.isRequired,
-    columns: PropTypes.arrayOf(
-        PropTypes.shape({
-            key: PropTypes.string.isRequired,
-            label: PropTypes.node.isRequired,
-        })
-    ).isRequired,
-    rows: PropTypes.arrayOf(PropTypes.object).isRequired,
-    idPrefix: PropTypes.string,
 };
 
 export default Grid;

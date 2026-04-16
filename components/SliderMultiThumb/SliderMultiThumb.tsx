@@ -15,13 +15,24 @@
  *   - PageUp / PageDown: ±10*step.
  */
 import React, { useRef, useState } from "react";
-import PropTypes from "prop-types";
 import "./SliderMultiThumb.css";
 
-const SliderMultiThumb = ({
+interface SliderMultiThumbProps {
+    min: number;
+    max: number;
+    step?: number;
+    initialLow?: number;
+    initialHigh?: number;
+    labelLow?: string;
+    labelHigh?: string;
+    getValueText?: (value: number) => string;
+    onChange?: (value: { low: number; high: number }) => void;
+}
+
+const SliderMultiThumb: React.FC<SliderMultiThumbProps> = ({
     min,
     max,
-    step,
+    step = 1,
     initialLow,
     initialHigh,
     labelLow,
@@ -31,28 +42,28 @@ const SliderMultiThumb = ({
 }) => {
     const [low, setLow] = useState(initialLow ?? min);
     const [high, setHigh] = useState(initialHigh ?? max);
-    const containerRef = useRef(null);
-    const thumbRefs = { low: useRef(null), high: useRef(null) };
+    const containerRef = useRef<HTMLDivElement>(null);
+    const thumbRefs = { low: useRef<HTMLDivElement>(null), high: useRef<HTMLDivElement>(null) };
 
-    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+    const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
-    const emit = (next) => {
+    const emit = (next: { low: number; high: number }) => {
         onChange?.(next);
     };
 
-    const updateLow = (v) => {
+    const updateLow = (v: number) => {
         const nv = clamp(v, min, high);
         setLow(nv);
         emit({ low: nv, high });
     };
 
-    const updateHigh = (v) => {
+    const updateHigh = (v: number) => {
         const nv = clamp(v, low, max);
         setHigh(nv);
         emit({ low, high: nv });
     };
 
-    const handleKey = (which, current) => (e) => {
+    const handleKey = (which: "low" | "high", current: number) => (e: React.KeyboardEvent) => {
         const update = which === "low" ? updateLow : updateHigh;
         let handled = true;
         switch (e.key) {
@@ -82,24 +93,24 @@ const SliderMultiThumb = ({
         if (handled) e.preventDefault();
     };
 
-    const pct = (v) => ((v - min) / (max - min)) * 100;
+    const pct = (v: number) => ((v - min) / (max - min)) * 100;
     const lowPct = pct(low);
     const highPct = pct(high);
 
-    const valueText = (v) => (getValueText ? getValueText(v) : `${v}`);
+    const valueText = (v: number) => (getValueText ? getValueText(v) : `${v}`);
 
-    const pointerValueFrom = (clientX) => {
-        const rect = containerRef.current.getBoundingClientRect();
+    const pointerValueFrom = (clientX: number) => {
+        const rect = containerRef.current!.getBoundingClientRect();
         const ratio = (clientX - rect.left) / rect.width;
         const raw = min + Math.max(0, Math.min(1, ratio)) * (max - min);
         const steps = Math.round((raw - min) / step);
         return min + steps * step;
     };
 
-    const startDrag = (which) => (e) => {
+    const startDrag = (which: "low" | "high") => (e: React.PointerEvent) => {
         e.preventDefault();
         thumbRefs[which].current?.focus();
-        const move = (ev) => {
+        const move = (ev: PointerEvent) => {
             const v = pointerValueFrom(ev.clientX);
             (which === "low" ? updateLow : updateHigh)(v);
         };
@@ -147,22 +158,6 @@ const SliderMultiThumb = ({
             />
         </div>
     );
-};
-
-SliderMultiThumb.propTypes = {
-    min: PropTypes.number.isRequired,
-    max: PropTypes.number.isRequired,
-    step: PropTypes.number,
-    initialLow: PropTypes.number,
-    initialHigh: PropTypes.number,
-    labelLow: PropTypes.string,
-    labelHigh: PropTypes.string,
-    getValueText: PropTypes.func,
-    onChange: PropTypes.func,
-};
-
-SliderMultiThumb.defaultProps = {
-    step: 1,
 };
 
 export default SliderMultiThumb;

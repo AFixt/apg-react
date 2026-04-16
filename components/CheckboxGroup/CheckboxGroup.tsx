@@ -9,15 +9,24 @@
  * @returns {JSX.Element} The rendered tri-state checkbox group component.
  */
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import Checkbox from "../Checkbox/Checkbox";
 import "./CheckboxGroup.css";
 
-const CheckboxGroup = ({ items, label }) => {
+interface CheckboxGroupItem {
+    id: string;
+    label: string;
+}
+
+interface CheckboxGroupProps {
+    items: CheckboxGroupItem[];
+    label: string;
+}
+
+const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ items, label }) => {
     const [checkedItems, setCheckedItems] = useState(
         new Array(items.length).fill(false)
     );
-    const [groupState, setGroupState] = useState(false);
+    const [groupState, setGroupState] = useState<boolean | null>(false);
 
     useEffect(() => {
         const allChecked = checkedItems.every(Boolean);
@@ -33,7 +42,7 @@ const CheckboxGroup = ({ items, label }) => {
         }
     };
 
-    const handleCheckboxChange = (index) => {
+    const handleCheckboxChange = (index: number) => {
         setCheckedItems(
             checkedItems.map((item, idx) => (idx === index ? !item : item))
         );
@@ -58,16 +67,6 @@ const CheckboxGroup = ({ items, label }) => {
             ))}
         </div>
     );
-};
-
-CheckboxGroup.propTypes = {
-    items: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: PropTypes.string.isRequired,
-            label: PropTypes.string.isRequired,
-        })
-    ).isRequired,
-    label: PropTypes.string.isRequired,
 };
 
 export default CheckboxGroup;

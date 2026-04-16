@@ -7,10 +7,26 @@
  *   - Describes errors via aria-errormessage / aria-describedby
  */
 import React, { useId } from "react";
-import PropTypes from "prop-types";
 import "./Textbox.css";
 
-const Textbox = ({
+interface TextboxProps {
+    label?: string;
+    value?: string;
+    onChange?: (next: string, event?: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    multiline?: boolean;
+    rows?: number;
+    placeholder?: string;
+    required?: boolean;
+    readOnly?: boolean;
+    invalid?: boolean;
+    errorMessage?: string;
+    helperText?: string;
+    id?: string;
+    name?: string;
+    type?: string;
+}
+
+const Textbox: React.FC<TextboxProps> = ({
     label,
     value,
     onChange,
@@ -42,7 +58,7 @@ const Textbox = ({
         id: textboxId,
         name,
         value,
-        onChange: (e) => onChange?.(e.target.value, e),
+        onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => onChange?.(e.target.value, e),
         placeholder,
         required: required || undefined,
         readOnly: readOnly || undefined,
@@ -77,23 +93,6 @@ const Textbox = ({
             )}
         </div>
     );
-};
-
-Textbox.propTypes = {
-    label: PropTypes.string,
-    value: PropTypes.string,
-    onChange: PropTypes.func,
-    multiline: PropTypes.bool,
-    rows: PropTypes.number,
-    placeholder: PropTypes.string,
-    required: PropTypes.bool,
-    readOnly: PropTypes.bool,
-    invalid: PropTypes.bool,
-    errorMessage: PropTypes.string,
-    helperText: PropTypes.string,
-    id: PropTypes.string,
-    name: PropTypes.string,
-    type: PropTypes.string,
 };
 
 export default Textbox;

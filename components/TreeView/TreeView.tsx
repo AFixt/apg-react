@@ -17,15 +17,38 @@
  *   - Enter / Space: select / toggle.
  */
 import React, { useMemo, useRef, useState } from "react";
-import PropTypes from "prop-types";
 import "./TreeView.css";
+
+interface TreeNode {
+    id: string;
+    label: React.ReactNode;
+    children?: TreeNode[];
+}
+
+interface TreeViewProps {
+    label: string;
+    nodes: TreeNode[];
+    onSelect?: (id: string) => void;
+    defaultExpanded?: string[];
+}
+
+interface FlatEntry {
+    id: string;
+    label: React.ReactNode;
+    level: number;
+    parentId: string | null;
+    hasChildren: boolean;
+    posinset: number;
+    setsize: number;
+    node: TreeNode;
+}
 
 /**
  * Nodes: [{ id, label, children?: nodes[] }]
  */
-const flattenVisible = (nodes, expanded, level = 1, parentId = null, acc = []) => {
+const flattenVisible = (nodes: TreeNode[], expanded: Set<string>, level = 1, parentId: string | null = null, acc: FlatEntry[] = []): FlatEntry[] => {
     nodes.forEach((n, i) => {
-        const entry = {
+        const entry: FlatEntry = {
             id: n.id,
             label: n.label,
             level,
@@ -43,13 +66,13 @@ const flattenVisible = (nodes, expanded, level = 1, parentId = null, acc = []) =
     return acc;
 };
 
-const TreeView = ({ label, nodes, onSelect, defaultExpanded }) => {
+const TreeView: React.FC<TreeViewProps> = ({ label, nodes, onSelect, defaultExpanded }) => {
     const [expanded, setExpanded] = useState(
         () => new Set(defaultExpanded ?? [])
     );
-    const [selected, setSelected] = useState(null);
-    const [focusId, setFocusId] = useState(() => nodes[0]?.id);
-    const itemRefs = useRef({});
+    const [selected, setSelected] = useState<string | null>(null);
+    const [focusId, setFocusId] = useState<string | undefined>(() => nodes[0]?.id);
+    const itemRefs = useRef<Record<string, HTMLLIElement | null>>({});
 
     const visible = useMemo(
         () => flattenVisible(nodes, expanded),
@@ -59,14 +82,14 @@ const TreeView = ({ label, nodes, onSelect, defaultExpanded }) => {
     const focusIndex = visible.findIndex((v) => v.id === focusId);
     const currentEntry = visible[focusIndex];
 
-    const focusAt = (i) => {
+    const focusAt = (i: number) => {
         const target = visible[i];
         if (!target) return;
         setFocusId(target.id);
         itemRefs.current[target.id]?.focus();
     };
 
-    const toggleExpand = (id, open) => {
+    const toggleExpand = (id: string, open?: boolean) => {
         setExpanded((prev) => {
             const next = new Set(prev);
             if (open === true) next.add(id);
@@ -76,15 +99,15 @@ const TreeView = ({ label, nodes, onSelect, defaultExpanded }) => {
         });
     };
 
-    const select = (id) => {
+    const select = (id: string) => {
         setSelected(id);
         onSelect?.(id);
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent) => {
         // Resolve the current node from the event target's data attribute so
         // we aren't dependent on React state catching up to native focus events.
-        const itemId = e.currentTarget.dataset.itemid;
+        const itemId = (e.currentTarget as HTMLElement).dataset.itemid;
         const entry = visible.find((v) => v.id === itemId);
         if (!entry) return;
         const idx = visible.indexOf(entry);
@@ -126,7 +149,7 @@ const TreeView = ({ label, nodes, onSelect, defaultExpanded }) => {
         if (handled) e.preventDefault();
     };
 
-    const renderNodes = (ns, level = 1) => (
+    const renderNodes = (ns: TreeNode[], level = 1): React.ReactNode => (
         <ul role={level === 1 ? "tree" : "group"} aria-label={level === 1 ? label : undefined} className={level === 1 ? "tree" : "tree-group"}>
             {ns.map((n, i) => {
                 const hasChildren = !!n.children?.length;
@@ -161,13 +184,13 @@ const TreeView = ({ label, nodes, onSelect, defaultExpanded }) => {
                         >
                             {hasChildren && (
                                 <span className="treeitem-chevron" aria-hidden="true">
-                                    {isOpen ? "▾" : "▸"}
+                                    {isOpen ? "\u25BE" : "\u25B8"}
                                 </span>
                             )}
                             {!hasChildren && <span className="treeitem-bullet" aria-hidden="true" />}
                             {n.label}
                         </span>
-                        {hasChildren && isOpen && renderNodes(n.children, level + 1)}
+                        {hasChildren && isOpen && renderNodes(n.children!, level + 1)}
                     </li>
                 );
             })}
@@ -175,19 +198,6 @@ const TreeView = ({ label, nodes, onSelect, defaultExpanded }) => {
     );
 
     return renderNodes(nodes);
-};
-
-const nodeShape = {
-    id: PropTypes.string.isRequired,
-    label: PropTypes.node.isRequired,
-};
-nodeShape.children = PropTypes.arrayOf(PropTypes.shape(nodeShape));
-
-TreeView.propTypes = {
-    label: PropTypes.string.isRequired,
-    nodes: PropTypes.arrayOf(PropTypes.shape(nodeShape)).isRequired,
-    onSelect: PropTypes.func,
-    defaultExpanded: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default TreeView;

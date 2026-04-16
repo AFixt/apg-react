@@ -12,12 +12,18 @@
  * @returns {ReactElement} The rendered AccessibleLink component.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 import './Link.css';
 
-const AccessibleLink = ({ to, children, onClick, ...props }) => {
-    const handleKeyDown = (event) => {
+interface LinkProps {
+    to: string | object;
+    children: React.ReactNode;
+    onClick?: (e: React.MouseEvent | React.KeyboardEvent) => void;
+    [extra: string]: unknown;
+}
+
+const AccessibleLink: React.FC<LinkProps> = ({ to, children, onClick, ...props }) => {
+    const handleKeyDown = (event: React.KeyboardEvent) => {
         const { key, shiftKey } = event;
 
         if (key === 'Enter' && onClick) {
@@ -31,21 +37,15 @@ const AccessibleLink = ({ to, children, onClick, ...props }) => {
 
     return (
         <RouterLink
-            to={to}
+            to={to as string}
             {...props}
             role="link"
-            tabIndex="0"
+            tabIndex={0}
             onKeyDown={handleKeyDown}
         >
             {children}
         </RouterLink>
     );
-};
-
-AccessibleLink.propTypes = {
-    to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-    children: PropTypes.node.isRequired,
-    onClick: PropTypes.func,
 };
 
 export default AccessibleLink;
