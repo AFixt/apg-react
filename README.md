@@ -4,7 +4,7 @@
 
 **Accessible React components implementing every pattern in the [W3C ARIA Authoring Practices Guide (APG)](https://www.w3.org/WAI/ARIA/apg/patterns/).**
 
-Each component ships with the full APG keyboard-interaction model, correct ARIA roles and state, focus management, and a Bootstrap-flavored visual default you can restyle via CSS custom properties.
+Each component ships with the full APG keyboard-interaction model, correct ARIA roles and state, focus management, and a Bootstrap-flavored visual default you can restyle via CSS custom properties. Written in TypeScript with full type declarations. All user-facing strings are translatable via an optional `labels` prop.
 
 ## Why
 
@@ -13,7 +13,7 @@ Most component libraries treat accessibility as a checklist. This library treats
 ## Install
 
 ```sh
-npm install apg-react
+npm install @afixt/apg-react
 ```
 
 Peer dependencies:
@@ -24,11 +24,11 @@ Peer dependencies:
 
 ## Quick start
 
-```jsx
-import { Button, Accordion, ModalDialog } from 'apg-react';
-import 'apg-react/styles.css';              // full baseline styles
+```tsx
+import { Button, Accordion, ModalDialog } from '@afixt/apg-react';
+import '@afixt/@afixt/apg-react/styles.css';         // full baseline styles
 // or, to cherry-pick tokens only:
-// import 'apg-react/variables.css';
+// import '@afixt/@afixt/apg-react/variables.css';
 
 function App() {
   return (
@@ -99,8 +99,8 @@ Run `npm run storybook` to see every keyboard path for every component, complete
 
 The package ships two CSS files:
 
-- `apg-react/styles.css` — full baseline styles for every component.
-- `apg-react/variables.css` — only the design tokens, if you want to write your own styles.
+- `@afixt/apg-react/styles.css` — full baseline styles for every component.
+- `@afixt/apg-react/variables.css` — only the design tokens, if you want to write your own styles.
 
 All visual choices are driven by CSS custom properties defined in `variables.css`. Override them at `:root` or at a container scope:
 
@@ -113,6 +113,20 @@ All visual choices are driven by CSS custom properties defined in `variables.css
 ```
 
 Key token groups: colors (`--apg-color-*`), spacing (`--apg-space-*`), radii (`--apg-radius-*`), typography (`--apg-font-*`), focus ring (`--apg-focus-ring-*`), shadows (`--apg-shadow-*`), z-index (`--apg-z-*`).
+
+## Internationalization (i18n)
+
+Components that render hardcoded user-facing strings (aria-labels, button text) accept an optional `labels` prop — an object whose keys map to English defaults. Pass your own translations without forking:
+
+```tsx
+<Alert message="Saved" type="info" labels={{ dismiss: "Fermer" }} />
+<Carousel slides={slides} labels={{ previousSlide: "Anterior", nextSlide: "Siguiente" }} />
+<ModalDialog isOpen onClose={close} labels={{ closeDialog: "Cerrar" }}>…</ModalDialog>
+<Spinbutton min={0} max={10} labels={{ increaseValue: "Erhöhen", decreaseValue: "Verringern" }} />
+<Breadcrumb items={items} navLabel="Fil d'Ariane" />
+```
+
+When `labels` is omitted, the English defaults are used. Only the keys you override are affected; the rest keep their defaults.
 
 ## Implementer responsibilities
 
