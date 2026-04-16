@@ -14,10 +14,23 @@
  *   - Ctrl/Cmd + A: select all.
  */
 import React, { useMemo, useRef, useState } from "react";
-import PropTypes from "prop-types";
 import "./Listbox.css";
 
-const Listbox = ({
+interface ListboxOption {
+    value: string;
+    label: React.ReactNode;
+}
+
+interface ListboxProps {
+    options: ListboxOption[];
+    value?: string | string[];
+    onChange?: (next: string | string[]) => void;
+    multiple?: boolean;
+    label?: string;
+    labelId?: string;
+}
+
+const Listbox: React.FC<ListboxProps> = ({
     options,
     value,
     onChange,
@@ -30,21 +43,21 @@ const Listbox = ({
         const i = options.findIndex((o) => o.value === value);
         return i >= 0 ? i : 0;
     });
-    const listRef = useRef(null);
-    const optionRefs = useRef([]);
+    const listRef = useRef<HTMLUListElement>(null);
+    const optionRefs = useRef<(HTMLLIElement | null)[]>([]);
     const groupLabelId = labelId || "listbox-label";
 
     const selectedSet = useMemo(() => {
         if (multiple) return new Set(Array.isArray(value) ? value : []);
-        return new Set(value !== undefined && value !== null ? [value] : []);
+        return new Set(value !== undefined && value !== null ? [value as string] : []);
     }, [value, multiple]);
 
-    const commitSingle = (i) => {
+    const commitSingle = (i: number) => {
         const next = options[i].value;
         onChange?.(next);
     };
 
-    const toggleMulti = (i) => {
+    const toggleMulti = (i: number) => {
         const next = new Set(selectedSet);
         const v = options[i].value;
         if (next.has(v)) next.delete(v);
@@ -52,14 +65,14 @@ const Listbox = ({
         onChange?.(Array.from(next));
     };
 
-    const selectRange = (from, to) => {
+    const selectRange = (from: number, to: number) => {
         const [a, b] = from <= to ? [from, to] : [to, from];
         const next = new Set(selectedSet);
         for (let i = a; i <= b; i++) next.add(options[i].value);
         onChange?.(Array.from(next));
     };
 
-    const moveFocus = (i, { extend } = {}) => {
+    const moveFocus = (i: number, { extend }: { extend?: boolean } = {}) => {
         const clamped = Math.max(0, Math.min(options.length - 1, i));
         const prev = focusIndex;
         setFocusIndex(clamped);
@@ -71,7 +84,7 @@ const Listbox = ({
         }
     };
 
-    const handleKeyDown = (e, i) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLLIElement>, i: number) => {
         let handled = true;
         switch (e.key) {
             case "ArrowDown":
@@ -145,23 +158,6 @@ const Listbox = ({
             </ul>
         </div>
     );
-};
-
-Listbox.propTypes = {
-    options: PropTypes.arrayOf(
-        PropTypes.shape({
-            value: PropTypes.string.isRequired,
-            label: PropTypes.node.isRequired,
-        })
-    ).isRequired,
-    value: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.arrayOf(PropTypes.string),
-    ]),
-    onChange: PropTypes.func,
-    multiple: PropTypes.bool,
-    label: PropTypes.string,
-    labelId: PropTypes.string,
 };
 
 export default Listbox;

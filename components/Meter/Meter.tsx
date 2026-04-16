@@ -15,15 +15,23 @@
  * @returns {JSX.Element} The rendered meter component.
  */
 import React from "react";
-import PropTypes from "prop-types";
 import "./Meter.css";
 
-const Meter = ({
+interface MeterProps {
+    value: number;
+    minValue?: number;
+    maxValue?: number;
+    label?: string;
+    labelId?: string;
+    userFriendlyText?: (value: number) => string;
+}
+
+const Meter: React.FC<MeterProps> = ({
     value,
-    minValue,
-    maxValue,
+    minValue = 0,
+    maxValue = 100,
     label,
-    labelId,
+    labelId = "meter-label",
     userFriendlyText,
 }) => {
     const pct = Math.max(
@@ -56,21 +64,6 @@ const Meter = ({
             </div>
         </div>
     );
-};
-
-Meter.propTypes = {
-    value: PropTypes.number.isRequired,
-    minValue: PropTypes.number,
-    maxValue: PropTypes.number,
-    label: PropTypes.string,
-    labelId: PropTypes.string,
-    userFriendlyText: PropTypes.func,
-};
-
-Meter.defaultProps = {
-    minValue: 0,
-    maxValue: 100,
-    labelId: "meter-label",
 };
 
 export default Meter;

@@ -9,23 +9,28 @@
  * @returns {JSX.Element} The rendered Tooltip component.
  */
 import React, { useState, useRef, cloneElement, isValidElement } from "react";
-import PropTypes from "prop-types";
 import "./Tooltip.css";
 
-const Tooltip = ({ children, text, position }) => {
+interface TooltipProps {
+    children: React.ReactNode;
+    text: string;
+    position?: "top" | "right" | "bottom" | "left";
+}
+
+const Tooltip: React.FC<TooltipProps> = ({ children, text, position = "top" }) => {
     const [isVisible, setIsVisible] = useState(false);
-    const tooltipRef = useRef(null);
+    const tooltipRef = useRef<HTMLDivElement | null>(null);
 
     const showTooltip = () => setIsVisible(true);
     const hideTooltip = () => setIsVisible(false);
 
-    const handleKeyPress = (e) => {
+    const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === "Escape") hideTooltip();
     };
 
-    const enhanceChild = (child) => {
+    const enhanceChild = (child: React.ReactNode) => {
         if (isValidElement(child)) {
-            return cloneElement(child, {
+            return cloneElement(child as React.ReactElement<any>, {
                 onMouseEnter: showTooltip,
                 onMouseLeave: hideTooltip,
                 onFocus: showTooltip, // Show tooltip on focus
@@ -56,15 +61,4 @@ const Tooltip = ({ children, text, position }) => {
     );
 };
 
-Tooltip.propTypes = {
-    children: PropTypes.node.isRequired,
-    text: PropTypes.string.isRequired,
-    position: PropTypes.oneOf(["top", "right", "bottom", "left"]),
-};
-
-Tooltip.defaultProps = {
-    position: "top",
-};
-
 export default Tooltip;
-

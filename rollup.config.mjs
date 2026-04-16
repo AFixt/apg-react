@@ -1,13 +1,13 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import babel from '@rollup/plugin-babel';
+import typescript from '@rollup/plugin-typescript';
 import postcss from 'rollup-plugin-postcss';
 import { readFileSync } from 'fs';
 
 const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
 
 export default {
-  input: 'index.js',
+  input: 'index.ts',
   output: [
     {
       file: pkg.main,
@@ -24,15 +24,16 @@ export default {
     'react',
     'react-dom',
     'react-router-dom',
-    'prop-types',
   ],
   plugins: [
-    resolve({ extensions: ['.js', '.jsx'] }),
+    resolve({ extensions: ['.ts', '.tsx', '.js', '.jsx'] }),
     commonjs(),
-    babel({
-      babelHelpers: 'bundled',
-      presets: ['@babel/preset-env', '@babel/preset-react'],
-      exclude: 'node_modules/**',
+    typescript({
+      tsconfig: './tsconfig.json',
+      noEmit: false,
+      declaration: true,
+      declarationDir: 'dist',
+      outDir: 'dist',
     }),
     postcss({
       extract: 'styles.css',

@@ -10,22 +10,35 @@
  * `activation="automatic"` (default) selects on focus; "manual" requires Enter/Space.
  */
 import React, { useRef, useState } from "react";
-import PropTypes from "prop-types";
 import "./Tabs.css";
 
-const Tabs = ({ tabs, defaultIndex, activation, orientation, idPrefix }) => {
+interface TabDef {
+    id: string;
+    label: React.ReactNode;
+    content: React.ReactNode;
+}
+
+interface TabsProps {
+    tabs: TabDef[];
+    defaultIndex?: number;
+    activation?: "automatic" | "manual";
+    orientation?: "horizontal" | "vertical";
+    idPrefix?: string;
+}
+
+const Tabs: React.FC<TabsProps> = ({ tabs, defaultIndex, activation = "automatic", orientation = "horizontal", idPrefix }) => {
     const [activeIndex, setActiveIndex] = useState(defaultIndex ?? 0);
     const [focusIndex, setFocusIndex] = useState(defaultIndex ?? 0);
-    const tabRefs = useRef([]);
+    const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
     const prefix = idPrefix || "tabs";
 
-    const focusTab = (i) => {
+    const focusTab = (i: number) => {
         setFocusIndex(i);
         tabRefs.current[i]?.focus();
         if (activation === "automatic") setActiveIndex(i);
     };
 
-    const handleKeyDown = (e, i) => {
+    const handleKeyDown = (e: React.KeyboardEvent, i: number) => {
         const last = tabs.length - 1;
         const isHorizontal = orientation !== "vertical";
         const next = isHorizontal ? "ArrowRight" : "ArrowDown";
@@ -100,25 +113,6 @@ const Tabs = ({ tabs, defaultIndex, activation, orientation, idPrefix }) => {
             ))}
         </div>
     );
-};
-
-Tabs.propTypes = {
-    tabs: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: PropTypes.string.isRequired,
-            label: PropTypes.node.isRequired,
-            content: PropTypes.node.isRequired,
-        })
-    ).isRequired,
-    defaultIndex: PropTypes.number,
-    activation: PropTypes.oneOf(["automatic", "manual"]),
-    orientation: PropTypes.oneOf(["horizontal", "vertical"]),
-    idPrefix: PropTypes.string,
-};
-
-Tabs.defaultProps = {
-    activation: "automatic",
-    orientation: "horizontal",
 };
 
 export default Tabs;

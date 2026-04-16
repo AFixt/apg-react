@@ -5,13 +5,21 @@
  *   - Indeterminate: omit `value`; aria-valuenow is unset.
  */
 import React from "react";
-import PropTypes from "prop-types";
 import "./Progressbar.css";
 
-const Progressbar = ({
+interface ProgressbarProps {
+    value?: number;
+    min?: number;
+    max?: number;
+    label?: string;
+    labelId?: string;
+    valueText?: string;
+}
+
+const Progressbar: React.FC<ProgressbarProps> = ({
     value,
-    min,
-    max,
+    min = 0,
+    max = 100,
     label,
     labelId,
     valueText,
@@ -44,20 +52,6 @@ const Progressbar = ({
             </div>
         </div>
     );
-};
-
-Progressbar.propTypes = {
-    value: PropTypes.number,
-    min: PropTypes.number,
-    max: PropTypes.number,
-    label: PropTypes.string,
-    labelId: PropTypes.string,
-    valueText: PropTypes.string,
-};
-
-Progressbar.defaultProps = {
-    min: 0,
-    max: 100,
 };
 
 export default Progressbar;

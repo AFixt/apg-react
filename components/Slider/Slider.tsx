@@ -4,35 +4,45 @@
  * Supports keyboard (APG pattern), click-on-track, and pointer drag.
  */
 import React, { useRef, useState } from "react";
-import PropTypes from "prop-types";
 import "./Slider.css";
 
-const Slider = ({
+interface SliderProps {
+    min: number;
+    max: number;
+    step?: number;
+    initialValue?: number;
+    ariaLabel?: string;
+    ariaLabelledby?: string;
+    isVertical?: boolean;
+    getUserFriendlyValue?: (value: number) => string;
+}
+
+const Slider: React.FC<SliderProps> = ({
     min,
     max,
-    step,
+    step = 1,
     initialValue,
     ariaLabel,
     ariaLabelledby,
-    isVertical,
+    isVertical = false,
     getUserFriendlyValue,
 }) => {
     const [value, setValue] = useState(initialValue ?? min);
-    const containerRef = useRef(null);
-    const thumbRef = useRef(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const thumbRef = useRef<HTMLDivElement>(null);
 
-    const clamp = (v) => Math.max(min, Math.min(max, v));
+    const clamp = (v: number) => Math.max(min, Math.min(max, v));
 
-    const snapToStep = (raw) => {
+    const snapToStep = (raw: number) => {
         const steps = Math.round((raw - min) / step);
         return clamp(min + steps * step);
     };
 
-    const handleChange = (newValue) => {
+    const handleChange = (newValue: number) => {
         setValue(clamp(newValue));
     };
 
-    const handleKeyPress = (e) => {
+    const handleKeyPress = (e: React.KeyboardEvent) => {
         let handled = true;
         switch (e.key) {
             case "ArrowRight":
@@ -62,8 +72,8 @@ const Slider = ({
         if (handled) e.preventDefault();
     };
 
-    const valueFromPointer = (clientX, clientY) => {
-        const rect = containerRef.current.getBoundingClientRect();
+    const valueFromPointer = (clientX: number, clientY: number) => {
+        const rect = containerRef.current!.getBoundingClientRect();
         const ratio = isVertical
             ? 1 - (clientY - rect.top) / rect.height
             : (clientX - rect.left) / rect.width;
@@ -71,14 +81,14 @@ const Slider = ({
         return snapToStep(raw);
     };
 
-    const handlePointerDown = (e) => {
+    const handlePointerDown = (e: React.PointerEvent) => {
         if (!containerRef.current) return;
         e.preventDefault();
         thumbRef.current?.focus();
         const newValue = valueFromPointer(e.clientX, e.clientY);
         setValue(newValue);
 
-        const handleMove = (ev) => {
+        const handleMove = (ev: PointerEvent) => {
             setValue(valueFromPointer(ev.clientX, ev.clientY));
         };
         const handleUp = () => {
@@ -120,22 +130,6 @@ const Slider = ({
             />
         </div>
     );
-};
-
-Slider.propTypes = {
-    min: PropTypes.number.isRequired,
-    max: PropTypes.number.isRequired,
-    step: PropTypes.number,
-    initialValue: PropTypes.number,
-    ariaLabel: PropTypes.string,
-    ariaLabelledby: PropTypes.string,
-    isVertical: PropTypes.bool,
-    getUserFriendlyValue: PropTypes.func,
-};
-
-Slider.defaultProps = {
-    step: 1,
-    isVertical: false,
 };
 
 export default Slider;

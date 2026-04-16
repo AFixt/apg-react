@@ -10,17 +10,23 @@
  * @returns {JSX.Element} The switch component.
  */
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import "./Switch.css"; // Assume appropriate CSS for styling
 
-const Switch = ({ label, ariaLabelledby, ariaDescribedby, initialChecked }) => {
+interface SwitchProps {
+    label?: string;
+    ariaLabelledby?: string;
+    ariaDescribedby?: string;
+    initialChecked?: boolean;
+}
+
+const Switch: React.FC<SwitchProps> = ({ label, ariaLabelledby, ariaDescribedby, initialChecked = false }) => {
     const [isChecked, setIsChecked] = useState(initialChecked);
 
     const toggleSwitch = () => {
         setIsChecked(!isChecked);
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === " " || e.key === "Enter") {
             e.preventDefault();
             toggleSwitch();
@@ -50,17 +56,6 @@ const Switch = ({ label, ariaLabelledby, ariaDescribedby, initialChecked }) => {
             </label>
         </div>
     );
-};
-
-Switch.propTypes = {
-    label: PropTypes.string,
-    ariaLabelledby: PropTypes.string,
-    ariaDescribedby: PropTypes.string,
-    initialChecked: PropTypes.bool,
-};
-
-Switch.defaultProps = {
-    initialChecked: false,
 };
 
 export default Switch;

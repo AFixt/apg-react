@@ -8,22 +8,35 @@
  *   - Home / End: move to first / last radio.
  */
 import React, { useRef, useState } from "react";
-import PropTypes from "prop-types";
 import "./RadioGroup.css";
 
-const RadioGroup = ({ label, labelId, options, value, onChange, name }) => {
+interface RadioOption {
+    value: string;
+    label: string;
+}
+
+interface RadioGroupProps {
+    name: string;
+    label?: string;
+    labelId?: string;
+    options: RadioOption[];
+    value?: string;
+    onChange?: (next: string) => void;
+}
+
+const RadioGroup: React.FC<RadioGroupProps> = ({ label, labelId, options, value, onChange, name }) => {
     const [internalValue, setInternalValue] = useState(value ?? options[0]?.value);
     const current = value !== undefined ? value : internalValue;
-    const radioRefs = useRef([]);
+    const radioRefs = useRef<(HTMLDivElement | null)[]>([]);
 
     const groupLabelId = labelId || `${name}-label`;
 
-    const select = (newValue) => {
+    const select = (newValue: string) => {
         if (value === undefined) setInternalValue(newValue);
         onChange?.(newValue);
     };
 
-    const focusIndex = (i) => {
+    const focusIndex = (i: number) => {
         const el = radioRefs.current[i];
         if (el) {
             el.focus();
@@ -31,7 +44,7 @@ const RadioGroup = ({ label, labelId, options, value, onChange, name }) => {
         }
     };
 
-    const handleKeyDown = (e, idx) => {
+    const handleKeyDown = (e: React.KeyboardEvent, idx: number) => {
         const last = options.length - 1;
         let handled = true;
         switch (e.key) {
@@ -90,20 +103,6 @@ const RadioGroup = ({ label, labelId, options, value, onChange, name }) => {
             </div>
         </div>
     );
-};
-
-RadioGroup.propTypes = {
-    label: PropTypes.string,
-    labelId: PropTypes.string,
-    name: PropTypes.string.isRequired,
-    options: PropTypes.arrayOf(
-        PropTypes.shape({
-            value: PropTypes.string.isRequired,
-            label: PropTypes.string.isRequired,
-        })
-    ).isRequired,
-    value: PropTypes.string,
-    onChange: PropTypes.func,
 };
 
 export default RadioGroup;

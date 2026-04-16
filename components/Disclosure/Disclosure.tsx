@@ -1,15 +1,19 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import "./Disclosure.css";
 
-const Disclosure = ({ title, children }) => {
+interface DisclosureProps {
+    title: React.ReactNode;
+    children: React.ReactNode;
+}
+
+const Disclosure: React.FC<DisclosureProps> = ({ title, children }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleVisibility = () => {
         setIsOpen(!isOpen);
     };
 
-    const handleKeyPress = (event) => {
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLButtonElement>) => {
         if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             toggleVisibility();
@@ -33,11 +37,6 @@ const Disclosure = ({ title, children }) => {
             </div>
         </div>
     );
-};
-
-Disclosure.propTypes = {
-    title: PropTypes.string.isRequired,
-    children: PropTypes.node.isRequired,
 };
 
 export default Disclosure;

@@ -1,12 +1,23 @@
 import React from 'react';
 
-const Accordion = ({ items, toggleItem, openIndex }) => {
+interface AccordionItem {
+    title: React.ReactNode;
+    content: React.ReactNode;
+}
+
+interface AccordionProps {
+    items: AccordionItem[];
+    openIndex: number | null;
+    toggleItem: (index: number) => void;
+}
+
+const Accordion: React.FC<AccordionProps> = ({ items, toggleItem, openIndex }) => {
     /**
      * Handles the keydown event for the accordion buttons.
      * @param {Event} event - The keydown event object.
      * @param {number} index - The index of the accordion button.
      */
-    const handleKeyDown = (event, index) => {
+    const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
         const totalItems = items.length;
         let newIndex = index;
 
@@ -28,7 +39,7 @@ const Accordion = ({ items, toggleItem, openIndex }) => {
         }
 
         // Set focus to the new accordion header
-        document.getElementById(`accordion-header-${newIndex}`).focus();
+        document.getElementById(`accordion-header-${newIndex}`)?.focus();
     };
 
     return (

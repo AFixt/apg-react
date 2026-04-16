@@ -12,15 +12,33 @@
  * @returns {JSX.Element} The rendered Breadcrumb component.
  */
 import React from "react";
-import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import "./Breadcrumb.css";
 
-const Breadcrumb = ({ items }) => {
-    const isLast = (index) => index === items.length - 1;
+interface BreadcrumbItem {
+    path: string;
+    label: string;
+}
+
+interface BreadcrumbLabels {
+    nav?: string;
+}
+
+interface BreadcrumbProps {
+    items: BreadcrumbItem[];
+    navLabel?: string;
+    labels?: BreadcrumbLabels;
+}
+
+const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, navLabel, labels }) => {
+    const defaultLabels: BreadcrumbLabels = {
+        nav: "Breadcrumb",
+    };
+    const l = { ...defaultLabels, ...labels };
+    const isLast = (index: number) => index === items.length - 1;
 
     return (
-        <nav aria-label="Breadcrumb" className="breadcrumb-nav">
+        <nav aria-label={navLabel || l.nav} className="breadcrumb-nav">
             <ol className="breadcrumb-list">
                 {items.map((item, index) => (
                     <li key={item.path} className="breadcrumb-item">
@@ -34,15 +52,6 @@ const Breadcrumb = ({ items }) => {
             </ol>
         </nav>
     );
-};
-
-Breadcrumb.propTypes = {
-    items: PropTypes.arrayOf(
-        PropTypes.shape({
-            path: PropTypes.string.isRequired,
-            label: PropTypes.string.isRequired,
-        })
-    ).isRequired,
 };
 
 export default Breadcrumb;

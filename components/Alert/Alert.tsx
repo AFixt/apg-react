@@ -11,10 +11,23 @@
  * @returns {JSX.Element|null} The rendered Alert component.
  */
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import "./Alert.css";
 
-const Alert = ({ message, type }) => {
+interface AlertLabels {
+    dismiss?: string;
+}
+
+interface AlertProps {
+    message: string;
+    type: "info" | "warning" | "error";
+    labels?: AlertLabels;
+}
+
+const Alert: React.FC<AlertProps> = ({ message, type, labels }) => {
+    const defaultLabels: AlertLabels = {
+        dismiss: "Dismiss",
+    };
+    const l = { ...defaultLabels, ...labels };
     const [isVisible, setIsVisible] = useState(true);
 
     const handleClose = () => {
@@ -34,17 +47,12 @@ const Alert = ({ message, type }) => {
                 type="button"
                 className="alert-close"
                 onClick={handleClose}
-                aria-label="Dismiss"
+                aria-label={l.dismiss}
             >
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
     );
-};
-
-Alert.propTypes = {
-    message: PropTypes.string.isRequired,
-    type: PropTypes.oneOf(["info", "warning", "error"]).isRequired,
 };
 
 export default Alert;

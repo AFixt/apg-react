@@ -15,11 +15,17 @@
  * @returns {JSX.Element|null} The JSX element representing the alert dialog.
  */
 import React, { useEffect, useRef } from "react";
-import PropTypes from "prop-types";
 import "./AlertDialog.css";
 
-const AlertDialog = ({ isOpen, title, message, onClose }) => {
-    const dialogRef = useRef(null);
+interface AlertDialogProps {
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onClose: () => void;
+}
+
+const AlertDialog: React.FC<AlertDialogProps> = ({ isOpen, title, message, onClose }) => {
+    const dialogRef = useRef<HTMLDivElement>(null);
 
     // Focus management
     useEffect(() => {
@@ -31,7 +37,7 @@ const AlertDialog = ({ isOpen, title, message, onClose }) => {
     // Document-level Escape handler so the key works regardless of focus target.
     useEffect(() => {
         if (!isOpen) return;
-        const onKeyDown = (e) => {
+        const onKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
                 e.stopPropagation();
                 onClose();
@@ -50,7 +56,7 @@ const AlertDialog = ({ isOpen, title, message, onClose }) => {
             aria-modal="true"
             aria-labelledby="dialogTitle"
             aria-describedby="dialogDesc"
-            tabIndex="-1"
+            tabIndex={-1}
             ref={dialogRef}
         >
             <div className="dialog-content">
@@ -60,13 +66,6 @@ const AlertDialog = ({ isOpen, title, message, onClose }) => {
             </div>
         </div>
     );
-};
-
-AlertDialog.propTypes = {
-    isOpen: PropTypes.bool.isRequired,
-    title: PropTypes.string.isRequired,
-    message: PropTypes.string.isRequired,
-    onClose: PropTypes.func.isRequired,
 };
 
 export default AlertDialog;

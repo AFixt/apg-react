@@ -12,19 +12,38 @@
  * @returns {JSX.Element|null} The rendered ModalDialog component.
  */
 import React, { useEffect, useRef, useState } from "react";
-import PropTypes from "prop-types";
 import "./ModalDialog.css"; // Assume appropriate CSS for styling
 
-const ModalDialog = ({
+interface ModalDialogLabels {
+    closeDialog?: string;
+}
+
+interface ModalDialogProps {
+    isOpen: boolean;
+    onClose: () => void;
+    ariaLabel?: string;
+    ariaDescribedby?: string;
+    children: React.ReactNode;
+    initialFocusRef?: React.RefObject<HTMLElement>;
+    labels?: ModalDialogLabels;
+}
+
+const defaultLabels = {
+    closeDialog: "Close dialog",
+};
+
+const ModalDialog: React.FC<ModalDialogProps> = ({
     isOpen,
     onClose,
     ariaLabel,
     ariaDescribedby,
     children,
     initialFocusRef,
+    labels,
 }) => {
-    const dialogRef = useRef(null);
-    const invokingElementRef = useRef(null);
+    const l = { ...defaultLabels, ...labels };
+    const dialogRef = useRef<HTMLDivElement>(null);
+    const invokingElementRef = useRef<Element | null>(null);
     const [isAnimatingIn, setIsAnimatingIn] = useState(false);
 
     useEffect(() => {
@@ -37,7 +56,7 @@ const ModalDialog = ({
         setIsAnimatingIn(false);
     }, [isOpen, initialFocusRef]);
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "Escape") {
             onClose();
         }
@@ -45,7 +64,7 @@ const ModalDialog = ({
 
     useEffect(() => {
         if (!isOpen) return;
-        const onDocKeyDown = (e) => {
+        const onDocKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
                 e.stopPropagation();
                 onClose();
@@ -55,8 +74,8 @@ const ModalDialog = ({
         return () => document.removeEventListener("keydown", onDocKeyDown);
     }, [isOpen, onClose]);
 
-    const handleFocusTrap = (e) => {
-        if (dialogRef.current && !dialogRef.current.contains(e.target)) {
+    const handleFocusTrap = (e: FocusEvent) => {
+        if (dialogRef.current && !dialogRef.current.contains(e.target as Node)) {
             e.stopPropagation();
             (initialFocusRef?.current || dialogRef.current)?.focus();
         }
@@ -74,7 +93,7 @@ const ModalDialog = ({
         return () => {
             // Return focus to the invoking element when the dialog closes
             if (!isOpen && invokingElementRef.current) {
-                invokingElementRef.current.focus();
+                (invokingElementRef.current as HTMLElement).focus();
             }
         };
     }, [isOpen]);
@@ -98,22 +117,13 @@ const ModalDialog = ({
                     type="button"
                     className="modal-dialog-close"
                     onClick={onClose}
-                    aria-label="Close dialog"
+                    aria-label={l.closeDialog}
                 >
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
         </div>
     );
-};
-
-ModalDialog.propTypes = {
-    isOpen: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired,
-    ariaLabel: PropTypes.string,
-    ariaDescribedby: PropTypes.string,
-    children: PropTypes.node.isRequired,
-    initialFocusRef: PropTypes.object,
 };
 
 export default ModalDialog;

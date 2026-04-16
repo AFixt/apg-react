@@ -24,15 +24,31 @@
  *   - Escape: close submenu, return focus to parent menubar item.
  */
 import React, { useEffect, useRef, useState } from "react";
-import PropTypes from "prop-types";
 import "./Menubar.css";
 
-const Menubar = ({ label, menus }) => {
+interface MenuItem {
+    id: string;
+    label: React.ReactNode;
+    onSelect?: () => void;
+}
+
+interface MenubarMenu {
+    id: string;
+    label: React.ReactNode;
+    items: MenuItem[];
+}
+
+interface MenubarProps {
+    label: string;
+    menus: MenubarMenu[];
+}
+
+const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
     const [activeMenu, setActiveMenu] = useState(0);
-    const [openMenu, setOpenMenu] = useState(null);
+    const [openMenu, setOpenMenu] = useState<number | null>(null);
     const [focusItem, setFocusItem] = useState(0);
-    const barRefs = useRef([]);
-    const itemRefs = useRef({});
+    const barRefs = useRef<(HTMLButtonElement | null)[]>([]);
+    const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
     useEffect(() => {
         if (openMenu === null) {
@@ -42,7 +58,7 @@ const Menubar = ({ label, menus }) => {
         }
     }, [openMenu, activeMenu, focusItem]);
 
-    const openAt = (mIdx, iIdx) => {
+    const openAt = (mIdx: number, iIdx: number) => {
         setActiveMenu(mIdx);
         setOpenMenu(mIdx);
         setFocusItem(iIdx);
@@ -53,12 +69,12 @@ const Menubar = ({ label, menus }) => {
         if (returnToBar) barRefs.current[activeMenu]?.focus();
     };
 
-    const activate = (mIdx, iIdx) => {
+    const activate = (mIdx: number, iIdx: number) => {
         menus[mIdx].items[iIdx].onSelect?.();
         closeMenu(true);
     };
 
-    const moveMenubar = (delta) => {
+    const moveMenubar = (delta: number) => {
         const n = menus.length;
         const next = (activeMenu + delta + n) % n;
         const wasOpen = openMenu !== null;
@@ -67,7 +83,7 @@ const Menubar = ({ label, menus }) => {
         else setOpenMenu(null);
     };
 
-    const handleBarKey = (e, mIdx) => {
+    const handleBarKey = (e: React.KeyboardEvent, mIdx: number) => {
         let handled = true;
         switch (e.key) {
             case "ArrowLeft":
@@ -96,7 +112,7 @@ const Menubar = ({ label, menus }) => {
         if (handled) e.preventDefault();
     };
 
-    const handleMenuKey = (e, mIdx, iIdx) => {
+    const handleMenuKey = (e: React.KeyboardEvent, mIdx: number, iIdx: number) => {
         const last = menus[mIdx].items.length - 1;
         let handled = true;
         switch (e.key) {
@@ -141,10 +157,10 @@ const Menubar = ({ label, menus }) => {
 
     useEffect(() => {
         if (openMenu === null) return;
-        const onDocClick = (e) => {
-            const onBar = barRefs.current.some((el) => el?.contains(e.target));
+        const onDocClick = (e: MouseEvent) => {
+            const onBar = barRefs.current.some((el) => el?.contains(e.target as Node));
             const onMenu = Object.values(itemRefs.current).some((el) =>
-                el?.contains(e.target)
+                el?.contains(e.target as Node)
             );
             if (!onBar && !onMenu) closeMenu(false);
         };
@@ -178,7 +194,7 @@ const Menubar = ({ label, menus }) => {
                             {menu.label}
                         </button>
                         {isOpen && (
-                            <ul role="menu" aria-label={menu.label} className="menubar-menu">
+                            <ul role="menu" aria-label={menu.label as string} className="menubar-menu">
                                 {menu.items.map((item, iIdx) => (
                                     <li key={item.id} role="none">
                                         <button
@@ -204,23 +220,6 @@ const Menubar = ({ label, menus }) => {
             })}
         </div>
     );
-};
-
-Menubar.propTypes = {
-    label: PropTypes.string.isRequired,
-    menus: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: PropTypes.string.isRequired,
-            label: PropTypes.node.isRequired,
-            items: PropTypes.arrayOf(
-                PropTypes.shape({
-                    id: PropTypes.string.isRequired,
-                    label: PropTypes.node.isRequired,
-                    onSelect: PropTypes.func,
-                })
-            ).isRequired,
-        })
-    ).isRequired,
 };
 
 export default Menubar;

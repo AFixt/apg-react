@@ -17,10 +17,35 @@
  *   - Ctrl+Home / Ctrl+End: first / last row (first column).
  */
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import PropTypes from "prop-types";
 import "./TreeGrid.css";
 
-const flatten = (rows, expanded, level = 1, parentId = null, acc = []) => {
+interface TreeGridColumn {
+    key: string;
+    label: React.ReactNode;
+}
+
+interface TreeGridRow {
+    id: string;
+    children?: TreeGridRow[];
+    [column: string]: unknown;
+}
+
+interface TreeGridProps {
+    label: string;
+    columns: TreeGridColumn[];
+    rows: TreeGridRow[];
+    defaultExpanded?: string[];
+}
+
+interface FlatRow extends TreeGridRow {
+    level: number;
+    parentId: string | null;
+    posinset: number;
+    setsize: number;
+    hasChildren: boolean;
+}
+
+const flatten = (rows: TreeGridRow[], expanded: Set<string>, level = 1, parentId: string | null = null, acc: FlatRow[] = []): FlatRow[] => {
     rows.forEach((r, i) => {
         acc.push({
             ...r,
@@ -37,13 +62,13 @@ const flatten = (rows, expanded, level = 1, parentId = null, acc = []) => {
     return acc;
 };
 
-const TreeGrid = ({ label, columns, rows, defaultExpanded }) => {
+const TreeGrid: React.FC<TreeGridProps> = ({ label, columns, rows, defaultExpanded }) => {
     const [expanded, setExpanded] = useState(
         () => new Set(defaultExpanded ?? [])
     );
     const [focus, setFocus] = useState({ row: 0, col: 0 });
     const shouldFocusRef = useRef(false);
-    const cellRefs = useRef({});
+    const cellRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
     useEffect(() => {
         if (shouldFocusRef.current) {
@@ -55,14 +80,14 @@ const TreeGrid = ({ label, columns, rows, defaultExpanded }) => {
     const visible = useMemo(() => flatten(rows, expanded), [rows, expanded]);
     const totalCols = columns.length;
 
-    const focusCell = (r, c) => {
+    const focusCell = (r: number, c: number) => {
         const rr = Math.max(0, Math.min(visible.length - 1, r));
         const cc = Math.max(0, Math.min(totalCols - 1, c));
         shouldFocusRef.current = true;
         setFocus({ row: rr, col: cc });
     };
 
-    const toggle = (id, open) => {
+    const toggle = (id: string, open?: boolean) => {
         setExpanded((prev) => {
             const next = new Set(prev);
             if (open === true) next.add(id);
@@ -72,7 +97,7 @@ const TreeGrid = ({ label, columns, rows, defaultExpanded }) => {
         });
     };
 
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         // Read position from the event target so we don't depend on a
         // possibly-stale `focus` state (especially when the cell gained focus
         // via a raw DOM .focus() call outside of React's event system).
@@ -198,10 +223,10 @@ const TreeGrid = ({ label, columns, rows, defaultExpanded }) => {
                                             aria-hidden="true"
                                             className="treegrid-chevron"
                                         >
-                                            {isExpanded ? "▾" : "▸"}
+                                            {isExpanded ? "\u25BE" : "\u25B8"}
                                         </span>
                                     )}
-                                    {row[col.key]}
+                                    {row[col.key] as React.ReactNode}
                                 </div>
                             );
                         })}
@@ -210,22 +235,6 @@ const TreeGrid = ({ label, columns, rows, defaultExpanded }) => {
             })}
         </div>
     );
-};
-
-const rowShape = {
-    id: PropTypes.string.isRequired,
-};
-
-TreeGrid.propTypes = {
-    label: PropTypes.string.isRequired,
-    columns: PropTypes.arrayOf(
-        PropTypes.shape({
-            key: PropTypes.string.isRequired,
-            label: PropTypes.node.isRequired,
-        })
-    ).isRequired,
-    rows: PropTypes.arrayOf(PropTypes.shape(rowShape)).isRequired,
-    defaultExpanded: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default TreeGrid;

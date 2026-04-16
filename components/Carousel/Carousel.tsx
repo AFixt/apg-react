@@ -13,13 +13,39 @@
  * @returns {JSX.Element} The Carousel component.
  */
 import React, { useState, useEffect, useRef } from "react";
-import PropTypes from "prop-types";
 import "./Carousel.css";
 
-const Carousel = ({ slides }) => {
+interface CarouselSlide {
+    id: string;
+    label: string;
+    content: React.ReactNode;
+}
+
+interface CarouselLabels {
+    previousSlide?: string;
+    nextSlide?: string;
+    pauseRotation?: string;
+    startRotation?: string;
+    selectSlide?: (i: number) => string;
+}
+
+interface CarouselProps {
+    slides: CarouselSlide[];
+    labels?: CarouselLabels;
+}
+
+const Carousel: React.FC<CarouselProps> = ({ slides, labels }) => {
+    const defaultLabels: CarouselLabels = {
+        previousSlide: "Previous slide",
+        nextSlide: "Next slide",
+        pauseRotation: "Pause rotation",
+        startRotation: "Start rotation",
+        selectSlide: (i: number) => `Select slide ${i}`,
+    };
+    const l = { ...defaultLabels, ...labels };
     const [activeIndex, setActiveIndex] = useState(0);
     const [isRotating, setIsRotating] = useState(true);
-    const carouselRef = useRef(null);
+    const carouselRef = useRef<HTMLDivElement>(null);
 
     const nextSlide = () => {
         setActiveIndex((prevIndex) => (prevIndex + 1) % slides.length);
@@ -33,7 +59,7 @@ const Carousel = ({ slides }) => {
         stopRotation();
     };
 
-    const selectSlide = (index) => {
+    const selectSlide = (index: number) => {
         setActiveIndex(index);
         stopRotation();
     };
@@ -66,21 +92,21 @@ const Carousel = ({ slides }) => {
             <button
                 className="carousel-control carousel-control-prev"
                 onClick={prevSlide}
-                aria-label="Previous slide"
+                aria-label={l.previousSlide}
             >
                 <span aria-hidden="true">&#x2039;</span>
             </button>
             <button
                 className="carousel-control carousel-control-next"
                 onClick={nextSlide}
-                aria-label="Next slide"
+                aria-label={l.nextSlide}
             >
                 <span aria-hidden="true">&#x203A;</span>
             </button>
             <button
                 className="carousel-control carousel-control-play"
                 onClick={toggleRotation}
-                aria-label={isRotating ? "Pause rotation" : "Start rotation"}
+                aria-label={isRotating ? l.pauseRotation : l.startRotation}
             >
                 {isRotating ? "\u2016" : "\u25B6"}
             </button>
@@ -102,7 +128,7 @@ const Carousel = ({ slides }) => {
                     <button
                         key={index}
                         onClick={() => selectSlide(index)}
-                        aria-label={`Select slide ${index + 1}`}
+                        aria-label={l.selectSlide!(index + 1)}
                         disabled={index === activeIndex}
                     >
                         {index + 1}
@@ -111,16 +137,6 @@ const Carousel = ({ slides }) => {
             </div>
         </div>
     );
-};
-
-Carousel.propTypes = {
-    slides: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: PropTypes.string.isRequired,
-            label: PropTypes.string.isRequired,
-            content: PropTypes.node.isRequired,
-        })
-    ).isRequired,
 };
 
 export default Carousel;
