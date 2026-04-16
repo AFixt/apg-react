@@ -26,7 +26,7 @@ The library ships **31 components** with full TypeScript declarations, Storybook
 
 ### Component structure
 Each component lives in `components/<Name>/` with up to three files:
-- `<Name>.jsx` — React functional component
+- `<Name>.tsx` — React functional component (TypeScript)
 - `<Name>.css` — Component styles (consumed via CSS custom properties from `variables.css`)
 - `<Name>.stories.jsx` — Storybook stories with `play` functions for the Interactions panel
 
@@ -37,13 +37,14 @@ Components fall into two patterns:
 - **Externally controlled** — receive all state and callbacks as props (e.g., `Accordion` takes `openIndex` + `toggleItem`; the parent owns the state).
 - **Internally stateful** — manage their own interaction state via React hooks (`useState`, `useRef`, `useEffect`). Most newer components (Tabs, RadioGroup, Combobox, TreeView, Grid, etc.) follow this pattern and accept optional controlled-value props.
 
-No external state libraries are used. CSS is imported directly into JSX files.
+No external state libraries are used. CSS is imported directly into TSX files.
 
 ### Entry point and packaging
-- `index.js` — barrel file that re-exports all 31 components by name.
-- `index.d.ts` — hand-written TypeScript declarations for every component and prop interface.
-- `rollup.config.js` — produces `dist/index.cjs.js`, `dist/index.esm.js`, `dist/styles.css`, and copies `index.d.ts` into `dist/`.
+- `index.ts` — barrel file that re-exports all 31 components by name.
+- `rollup.config.mjs` — uses `@rollup/plugin-typescript` to compile TSX and auto-generate `.d.ts` declarations into `dist/`.
+- Produces `dist/index.cjs.js`, `dist/index.esm.js`, `dist/styles.css`, and per-component `.d.ts` files.
 - Package `exports` map exposes `"."` (component JS + types), `"./styles.css"`, and `"./variables.css"`.
+- `tsconfig.json` — TypeScript configuration (strict mode, ES2018 target, JSX react).
 
 ### Testing
 Three layers, all runnable locally:
@@ -55,7 +56,7 @@ Three layers, all runnable locally:
 Configuration:
 - Jest is configured in `jest.config.js` with `jsdom` test environment. The `jest-puppeteer` preset is NOT used for unit tests; E2E uses its own config.
 - CSS imports are mocked via `__mocks__/styleMock.js`.
-- Babel transpiles JSX via `@babel/preset-env` + `@babel/preset-react`.
+- Babel transpiles TSX via `@babel/preset-env` + `@babel/preset-react` + `@babel/preset-typescript`.
 - Test file pattern: `**/__tests__/**/*.test.[jt]s?(x)` (helper files in `__tests__/helpers/` are excluded).
 
 ### CI
@@ -76,3 +77,4 @@ GitHub Actions workflow at `.github/workflows/ci.yml`:
 - Components use index-based or id-based IDs for ARIA relationships (e.g., `accordion-header-${index}`, `panel-${index}`).
 - Some accessibility requirements (contrast, labeling, focus restoration on dialog close) are left to implementers — documented in the README "Implementer responsibilities" section.
 - No external accessibility testing libraries (axe-core, jest-axe, cypress-axe, addon-a11y, @axe-core/*) are permitted in this project.
+- Components with hardcoded user-facing strings (aria-labels, button text) expose an optional `labels` prop so consumers can provide translations. English defaults are always provided.
