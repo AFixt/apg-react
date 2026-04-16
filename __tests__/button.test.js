@@ -62,7 +62,7 @@ describe("Button Component", () => {
     });
 
     test("Using a Menu Button", () => {
-        render(<Button action={mockAction} label="Menu" />);
+        render(<Button action={mockAction} label="Menu" ariaHaspopup="menu" />);
         const menuButton = screen.getByRole("button", { name: "Menu" });
 
         expect(menuButton).toHaveAttribute("aria-haspopup", "menu");
@@ -79,7 +79,7 @@ describe("Button Component", () => {
         );
         const button = screen.getByRole("button", { name: label });
 
-        expect(button).toHaveAttribute("aria-disabled", "true");
+        expect(button).toBeDisabled();
         expect(button).toHaveAttribute("aria-describedby", "descId");
     });
 

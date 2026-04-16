@@ -1,40 +1,43 @@
+/* Bootstrap 5–inspired nav-tabs styling */
+
 .tabs {
     display: flex;
     flex-direction: column;
+    font-family: var(--apg-font-family);
 }
 
 .tabs-vertical {
     flex-direction: row;
-    gap: var(--apg-space-lg);
 }
+
+/* ---- Tablist (horizontal) ---- */
 
 .tablist {
     display: flex;
-    gap: var(--apg-space-xs);
-    border-bottom: var(--apg-border-width) solid var(--apg-border-color);
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-bottom: 0;
+    border-bottom: 2px solid var(--apg-border-color);
+    gap: 0;
 }
 
-.tabs-vertical .tablist {
-    flex-direction: column;
-    border-bottom: 0;
-    border-right: var(--apg-border-width) solid var(--apg-border-color);
-    padding-right: 0;
-    min-width: 10rem;
-}
+/* ---- Individual tab button ---- */
 
 .tab {
-    display: inline-block;
-    padding: var(--apg-space-md) var(--apg-space-lg);
+    display: block;
+    padding: 0.5rem 1rem;
     background-color: transparent;
-    color: var(--apg-color-gray-700);
+    color: var(--apg-color-primary);
     border: var(--apg-border-width) solid transparent;
-    border-bottom: 0;
-    border-radius: var(--apg-radius-md) var(--apg-radius-md) 0 0;
+    border-top-left-radius: var(--apg-radius-md);
+    border-top-right-radius: var(--apg-radius-md);
     font-size: var(--apg-font-size-base);
-    font-family: var(--apg-font-family);
-    font-weight: var(--apg-font-weight-medium);
+    font-family: inherit;
+    font-weight: var(--apg-font-weight-normal);
+    line-height: var(--apg-line-height-normal);
     cursor: pointer;
-    margin-bottom: -1px;
+    margin-bottom: -2px;
+    text-decoration: none;
     transition:
         color var(--apg-transition-fast),
         background-color var(--apg-transition-fast),
@@ -42,19 +45,19 @@
 }
 
 .tab:hover {
-    color: var(--apg-color-primary);
-    background-color: var(--apg-color-gray-50);
-    border-color: var(--apg-color-gray-200);
+    color: var(--apg-color-primary-hover);
+    background-color: transparent;
+    border-color: var(--apg-color-gray-200) var(--apg-color-gray-200) var(--apg-border-color);
+    isolation: isolate;
 }
 
 .tab.is-active {
-    color: var(--apg-color-primary);
+    color: var(--apg-color-gray-800);
     background-color: var(--apg-color-white);
-    border-color: var(--apg-border-color);
-    border-bottom-color: var(--apg-color-white);
+    border-color: var(--apg-border-color) var(--apg-border-color) var(--apg-color-white);
+    font-weight: var(--apg-font-weight-medium);
 }
 
-.tab:focus,
 .tab:focus-visible {
     outline: none;
     box-shadow: var(--apg-focus-ring);
@@ -62,36 +65,52 @@
     position: relative;
 }
 
+/* ---- Vertical orientation ---- */
+
+.tabs-vertical .tablist {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    border-bottom: 0;
+    border-right: 2px solid var(--apg-border-color);
+    min-width: 10rem;
+    gap: 0;
+}
+
 .tabs-vertical .tab {
     border-radius: var(--apg-radius-md) 0 0 var(--apg-radius-md);
     margin-bottom: 0;
-    margin-right: -1px;
-    border-bottom: var(--apg-border-width) solid transparent;
-    border-right: 0;
+    margin-right: -2px;
     text-align: left;
+    border: var(--apg-border-width) solid transparent;
+}
+
+.tabs-vertical .tab:hover {
+    border-color: var(--apg-color-gray-200) var(--apg-border-color) var(--apg-color-gray-200) var(--apg-color-gray-200);
 }
 
 .tabs-vertical .tab.is-active {
-    border-right-color: var(--apg-color-white);
+    border-color: var(--apg-border-color) var(--apg-color-white) var(--apg-border-color) var(--apg-border-color);
 }
 
+/* ---- Tab panel ---- */
+
 .tabpanel {
-    padding: var(--apg-space-lg);
+    padding: var(--apg-space-lg) var(--apg-space-xl);
     background-color: var(--apg-color-white);
-    border: var(--apg-border-width) solid var(--apg-border-color);
+    border: 2px solid var(--apg-border-color);
     border-top: 0;
     border-radius: 0 0 var(--apg-radius-md) var(--apg-radius-md);
     min-height: 4rem;
+    color: var(--apg-color-black);
 }
 
 .tabs-vertical .tabpanel {
-    border: var(--apg-border-width) solid var(--apg-border-color);
+    border: 2px solid var(--apg-border-color);
     border-left: 0;
     border-radius: 0 var(--apg-radius-md) var(--apg-radius-md) 0;
     flex: 1 1 auto;
 }
 
-.tabpanel:focus,
 .tabpanel:focus-visible {
     outline: none;
     box-shadow: var(--apg-focus-ring);

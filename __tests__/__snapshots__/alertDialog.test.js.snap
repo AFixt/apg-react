@@ -3,8 +3,8 @@
 exports[`AlertDialog Component Alert Dialog Snapshot 1`] = `
 <DocumentFragment>
   <div
-    aria-describedby="dialogDesc"
-    aria-labelledby="dialogTitle"
+    aria-describedby="alertdialog-desc-:r0:"
+    aria-labelledby="alertdialog-title-:r0:"
     aria-modal="true"
     class="dialog-overlay"
     role="alertdialog"
@@ -14,12 +14,12 @@ exports[`AlertDialog Component Alert Dialog Snapshot 1`] = `
       class="dialog-content"
     >
       <h2
-        id="dialogTitle"
+        id="alertdialog-title-:r0:"
       >
         Alert Title
       </h2>
       <p
-        id="dialogDesc"
+        id="alertdialog-desc-:r0:"
       >
         This is an important alert message.
       </p>

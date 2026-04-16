@@ -26,7 +26,7 @@ const Template = (args) => {
 export const Default = {
   render: Template,
   args: {
-    ariaLabel: 'modal-title',
+    ariaLabelledby: 'modal-title',
     ariaDescribedby: 'modal-desc',
   },
   play: async ({ canvasElement, step }) => {
@@ -50,7 +50,7 @@ export const OpenByDefault = {
   render: Template,
   args: {
     isOpen: true,
-    ariaLabel: 'modal-title',
+    ariaLabelledby: 'modal-title',
     ariaDescribedby: 'modal-desc',
   },
   play: async ({ step }) => {

@@ -39,6 +39,11 @@ export const Unchecked = {
       await userEvent.click(checkbox);
       await expect(checkbox).toBeChecked();
     });
+
+    await step('Click again restores unchecked state (matches story name)', async () => {
+      await userEvent.click(checkbox);
+      await expect(checkbox).not.toBeChecked();
+    });
   },
 };
 

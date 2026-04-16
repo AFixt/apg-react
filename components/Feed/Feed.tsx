@@ -28,9 +28,11 @@ interface ArticleData {
 
 interface FeedProps {
     fetchArticles: () => Promise<ArticleData[]>;
+    /** Accessible name for the feed region. */
+    ariaLabel?: string;
 }
 
-const Feed: React.FC<FeedProps> = ({ fetchArticles }) => {
+const Feed: React.FC<FeedProps> = ({ fetchArticles, ariaLabel }) => {
     const [articles, setArticles] = useState<ArticleData[]>([]);
     const [loading, setLoading] = useState(false);
     const feedEndRef = useRef<HTMLDivElement>(null);
@@ -93,6 +95,7 @@ const Feed: React.FC<FeedProps> = ({ fetchArticles }) => {
         <div
             className="feed"
             role="feed"
+            aria-label={ariaLabel}
             onKeyDown={handleKeyDown}
             aria-busy={loading}
         >
@@ -100,6 +103,8 @@ const Feed: React.FC<FeedProps> = ({ fetchArticles }) => {
                 <Article
                     key={article.id}
                     article={article}
+                    ariaPosinset={index + 1}
+                    ariaSetsize={articles.length}
                     ref={(el: HTMLElement | null) => (articleRefs.current[index] = el)}
                 />
             ))}

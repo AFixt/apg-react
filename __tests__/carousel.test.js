@@ -99,7 +99,7 @@ describe("Carousel Component", () => {
             expect(
                 screen.getByText(slides[index].content.props.children)
             ).toBeVisible();
-            expect(pickerButton).toBeDisabled();
+            expect(pickerButton).toHaveAttribute("aria-current", "true");
         });
     });
 

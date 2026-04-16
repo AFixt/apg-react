@@ -4,7 +4,6 @@ exports[`Button Component Button Snapshot 1`] = `
 <DocumentFragment>
   <button
     class="button"
-    role="button"
   >
     Test Button
   </button>
@@ -16,7 +15,6 @@ exports[`Button Component Toggle Button Snapshot 1`] = `
   <button
     aria-pressed="false"
     class="button button-toggle"
-    role="button"
   >
     Test Button
   </button>
