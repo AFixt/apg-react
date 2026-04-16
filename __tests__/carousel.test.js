@@ -36,11 +36,12 @@ describe("Carousel Component", () => {
 
     test("Controlling Carousel Slide Rotation", () => {
         render(<Carousel slides={slides} />);
-        const rotationButton = screen.getByLabelText(/pause/i);
+        let rotationButton = screen.getByLabelText(/pause rotation/i);
         fireEvent.click(rotationButton);
-        expect(rotationButton).toHaveTextContent("Play");
+        rotationButton = screen.getByLabelText(/start rotation/i);
+        expect(rotationButton).toBeInTheDocument();
         fireEvent.click(rotationButton);
-        expect(rotationButton).toHaveTextContent("Pause");
+        expect(screen.getByLabelText(/pause rotation/i)).toBeInTheDocument();
     });
 
     test("Navigating to Next and Previous Slides", () => {

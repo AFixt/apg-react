@@ -1,36 +1,64 @@
-/* Styles for the button */
 .button {
-    background-color: #007bff; /* Blue background color */
-    color: white; /* White text color */
-    padding: 10px 15px; /* Padding inside the button */
-    border: none; /* No border */
-    border-radius: 4px; /* Rounded corners */
-    font-size: 1rem; /* Font size */
-    cursor: pointer; /* Cursor to pointer to indicate it's clickable */
-    transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for hover and focus effects */
-    outline: none; /* Remove default focus outline */
-    display: inline-block; /* Inline-block for proper sizing and positioning */
-    text-align: center; /* Center the text inside the button */
-    text-decoration: none; /* Remove text decoration for link-styled buttons */
+    display: inline-block;
+    font-family: var(--apg-font-family);
+    font-weight: var(--apg-font-weight-normal);
+    line-height: var(--apg-line-height-normal);
+    color: var(--apg-color-white);
+    background-color: var(--apg-color-primary);
+    border: var(--apg-border-width) solid var(--apg-color-primary);
+    padding: 0.375rem 0.75rem;
+    font-size: var(--apg-font-size-base);
+    border-radius: var(--apg-radius-md);
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    user-select: none;
+    outline: none;
+    transition:
+        color var(--apg-transition-fast),
+        background-color var(--apg-transition-fast),
+        border-color var(--apg-transition-fast),
+        box-shadow var(--apg-transition-fast);
 }
 
-/* Styles for the button when hovered */
 .button:hover {
-    background-color: #0056b3; /* Slightly darker shade of blue on hover */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    background-color: var(--apg-color-primary-hover);
+    border-color: var(--apg-color-primary-hover);
+    color: var(--apg-color-white);
 }
 
-/* Styles for the button when focused or active */
 .button:focus,
-.button:active {
-    background-color: #004085; /* Even darker shade of blue for focus/active state */
-    box-shadow: 0 0 0 3px rgba(38, 143, 255, 0.6); /* Glow effect for focus */
+.button:focus-visible {
+    background-color: var(--apg-color-primary-hover);
+    border-color: var(--apg-color-primary-hover);
+    box-shadow: var(--apg-focus-ring);
 }
 
-/* Styles for the button when disabled */
+.button:active {
+    background-color: var(--apg-color-primary-active);
+    border-color: var(--apg-color-primary-active);
+    box-shadow: var(--apg-shadow-inset);
+}
+
 .button:disabled {
-    background-color: #cccccc; /* Gray background for disabled state */
-    color: #666666; /* Dark gray text color for disabled state */
-    cursor: not-allowed; /* Cursor to indicate the button is not clickable */
-    box-shadow: none; /* No shadow for disabled state */
+    background-color: var(--apg-color-primary);
+    border-color: var(--apg-color-primary);
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.button-toggle.is-pressed,
+.button[aria-pressed="true"] {
+    background-color: var(--apg-color-primary-active);
+    border-color: var(--apg-color-primary-active);
+    color: var(--apg-color-white);
+    box-shadow: var(--apg-shadow-inset);
+}
+
+.button-toggle.is-pressed::before,
+.button[aria-pressed="true"]::before {
+    content: "\2713\00a0";
+    font-weight: var(--apg-font-weight-bold);
 }

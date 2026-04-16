@@ -10,10 +10,10 @@
  */
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import Checkbox from "./Checkbox";
+import Checkbox from "../Checkbox/Checkbox";
 import "./CheckboxGroup.css";
 
-const TriStateCheckboxGroup = ({ items, label }) => {
+const CheckboxGroup = ({ items, label }) => {
     const [checkedItems, setCheckedItems] = useState(
         new Array(items.length).fill(false)
     );
@@ -40,7 +40,7 @@ const TriStateCheckboxGroup = ({ items, label }) => {
     };
 
     return (
-        <div role="group" aria-labelledby="group-label">
+        <div className="checkbox-group" role="group" aria-labelledby="group-label">
             <h3 id="group-label">{label}</h3>
             <Checkbox
                 label="All"
@@ -60,7 +60,7 @@ const TriStateCheckboxGroup = ({ items, label }) => {
     );
 };
 
-TriStateCheckboxGroup.propTypes = {
+CheckboxGroup.propTypes = {
     items: PropTypes.arrayOf(
         PropTypes.shape({
             id: PropTypes.string.isRequired,
@@ -70,4 +70,4 @@ TriStateCheckboxGroup.propTypes = {
     label: PropTypes.string.isRequired,
 };
 
-export default TriStateCheckboxGroup;
+export default CheckboxGroup;

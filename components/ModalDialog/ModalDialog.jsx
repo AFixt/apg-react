@@ -11,7 +11,7 @@
  * @param {Object} [props.initialFocusRef] - The ref to the initial focusable element inside the modal dialog.
  * @returns {JSX.Element|null} The rendered ModalDialog component.
  */
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import "./ModalDialog.css"; // Assume appropriate CSS for styling
 
@@ -25,14 +25,16 @@ const ModalDialog = ({
 }) => {
     const dialogRef = useRef(null);
     const invokingElementRef = useRef(null);
+    const [isAnimatingIn, setIsAnimatingIn] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
-            // Save a reference to the element that invoked the dialog
             invokingElementRef.current = document.activeElement;
-            // Focus the initial element inside the dialog
             (initialFocusRef?.current || dialogRef.current)?.focus();
+            const id = requestAnimationFrame(() => setIsAnimatingIn(true));
+            return () => cancelAnimationFrame(id);
         }
+        setIsAnimatingIn(false);
     }, [isOpen, initialFocusRef]);
 
     const handleKeyDown = (e) => {
@@ -40,6 +42,18 @@ const ModalDialog = ({
             onClose();
         }
     };
+
+    useEffect(() => {
+        if (!isOpen) return;
+        const onDocKeyDown = (e) => {
+            if (e.key === "Escape") {
+                e.stopPropagation();
+                onClose();
+            }
+        };
+        document.addEventListener("keydown", onDocKeyDown);
+        return () => document.removeEventListener("keydown", onDocKeyDown);
+    }, [isOpen, onClose]);
 
     const handleFocusTrap = (e) => {
         if (dialogRef.current && !dialogRef.current.contains(e.target)) {
@@ -68,19 +82,26 @@ const ModalDialog = ({
     if (!isOpen) return null;
 
     return (
-        <div className="modal-dialog-backdrop">
+        <div className={`modal-dialog-backdrop${isAnimatingIn ? " open" : ""}`}>
             <div
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={ariaLabel}
                 aria-describedby={ariaDescribedby}
                 ref={dialogRef}
-                className="modal-dialog"
+                className={`modal-dialog${isAnimatingIn ? " open" : ""}`}
                 onKeyDown={handleKeyDown}
                 tabIndex={-1}
             >
                 {children}
-                <button onClick={onClose}>Close</button>
+                <button
+                    type="button"
+                    className="modal-dialog-close"
+                    onClick={onClose}
+                    aria-label="Close dialog"
+                >
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
         </div>
     );

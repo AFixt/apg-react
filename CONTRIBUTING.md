@@ -28,4 +28,4 @@ If you're not comfortable with Git or coding, you can still contribute significa
 
 3. **Engage in the Discussion**: Once your issue is logged, you might receive comments or questions from the maintainers or other contributors. Engaging in this dialogue helps clarify the issue and guides its resolution.
 
-Thank you for contributing to [Repository Name]! Your efforts help build a stronger and more effective project. If you have any questions or need assistance, feel free to reach out to the maintainers.
+Thank you for contributing to APG-React! Your efforts help build a stronger and more effective project. If you have any questions or need assistance, feel free to reach out to the maintainers.

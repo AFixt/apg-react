@@ -47,7 +47,7 @@ const Tooltip = ({ children, text, position }) => {
                     role="tooltip"
                     id="tooltip-text"
                     ref={tooltipRef}
-                    position={position}
+                    data-position={position}
                 >
                     {text}
                 </div>

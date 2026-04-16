@@ -1,17 +1,9 @@
 /**
  * A customizable slider component for React.
  *
- * @component
- * @param {number} min - The minimum value of the slider.
- * @param {number} max - The maximum value of the slider.
- * @param {number} [step=1] - The increment value for each step of the slider.
- * @param {number} [initialValue=min] - The initial value of the slider.
- * @param {string} [ariaLabelledby] - The ID of the element that labels the slider.
- * @param {boolean} [isVertical=false] - Determines whether the slider is vertical or horizontal.
- * @param {Function} [getUserFriendlyValue] - A function that returns a user-friendly value for the slider.
- * @returns {JSX.Element} The Slider component.
+ * Supports keyboard (APG pattern), click-on-track, and pointer drag.
  */
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import "./Slider.css";
 
@@ -20,23 +12,28 @@ const Slider = ({
     max,
     step,
     initialValue,
+    ariaLabel,
     ariaLabelledby,
     isVertical,
     getUserFriendlyValue,
 }) => {
-    const [value, setValue] = useState(initialValue || min);
+    const [value, setValue] = useState(initialValue ?? min);
+    const containerRef = useRef(null);
+    const thumbRef = useRef(null);
+
+    const clamp = (v) => Math.max(min, Math.min(max, v));
+
+    const snapToStep = (raw) => {
+        const steps = Math.round((raw - min) / step);
+        return clamp(min + steps * step);
+    };
 
     const handleChange = (newValue) => {
-        if (newValue > max) {
-            setValue(max);
-        } else if (newValue < min) {
-            setValue(min);
-        } else {
-            setValue(newValue);
-        }
+        setValue(clamp(newValue));
     };
 
     const handleKeyPress = (e) => {
+        let handled = true;
         switch (e.key) {
             case "ArrowRight":
             case "ArrowUp":
@@ -53,37 +50,74 @@ const Slider = ({
                 handleChange(max);
                 break;
             case "PageUp":
-                handleChange(value + step * 10); // Larger increment
+                handleChange(value + step * 10);
                 break;
             case "PageDown":
-                handleChange(value - step * 10); // Larger decrement
+                handleChange(value - step * 10);
                 break;
             default:
+                handled = false;
                 break;
         }
+        if (handled) e.preventDefault();
+    };
+
+    const valueFromPointer = (clientX, clientY) => {
+        const rect = containerRef.current.getBoundingClientRect();
+        const ratio = isVertical
+            ? 1 - (clientY - rect.top) / rect.height
+            : (clientX - rect.left) / rect.width;
+        const raw = min + Math.max(0, Math.min(1, ratio)) * (max - min);
+        return snapToStep(raw);
+    };
+
+    const handlePointerDown = (e) => {
+        if (!containerRef.current) return;
+        e.preventDefault();
+        thumbRef.current?.focus();
+        const newValue = valueFromPointer(e.clientX, e.clientY);
+        setValue(newValue);
+
+        const handleMove = (ev) => {
+            setValue(valueFromPointer(ev.clientX, ev.clientY));
+        };
+        const handleUp = () => {
+            window.removeEventListener("pointermove", handleMove);
+            window.removeEventListener("pointerup", handleUp);
+        };
+        window.addEventListener("pointermove", handleMove);
+        window.addEventListener("pointerup", handleUp);
     };
 
     const ariaValuetext = getUserFriendlyValue
         ? getUserFriendlyValue(value)
         : `${value}`;
 
+    const percent = ((value - min) / (max - min)) * 100;
+    const thumbStyle = isVertical
+        ? { top: `${100 - percent}%` }
+        : { left: `${percent}%` };
+
     return (
         <div
-            role="slider"
-            aria-valuenow={value}
-            aria-valuemin={min}
-            aria-valuemax={max}
-            aria-valuetext={ariaValuetext}
-            aria-labelledby={ariaLabelledby}
-            aria-orientation={isVertical ? "vertical" : "horizontal"}
-            tabIndex={0}
-            onKeyDown={handleKeyPress}
-            style={{
-                ...sliderStyle,
-                ...(isVertical ? verticalStyle : horizontalStyle),
-            }}
+            ref={containerRef}
+            className={`slider-container${isVertical ? " vertical" : ""}`}
+            onPointerDown={handlePointerDown}
         >
-            {/* Slider visual representation (e.g., thumb, track) goes here */}
+            <div
+                ref={thumbRef}
+                role="slider"
+                aria-valuenow={value}
+                aria-valuemin={min}
+                aria-valuemax={max}
+                aria-valuetext={ariaValuetext}
+                aria-label={ariaLabelledby ? undefined : ariaLabel}
+                aria-labelledby={ariaLabelledby}
+                aria-orientation={isVertical ? "vertical" : "horizontal"}
+                tabIndex={0}
+                onKeyDown={handleKeyPress}
+                style={thumbStyle}
+            />
         </div>
     );
 };
@@ -93,6 +127,7 @@ Slider.propTypes = {
     max: PropTypes.number.isRequired,
     step: PropTypes.number,
     initialValue: PropTypes.number,
+    ariaLabel: PropTypes.string,
     ariaLabelledby: PropTypes.string,
     isVertical: PropTypes.bool,
     getUserFriendlyValue: PropTypes.func,
@@ -104,16 +139,3 @@ Slider.defaultProps = {
 };
 
 export default Slider;
-
-// Example styles (to be placed in Slider.css)
-const sliderStyle = {
-    // Common styles for the slider
-};
-
-const horizontalStyle = {
-    // Specific styles for horizontal orientation
-};
-
-const verticalStyle = {
-    // Specific styles for vertical orientation
-};

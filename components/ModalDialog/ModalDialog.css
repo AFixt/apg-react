@@ -1,49 +1,16 @@
-/* Styles for the modal dialog backdrop */
 .modal-dialog-backdrop {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+    background-color: var(--apg-overlay-bg);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Ensure it's above other content */
-}
-
-/* Styles for the modal dialog box */
-.modal-dialog {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 500px; /* Maximum width of the modal */
-    width: 90%; /* Responsive width */
-    z-index: 1001; /* Above the backdrop */
-    position: relative;
-    outline: none; /* Remove outline for focus */
-}
-
-/* Styles for the close button */
-.modal-dialog button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    font-size: 1.2rem;
-}
-
-.modal-dialog button:hover {
-    color: #007bff; /* Change color on hover for visual feedback */
-}
-
-/* Optional: Animation for the modal appearance */
-.modal-dialog-backdrop {
+    z-index: var(--apg-z-overlay);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity var(--apg-transition-slow);
 }
 
 .modal-dialog-backdrop.open {
@@ -51,10 +18,50 @@
 }
 
 .modal-dialog {
-    transform: translateY(-30px);
-    transition: transform 0.3s ease;
+    background-color: var(--apg-color-white);
+    padding: var(--apg-space-xl);
+    border: var(--apg-border-width) solid rgba(0, 0, 0, 0.2);
+    border-radius: var(--apg-radius-lg);
+    box-shadow: var(--apg-shadow-lg);
+    max-width: var(--apg-dialog-max-width);
+    width: 90%;
+    z-index: var(--apg-z-modal);
+    position: relative;
+    transform: translateY(-50px);
+    transition: transform var(--apg-transition-slow);
 }
 
 .modal-dialog.open {
     transform: translateY(0);
+}
+
+.modal-dialog-close {
+    position: absolute;
+    top: var(--apg-space-md);
+    right: var(--apg-space-md);
+    width: 1.75rem;
+    height: 1.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 0;
+    border-radius: var(--apg-radius-sm);
+    opacity: 0.6;
+    transition: opacity var(--apg-transition-fast), box-shadow var(--apg-transition-fast);
+}
+
+.modal-dialog-close:hover {
+    opacity: 1;
+}
+
+.modal-dialog-close:focus,
+.modal-dialog-close:focus-visible {
+    outline: none;
+    opacity: 1;
+    box-shadow: var(--apg-focus-ring);
 }

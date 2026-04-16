@@ -74,6 +74,7 @@ const Button = ({
     return (
         <button
             ref={buttonRef}
+            className={`button${isToggleButton ? " button-toggle" : ""}${isToggleButton && pressed ? " is-pressed" : ""}`}
             role="button"
             aria-pressed={isToggleButton ? pressed : undefined}
             aria-haspopup={label === "Menu" ? "menu" : undefined}

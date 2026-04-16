@@ -1,54 +1,66 @@
-/* Base styles for the switch container */
 .switch-container {
     display: inline-block;
-    position: relative;
 }
 
-/* Styles for the switch label */
 .switch-container label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--apg-space-md);
     cursor: pointer;
-    display: inline-block;
+    color: var(--apg-color-black);
+    font-size: var(--apg-font-size-base);
 }
 
-/* Base styles for the switch */
+.switch-label-text {
+    line-height: var(--apg-line-height-normal);
+}
+
+.switch-control {
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--apg-radius-full);
+}
+
 .switch {
     position: relative;
     display: inline-block;
-    width: 60px; /* Width of the switch */
-    height: 34px; /* Height of the switch */
+    width: 2.5rem;
+    height: 1.25rem;
+    background-color: var(--apg-color-gray-300);
+    border: var(--apg-border-width) solid rgba(0, 0, 0, 0.25);
+    border-radius: var(--apg-radius-full);
+    transition:
+        background-color var(--apg-transition-fast),
+        border-color var(--apg-transition-fast),
+        box-shadow var(--apg-transition-fast);
+    vertical-align: middle;
 }
 
-/* Styles for the sliding thumb inside the switch */
-.switch:before {
+.switch::before {
     content: "";
     position: absolute;
-    height: 26px; /* Height of the thumb */
-    width: 26px; /* Width of the thumb */
-    left: 4px;
-    bottom: 4px;
-    background-color: white; /* Color of the thumb */
-    transition: 0.4s;
+    top: 50%;
+    left: 2px;
+    width: calc(1.25rem - 6px);
+    height: calc(1.25rem - 6px);
+    background-color: var(--apg-color-white);
+    transform: translateY(-50%);
+    transition: transform var(--apg-transition-fast);
     border-radius: 50%;
-}
-
-/* Styles for when the switch is turned on */
-.switch-on:before {
-    transform: translateX(26px); /* Move the thumb to the right */
-}
-
-/* Styles for the switch when it's focused or hovered */
-.switch-container span:focus,
-.switch-container span:hover {
-    box-shadow: 0 0 1px #2196f3; /* Glow effect for focus/hover */
-}
-
-/* Styles for the switch background */
-.switch {
-    background-color: #ccc; /* Background of the switch when it's off */
-    border-radius: 34px; /* Roundness of the switch */
-    transition: background-color 0.4s;
+    box-shadow: var(--apg-shadow-sm);
 }
 
 .switch-on {
-    background-color: #2196f3; /* Background of the switch when it's on */
+    background-color: var(--apg-color-primary);
+    border-color: var(--apg-color-primary);
+}
+
+.switch-on::before {
+    transform: translate(calc(2.5rem - 1.25rem), -50%);
+}
+
+.switch-control:focus,
+.switch-control:focus-visible {
+    outline: none;
+    box-shadow: var(--apg-focus-ring);
 }

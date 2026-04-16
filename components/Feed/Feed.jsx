@@ -18,7 +18,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import Article from "./Article"; // Assume Article is a separate component
+import Article from "../Article/Article";
 import "./Feed.css";
 
 const Feed = ({ fetchArticles }) => {

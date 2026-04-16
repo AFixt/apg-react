@@ -63,17 +63,26 @@ const Carousel = ({ slides }) => {
             onFocus={stopRotation}
             tabIndex={0}
         >
-            <button onClick={prevSlide} aria-label="Previous slide">
-                Prev
-            </button>
-            <button onClick={nextSlide} aria-label="Next slide">
-                Next
+            <button
+                className="carousel-control carousel-control-prev"
+                onClick={prevSlide}
+                aria-label="Previous slide"
+            >
+                <span aria-hidden="true">&#x2039;</span>
             </button>
             <button
+                className="carousel-control carousel-control-next"
+                onClick={nextSlide}
+                aria-label="Next slide"
+            >
+                <span aria-hidden="true">&#x203A;</span>
+            </button>
+            <button
+                className="carousel-control carousel-control-play"
                 onClick={toggleRotation}
                 aria-label={isRotating ? "Pause rotation" : "Start rotation"}
             >
-                {isRotating ? "Pause" : "Play"}
+                {isRotating ? "\u2016" : "\u25B6"}
             </button>
             <div className="slides">
                 {slides.map((slide, index) => (

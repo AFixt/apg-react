@@ -1,53 +1,65 @@
-/* Styles for individual articles */
 .article {
-    border: 1px solid #ddd; /* Light grey border for each article */
-    border-radius: 8px; /* Rounded corners for a softer look */
-    padding: 15px; /* Padding inside each article */
-    margin-bottom: 20px; /* Space between articles */
-    background-color: white; /* White background for readability */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    transition: box-shadow 0.3s ease; /* Smooth transition for hover effect */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--apg-color-white);
+    background-clip: border-box;
+    border: var(--apg-border-width) solid var(--apg-border-color);
+    border-radius: var(--apg-radius-lg);
+    padding: var(--apg-space-xl);
+    margin-bottom: var(--apg-space-xl);
+    box-shadow: var(--apg-shadow-sm);
+    transition: box-shadow var(--apg-transition-normal), transform var(--apg-transition-normal);
 }
 
 .article:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slightly larger shadow on hover for interaction feedback */
+    box-shadow: var(--apg-shadow-md);
+    transform: translateY(-2px);
 }
 
-/* Styles for article titles */
 .article h2 {
     margin-top: 0;
-    margin-bottom: 10px; /* Space below the title */
-    color: #333; /* Dark color for the title */
-    font-size: 1.5rem; /* Larger font size for the title */
+    margin-bottom: var(--apg-space-md);
+    color: var(--apg-color-black);
+    font-size: var(--apg-font-size-xl);
+    font-weight: var(--apg-font-weight-medium);
+    line-height: var(--apg-line-height-normal);
 }
 
-/* Styles for the article content */
 .article p {
-    color: #666; /* Medium grey color for the article text */
-    line-height: 1.6; /* Line height for better readability */
+    color: var(--apg-color-gray-700);
+    line-height: var(--apg-line-height-relaxed);
+    margin: 0 0 var(--apg-space-md) 0;
 }
 
-/* Optional: Styles for images in articles */
 .article img {
-    max-width: 100%; /* Ensure images don't overflow the article container */
-    height: auto; /* Maintain the aspect ratio of images */
-    border-radius: 4px; /* Rounded corners for images */
-    margin-bottom: 15px; /* Space below images */
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--apg-radius-md);
+    margin-bottom: var(--apg-space-lg);
 }
 
-/* Styles for metadata or additional information */
 .article .metadata {
-    font-size: 0.875rem; /* Smaller font size for metadata */
-    color: #999; /* Light grey color for metadata */
-    margin-top: 15px; /* Space above metadata */
+    font-size: var(--apg-font-size-sm);
+    color: var(--apg-color-gray-600);
+    margin-top: var(--apg-space-lg);
+    padding-top: var(--apg-space-md);
+    border-top: var(--apg-border-width) solid var(--apg-border-color);
 }
 
-/* Styles for links or buttons in articles */
 .article a {
-    color: #007bff; /* Color for links */
-    text-decoration: none; /* Remove underline from links */
+    color: var(--apg-color-primary);
+    text-decoration: none;
+    transition: color var(--apg-transition-fast);
 }
 
 .article a:hover {
-    text-decoration: underline; /* Underline on hover for links */
+    color: var(--apg-color-primary-hover);
+    text-decoration: underline;
+}
+
+.article a:focus-visible {
+    outline: none;
+    box-shadow: var(--apg-focus-ring);
+    border-radius: var(--apg-radius-sm);
 }

@@ -29,8 +29,15 @@ const Alert = ({ message, type }) => {
             aria-live="assertive"
             className={`alert alert-${type}`}
         >
-            <span>{message}</span>
-            <button onClick={handleClose}>Dismiss</button>
+            <span className="alert-message">{message}</span>
+            <button
+                type="button"
+                className="alert-close"
+                onClick={handleClose}
+                aria-label="Dismiss"
+            >
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
     );
 };

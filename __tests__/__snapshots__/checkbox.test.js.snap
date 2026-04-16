@@ -1,38 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Checkbox Component Interacting with a Dual-State Checkbox 1`] = `
+exports[`Checkbox Component (APG checkbox pattern) matches the snapshot 1`] = `
 <DocumentFragment>
   <div
     class="checkbox"
   >
     <input
       aria-checked="false"
-      id="checkbox-dualstatecheckbox"
+      class="checkbox-input"
+      id="checkbox-accept"
       type="checkbox"
     />
     <label
-      for="checkbox-dualstatecheckbox"
+      for="checkbox-accept"
     >
-      Dual-State Checkbox
-    </label>
-  </div>
-</DocumentFragment>
-`;
-
-exports[`Checkbox Component Interacting with a Dual-State Checkbox 2`] = `
-<DocumentFragment>
-  <div
-    class="checkbox"
-  >
-    <input
-      aria-checked="true"
-      id="checkbox-dualstatecheckbox"
-      type="checkbox"
-    />
-    <label
-      for="checkbox-dualstatecheckbox"
-    >
-      Dual-State Checkbox
+      Accept
     </label>
   </div>
 </DocumentFragment>

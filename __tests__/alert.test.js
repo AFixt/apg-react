@@ -24,7 +24,7 @@ describe("Alert Component", () => {
     test("Alert Appearance and Behavior", () => {
         render(<Alert message={message} type={type} />);
         const alert = screen.getByRole("alert");
-        const dismissButton = screen.getByText("Dismiss");
+        const dismissButton = screen.getByLabelText("Dismiss");
 
         expect(alert).toBeVisible();
         fireEvent.click(dismissButton);

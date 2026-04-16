@@ -10,18 +10,29 @@ exports[`Carousel Component Carousel Initial Render Snapshot 1`] = `
   >
     <button
       aria-label="Previous slide"
+      class="carousel-control carousel-control-prev"
     >
-      Prev
+      <span
+        aria-hidden="true"
+      >
+        ‹
+      </span>
     </button>
     <button
       aria-label="Next slide"
+      class="carousel-control carousel-control-next"
     >
-      Next
+      <span
+        aria-hidden="true"
+      >
+        ›
+      </span>
     </button>
     <button
       aria-label="Pause rotation"
+      class="carousel-control carousel-control-play"
     >
-      Pause
+      ‖
     </button>
     <div
       class="slides"
@@ -90,18 +101,29 @@ exports[`Carousel Component Carousel Snapshot After Navigation 1`] = `
   >
     <button
       aria-label="Previous slide"
+      class="carousel-control carousel-control-prev"
     >
-      Prev
+      <span
+        aria-hidden="true"
+      >
+        ‹
+      </span>
     </button>
     <button
       aria-label="Next slide"
+      class="carousel-control carousel-control-next"
     >
-      Next
+      <span
+        aria-hidden="true"
+      >
+        ›
+      </span>
     </button>
     <button
       aria-label="Start rotation"
+      class="carousel-control carousel-control-play"
     >
-      Play
+      ▶
     </button>
     <div
       class="slides"

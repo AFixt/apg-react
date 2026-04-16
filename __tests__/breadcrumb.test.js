@@ -1,71 +1,89 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Breadcrumb from "../components/Breadcrumb/Breadcrumb";
 import { BrowserRouter as Router } from "react-router-dom";
 
-// Mock Breadcrumb items
-const breadcrumbItems = [
+/**
+ * APG pattern: Breadcrumb
+ * https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/
+ *
+ * Contract:
+ *   - Wrapping <nav> has aria-label="Breadcrumb".
+ *   - Items are an ordered list.
+ *   - All items except the last are links.
+ *   - The last item represents the current page and is NOT a link; it has aria-current="page".
+ */
+const items = [
     { path: "/", label: "Home" },
-    { path: "/about", label: "About" },
-    { path: "/contact", label: "Contact" },
+    { path: "/library", label: "Library" },
+    { path: "/library/data", label: "Data" },
+    { path: "/library/data/reports", label: "Reports" },
 ];
 
-describe("Breadcrumb Component", () => {
-    const renderBreadcrumb = (items) =>
-        render(
-            <Router>
-                <Breadcrumb items={items} />
-            </Router>
-        );
+const renderBreadcrumb = (bcItems = items) =>
+    render(
+        <Router>
+            <Breadcrumb items={bcItems} />
+        </Router>
+    );
 
-    test("Breadcrumb Snapshot", () => {
-        const { asFragment } = renderBreadcrumb(breadcrumbItems);
-        expect(asFragment()).toMatchSnapshot();
+describe("Breadcrumb Component (APG breadcrumb pattern)", () => {
+    test("container is a navigation landmark labelled 'Breadcrumb'", () => {
+        renderBreadcrumb();
+        const nav = screen.getByRole("navigation");
+        expect(nav).toHaveAttribute("aria-label", "Breadcrumb");
     });
 
-    test("Breadcrumb Containment in a Navigation Landmark Region", () => {
-        renderBreadcrumb(breadcrumbItems);
-        const navElement = screen.getByRole("navigation");
-
-        expect(navElement).toBeInTheDocument();
-        expect(navElement).toHaveAttribute("aria-label", "Breadcrumb");
+    test("items are rendered inside an ordered list", () => {
+        renderBreadcrumb();
+        const nav = screen.getByRole("navigation");
+        const list = within(nav).getByRole("list");
+        expect(list.tagName).toBe("OL");
     });
 
-    test("Links in Breadcrumb", () => {
-        renderBreadcrumb(breadcrumbItems);
+    test("all items except the last are links with correct hrefs", () => {
+        renderBreadcrumb();
         const links = screen.getAllByRole("link");
-
-        links.forEach((link, index) => {
-            if (index < breadcrumbItems.length - 1) {
-                expect(link).toHaveAttribute(
-                    "href",
-                    breadcrumbItems[index].path
-                );
-            }
+        expect(links).toHaveLength(items.length - 1);
+        links.forEach((link, i) => {
+            expect(link).toHaveAttribute("href", items[i].path);
+            expect(link).toHaveTextContent(items[i].label);
         });
+    });
 
-        const currentPage = screen.getByText(
-            breadcrumbItems[breadcrumbItems.length - 1].label
-        );
+    test("last item is NOT a link and represents the current page", () => {
+        renderBreadcrumb();
+        const last = items[items.length - 1];
+        const currentPage = screen.getByText(last.label);
+        expect(currentPage.tagName).not.toBe("A");
         expect(currentPage).toHaveAttribute("aria-current", "page");
     });
 
-    test("Current Page Representation in Breadcrumb", () => {
-        renderBreadcrumb(breadcrumbItems);
-        const currentPage = screen.getByText(
-            breadcrumbItems[breadcrumbItems.length - 1].label
-        );
-
-        expect(currentPage).not.toBeInstanceOf(HTMLAnchorElement);
-        expect(currentPage).toHaveAttribute("aria-current", "page");
+    test("exactly one element has aria-current=page", () => {
+        renderBreadcrumb();
+        const all = screen.getByRole("navigation").querySelectorAll("[aria-current]");
+        expect(all).toHaveLength(1);
+        expect(all[0]).toHaveAttribute("aria-current", "page");
     });
 
-    test("Visual Structure of Breadcrumb", () => {
-        renderBreadcrumb(breadcrumbItems);
-        const breadcrumbNav = screen.getByRole("navigation");
+    test("renders correctly with a single item (current page only)", () => {
+        renderBreadcrumb([{ path: "/", label: "Home" }]);
+        expect(screen.queryAllByRole("link")).toHaveLength(0);
+        expect(screen.getByText("Home")).toHaveAttribute("aria-current", "page");
+    });
 
-        // Note: Visual structure and positioning tests are better suited for visual testing tools or manual inspection.
-        expect(breadcrumbNav).toBeInTheDocument();
+    test("renders correctly with two items", () => {
+        renderBreadcrumb([
+            { path: "/", label: "Home" },
+            { path: "/settings", label: "Settings" },
+        ]);
+        expect(screen.getAllByRole("link")).toHaveLength(1);
+        expect(screen.getByText("Settings")).toHaveAttribute("aria-current", "page");
+    });
+
+    test("matches the snapshot", () => {
+        const { asFragment } = renderBreadcrumb();
+        expect(asFragment()).toMatchSnapshot();
     });
 });

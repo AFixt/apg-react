@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Breadcrumb Component Breadcrumb Snapshot 1`] = `
+exports[`Breadcrumb Component (APG breadcrumb pattern) matches the snapshot 1`] = `
 <DocumentFragment>
   <nav
     aria-label="Breadcrumb"
@@ -22,9 +22,18 @@ exports[`Breadcrumb Component Breadcrumb Snapshot 1`] = `
         class="breadcrumb-item"
       >
         <a
-          href="/about"
+          href="/library"
         >
-          About
+          Library
+        </a>
+      </li>
+      <li
+        class="breadcrumb-item"
+      >
+        <a
+          href="/library/data"
+        >
+          Data
         </a>
       </li>
       <li
@@ -33,7 +42,7 @@ exports[`Breadcrumb Component Breadcrumb Snapshot 1`] = `
         <span
           aria-current="page"
         >
-          Contact
+          Reports
         </span>
       </li>
     </ol>

@@ -3,70 +3,105 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Tooltip from '../components/Tooltip/Tooltip';
 
-describe('Tooltip Component', () => {
-    const text = 'Tooltip Information';
-    const title = 'Hover or Focus Me';
-    const tooltipContent = <button>{title}</button>;
+/**
+ * APG pattern: Tooltip
+ * https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/
+ *
+ * Contract:
+ *   - Tooltip element has role=tooltip.
+ *   - Shown on hover AND focus.
+ *   - Hidden on pointer leave, focus loss, or Escape.
+ *   - Tooltip is associated with the trigger via aria-describedby.
+ */
+describe('Tooltip Component (APG tooltip pattern)', () => {
+    const text = 'Helpful hint';
+    const title = 'Trigger';
+    const content = <button>{title}</button>;
 
-    test('Displaying Tooltip on Focus or Hover', async () => {
-        render(<Tooltip text={text}>{tooltipContent}</Tooltip>);
+    const renderTooltip = (position = 'top') =>
+        render(
+            <Tooltip text={text} position={position}>
+                {content}
+            </Tooltip>
+        );
 
-        const triggerElement = screen.getByText(title);
-        fireEvent.mouseEnter(triggerElement);
+    test('tooltip is hidden initially', () => {
+        renderTooltip();
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
 
+    test('shows on pointer hover', async () => {
+        renderTooltip();
+        fireEvent.mouseEnter(screen.getByText(title));
         await waitFor(() => {
             expect(screen.getByRole('tooltip')).toHaveTextContent(text);
         });
+    });
 
-        fireEvent.mouseLeave(triggerElement);
-
+    test('hides on pointer leave', async () => {
+        renderTooltip();
+        const trigger = screen.getByText(title);
+        fireEvent.mouseEnter(trigger);
+        await waitFor(() => expect(screen.getByRole('tooltip')).toBeInTheDocument());
+        fireEvent.mouseLeave(trigger);
         await waitFor(() => {
             expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
         });
     });
 
-    test('Hiding Tooltip on Focus Loss or Pointer Exit', async () => {
-        render(<Tooltip text={text}>{tooltipContent}</Tooltip>);
-
-        const triggerElement = screen.getByText(title);
-        fireEvent.mouseEnter(triggerElement);
-
+    test('shows on keyboard focus', async () => {
+        renderTooltip();
+        const trigger = screen.getByText(title);
+        fireEvent.focus(trigger);
         await waitFor(() => {
             expect(screen.getByRole('tooltip')).toBeInTheDocument();
         });
+    });
 
-        fireEvent.mouseLeave(triggerElement);
-
+    test('hides on focus loss (blur)', async () => {
+        renderTooltip();
+        const trigger = screen.getByText(title);
+        fireEvent.focus(trigger);
+        await waitFor(() => expect(screen.getByRole('tooltip')).toBeInTheDocument());
+        fireEvent.blur(trigger);
         await waitFor(() => {
             expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
         });
     });
 
-    test('Closing Tooltip with Escape Key', async () => {
-        render(<Tooltip text={text}>{tooltipContent}</Tooltip>);
-
-        const triggerElement = screen.getByText(title);
-        fireEvent.focus(triggerElement);
-        fireEvent.keyDown(triggerElement, { key: 'Escape' });
-
+    test('Escape key dismisses the tooltip', async () => {
+        renderTooltip();
+        const trigger = screen.getByText(title);
+        fireEvent.focus(trigger);
+        fireEvent.keyDown(trigger, { key: 'Escape' });
         await waitFor(() => {
             expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
         });
     });
 
-    test('Tooltip Visibility and Positioning', () => {
-        render(<Tooltip text={text} position="bottom">{tooltipContent}</Tooltip>);
-
-        const triggerElement = screen.getByText(title);
-        fireEvent.mouseEnter(triggerElement);
-
-        const tooltip = screen.getByRole('tooltip');
-        expect(tooltip).toHaveStyle('position: bottom');
+    test('position prop is reflected as data-position attribute', async () => {
+        renderTooltip('bottom');
+        fireEvent.mouseEnter(screen.getByText(title));
+        await waitFor(() => {
+            expect(screen.getByRole('tooltip')).toHaveAttribute('data-position', 'bottom');
+        });
     });
 
-    // Add snapshot test if necessary
-    test('Tooltip snapshot', () => {
-        const { asFragment } = render(<Tooltip text={text}>{tooltipContent}</Tooltip>);
+    test.each(['top', 'right', 'bottom', 'left'])(
+        'supports %s position',
+        async (position) => {
+            renderTooltip(position);
+            fireEvent.mouseEnter(screen.getByText(title));
+            await waitFor(() => {
+                expect(screen.getByRole('tooltip')).toHaveAttribute('data-position', position);
+            });
+        }
+    );
+
+    test('tooltip snapshot (closed)', () => {
+        const { asFragment } = render(
+            <Tooltip text={text}>{content}</Tooltip>
+        );
         expect(asFragment()).toMatchSnapshot();
     });
 });

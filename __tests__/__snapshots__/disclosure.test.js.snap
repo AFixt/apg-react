@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Disclosure Component Accessibility Features of the Disclosure Control 1`] = `
+exports[`Disclosure Component (APG disclosure pattern) matches the snapshot (closed) 1`] = `
 <DocumentFragment>
   <div
     class="disclosure-widget"
@@ -10,82 +10,19 @@ exports[`Disclosure Component Accessibility Features of the Disclosure Control 1
       aria-expanded="false"
       class="disclosure-control"
     >
-      Disclosure Title
+      More details
       <span
         class="indicator"
       >
         ▼
-      </span>
-    </button>
-  </div>
-</DocumentFragment>
-`;
-
-exports[`Disclosure Component Toggling the Visibility of Content with Keyboard 1`] = `
-<DocumentFragment>
-  <div
-    class="disclosure-widget"
-  >
-    <button
-      aria-controls="disclosure-content"
-      aria-expanded="false"
-      class="disclosure-control"
-    >
-      Disclosure Title
-      <span
-        class="indicator"
-      >
-        ▼
-      </span>
-    </button>
-  </div>
-</DocumentFragment>
-`;
-
-exports[`Disclosure Component Toggling the Visibility of Content with Keyboard 2`] = `
-<DocumentFragment>
-  <div
-    class="disclosure-widget"
-  >
-    <button
-      aria-controls="disclosure-content"
-      aria-expanded="true"
-      class="disclosure-control"
-    >
-      Disclosure Title
-      <span
-        class="indicator"
-      >
-        ▲
       </span>
     </button>
     <div
-      class="disclosure-content"
+      class="disclosure-content hidden"
       id="disclosure-content"
     >
-      Disclosure Content
+      Hidden content
     </div>
-  </div>
-</DocumentFragment>
-`;
-
-exports[`Disclosure Component Toggling the Visibility of Content with Keyboard 3`] = `
-<DocumentFragment>
-  <div
-    class="disclosure-widget"
-  >
-    <button
-      aria-controls="disclosure-content"
-      aria-expanded="false"
-      class="disclosure-control"
-    >
-      Disclosure Title
-      <span
-        class="indicator"
-      >
-        ▼
-      </span>
-    </button>
   </div>
 </DocumentFragment>
 `;

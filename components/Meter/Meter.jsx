@@ -1,9 +1,8 @@
 /**
  * A meter component that displays a value within a specified range.
- *  The userFriendlyText function should be implemented to provide
- *  meaningful interpretations of the meter value if needed.
- *  This implementation provides a foundational structure for a meter component,
- *  and you may need to adjust it to fit the specific requirements and context of your application.
+ *
+ * Uses a div-based visual (not a native <meter>) so CSS is fully
+ * controllable and matches the Progressbar appearance exactly.
  *
  * @component
  * @param {Object} props - The component props.
@@ -27,21 +26,34 @@ const Meter = ({
     labelId,
     userFriendlyText,
 }) => {
-    const getAriaValueText = () => {
-        return userFriendlyText ? userFriendlyText(value) : `${value}`;
-    };
+    const pct = Math.max(
+        0,
+        Math.min(100, ((value - minValue) / (maxValue - minValue)) * 100)
+    );
+    const ariaValueText = userFriendlyText ? userFriendlyText(value) : `${value}`;
+    const groupLabelId = labelId || "meter-label";
 
     return (
         <div className="meter-container">
-            {label && <label id={labelId}>{label}</label>}
-            <meter
+            {label && (
+                <div id={groupLabelId} className="meter-label">
+                    {label}
+                </div>
+            )}
+            <div
                 role="meter"
                 aria-valuenow={value}
                 aria-valuemin={minValue}
                 aria-valuemax={maxValue}
-                aria-valuetext={getAriaValueText()}
-                aria-labelledby={label ? labelId : undefined}
-            />
+                aria-valuetext={ariaValueText}
+                aria-labelledby={label ? groupLabelId : undefined}
+                className="meter"
+            >
+                <div
+                    className="meter-fill"
+                    style={{ width: `${pct}%` }}
+                />
+            </div>
         </div>
     );
 };

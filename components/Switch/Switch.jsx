@@ -20,8 +20,8 @@ const Switch = ({ label, ariaLabelledby, ariaDescribedby, initialChecked }) => {
         setIsChecked(!isChecked);
     };
 
-    const handleKeyPress = (e) => {
-        if (e.keyCode === 32 || e.key === "Enter") {
+    const handleKeyDown = (e) => {
+        if (e.key === " " || e.key === "Enter") {
             e.preventDefault();
             toggleSwitch();
         }
@@ -30,15 +30,16 @@ const Switch = ({ label, ariaLabelledby, ariaDescribedby, initialChecked }) => {
     return (
         <div className="switch-container">
             <label>
-                {label}
+                <span className="switch-label-text">{label}</span>
                 <span
                     role="switch"
                     aria-checked={isChecked}
                     tabIndex={0}
-                    onKeyPress={handleKeyPress}
+                    onKeyDown={handleKeyDown}
                     onClick={toggleSwitch}
                     aria-labelledby={ariaLabelledby}
                     aria-describedby={ariaDescribedby}
+                    className="switch-control"
                 >
                     <span
                         className={`switch ${

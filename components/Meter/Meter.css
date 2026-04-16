@@ -1,42 +1,25 @@
-/* Base styles for the meter container */
 .meter-container {
-    width: 100%; /* Full width of the container */
-    padding: 10px; /* Padding around the meter */
+    width: 100%;
 }
 
-/* Styles for the meter element */
-.meter-container meter {
-    width: 100%; /* Full width of the meter */
-    height: 20px; /* Height of the meter */
-    background-color: #e0e0e0; /* Background color when the value is low */
-    border-radius: 10px; /* Rounded corners for the meter */
-    border: none; /* Remove default border */
-    appearance: none; /* Remove default appearance */
+.meter-label {
+    margin-bottom: var(--apg-space-xs);
+    color: var(--apg-color-black);
+    font-size: var(--apg-font-size-sm);
 }
 
-/* Styles for the meter's value (progress) */
-.meter-container meter::-webkit-meter-bar {
-    background-color: #e0e0e0;
-    border-radius: 10px;
+.meter {
+    width: 100%;
+    height: 1rem;
+    background-color: #dddddd;
+    border-radius: var(--apg-radius-md);
+    overflow: hidden;
+    position: relative;
 }
 
-.meter-container meter::-webkit-meter-optimum-value {
-    background-color: #4caf50; /* Color for optimum value */
-    border-radius: 10px 0 0 10px; /* Rounded corners on the left side */
-}
-
-.meter-container meter::-webkit-meter-suboptimum-value {
-    background-color: #ffa500; /* Color for suboptimum value */
-    border-radius: 10px 0 0 10px; /* Rounded corners on the left side */
-}
-
-.meter-container meter::-webkit-meter-even-less-good-value {
-    background-color: #f44336; /* Color for less good value */
-    border-radius: 10px 0 0 10px; /* Rounded corners on the left side */
-}
-
-/* Firefox styles for the meter's value (progress) */
-.meter-container meter::-moz-meter-bar {
-    background-color: #4caf50;
-    border-radius: 10px 0 0 10px;
+.meter-fill {
+    height: 100%;
+    background-color: var(--apg-color-primary);
+    border-radius: var(--apg-radius-md) 0 0 var(--apg-radius-md);
+    transition: width 0.3s ease;
 }

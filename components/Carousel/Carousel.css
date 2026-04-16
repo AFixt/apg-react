@@ -1,67 +1,134 @@
-/* Styles for the carousel container */
 .carousel {
     position: relative;
-    width: 100%; /* Full width of the carousel */
-    overflow: hidden; /* Hide the overflowing content */
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--apg-radius-lg);
+    background-color: var(--apg-color-black);
 }
 
-/* Styles for the slides */
 .carousel .slides {
     display: flex;
-    transition: transform 0.5s ease-in-out; /* Smooth transition for slide change */
+    transition: transform var(--apg-transition-slow);
 }
 
 .carousel .slides > div {
-    flex: 0 0 100%; /* Each slide takes up full width of the container */
-    overflow: hidden; /* Hide overflowing content inside each slide */
+    flex: 0 0 100%;
+    overflow: hidden;
 }
 
-/* Styles for the navigation buttons */
-.carousel button {
+.carousel-control {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    border: none;
-    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.55);
+    color: var(--apg-color-white);
+    border: 0;
+    padding: var(--apg-space-md);
     cursor: pointer;
-    z-index: 2;
+    opacity: 1;
+    z-index: var(--apg-z-dropdown);
+    font-size: var(--apg-font-size-2xl);
+    line-height: 1;
+    transition: background-color var(--apg-transition-fast), box-shadow var(--apg-transition-fast);
 }
 
-.carousel button:hover {
-    background-color: rgba(0, 0, 0, 0.7);
+.carousel-control:hover {
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
-/* Positioning the navigation buttons */
-.carousel button:first-child {
-    left: 10px;
+.carousel-control:focus,
+.carousel-control:focus-visible {
+    outline: none;
+    opacity: 1;
+    box-shadow: inset 0 0 0 3px var(--apg-focus-ring-color);
 }
 
-.carousel button:last-child {
-    right: 10px;
+.carousel-control-prev {
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 var(--apg-radius-md) var(--apg-radius-md) 0;
 }
 
-/* Styles for the slide selectors (indicators) */
+.carousel-control-next {
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--apg-radius-md) 0 0 var(--apg-radius-md);
+}
+
+.carousel-control-play {
+    top: auto;
+    bottom: var(--apg-space-sm);
+    left: var(--apg-space-sm);
+    right: auto;
+    transform: none;
+    width: 2rem;
+    height: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--apg-radius-full);
+    font-size: 0.75rem;
+    background-color: rgba(0, 0, 0, 0.55);
+}
+
+.carousel-control-play:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
 .carousel .slide-selectors {
     position: absolute;
-    bottom: 10px;
+    bottom: var(--apg-space-lg);
     left: 50%;
     transform: translateX(-50%);
     display: flex;
+    gap: var(--apg-space-sm);
+    padding: 0;
+    margin: 0;
+    z-index: calc(var(--apg-z-dropdown) + 1);
 }
 
 .carousel .slide-selectors button {
-    border: none;
-    background-color: #ddd;
-    margin: 0 5px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
+    position: static;
+    transform: none;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    padding: 0 var(--apg-space-sm);
+    margin: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: var(--apg-color-black);
+    border: 0;
+    opacity: 0.8;
+    border-radius: var(--apg-radius-full);
     cursor: pointer;
+    font-size: var(--apg-font-size-sm);
+    line-height: 1;
+    transition: opacity var(--apg-transition-fast), background-color var(--apg-transition-fast);
 }
 
-.carousel .slide-selectors button:hover,
+.carousel .slide-selectors button:hover {
+    opacity: 1;
+    background-color: var(--apg-color-white);
+}
+
 .carousel .slide-selectors button[disabled] {
-    background-color: #333;
+    opacity: 1;
+    background-color: var(--apg-color-white);
+    color: var(--apg-color-primary);
+    font-weight: var(--apg-font-weight-semibold);
+    cursor: default;
+}
+
+.carousel .slide-selectors button:focus-visible {
+    outline: none;
+    box-shadow: var(--apg-focus-ring);
 }

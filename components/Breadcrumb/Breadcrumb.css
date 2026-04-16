@@ -1,40 +1,52 @@
-/* Styles for the breadcrumb navigation */
 .breadcrumb-nav {
+    margin: 0 0 var(--apg-space-lg) 0;
+}
+
+.breadcrumb-nav .breadcrumb-list {
     display: flex;
-    list-style: none; /* Remove default list styling */
-    padding: 0; /* Remove default padding */
+    flex-wrap: wrap;
+    align-items: center;
+    list-style: none;
+    padding: var(--apg-space-md) var(--apg-space-lg);
+    margin: 0;
+    background-color: var(--apg-color-gray-100);
+    border-radius: var(--apg-radius-md);
+    font-size: var(--apg-font-size-sm);
 }
 
-/* Styles for each breadcrumb item */
 .breadcrumb-item {
-    margin-right: 10px; /* Space between breadcrumb items */
+    display: flex;
+    align-items: center;
 }
 
-/* Styles for the breadcrumb links */
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "/";
+    padding: 0 var(--apg-space-sm);
+    color: var(--apg-color-gray-500);
+}
+
 .breadcrumb-item a {
-    color: #007bff; /* Color of the breadcrumb links */
-    text-decoration: none; /* Remove underline from links */
-    transition: color 0.3s ease; /* Smooth transition for color change on hover */
+    color: var(--apg-color-primary);
+    text-decoration: none;
+    transition: color var(--apg-transition-fast);
 }
 
 .breadcrumb-item a:hover {
-    color: #0056b3; /* Darker color on hover */
+    color: var(--apg-color-primary-hover);
+    text-decoration: underline;
 }
 
-/* Styles for the current breadcrumb item */
+.breadcrumb-item a:focus-visible {
+    outline: none;
+    box-shadow: var(--apg-focus-ring);
+    border-radius: var(--apg-radius-sm);
+}
+
 .breadcrumb-item span[aria-current="page"] {
-    color: #666; /* Different color for the current page */
-    font-weight: bold; /* Make the current page bold */
+    color: var(--apg-color-gray-600);
+    font-weight: var(--apg-font-weight-normal);
 }
 
-/* Optional: Styles for breadcrumb separators */
 .breadcrumb-item::after {
-    content: "/"; /* Separator character */
-    margin-left: 10px; /* Space after the separator */
-    color: #999; /* Color of the separator */
-}
-
-/* Remove the separator after the last item */
-.breadcrumb-item:last-child::after {
     content: none;
 }

@@ -102,8 +102,11 @@ const config = {
   // An enum that specifies notification mode. Requires { notify: true }
   // notifyMode: "failure-change",
 
-  // A preset that is used as a base for Jest's configuration
-  preset: 'jest-puppeteer',
+  // NOTE: the jest-puppeteer preset has been removed. All tests in this project
+  // use React Testing Library + jsdom; no tests drive a real browser. The preset
+  // was forcing every test run to launch Chrome, which failed in CI-like envs
+  // with "Failed to launch the browser process".
+  // preset: 'jest-puppeteer',
 
   // Run tests from one or more projects
   // projects: undefined,
@@ -158,7 +161,11 @@ const config = {
 
   // The glob patterns Jest uses to detect test files
   testMatch: [
-  "**/__tests__/**/*.[jt]s?(x)",
+    "**/__tests__/**/*.test.[jt]s?(x)",
+  ],
+  testPathIgnorePatterns: [
+    "/node_modules/",
+    "/e2e/",
   ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped

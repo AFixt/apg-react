@@ -1,14 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Switch Component matches the snapshot 1`] = `
+exports[`Switch Component (APG switch pattern) matches the snapshot 1`] = `
 <DocumentFragment>
   <div
     class="switch-container"
   >
     <label>
-      Test Switch
+      <span
+        class="switch-label-text"
+      >
+        Enable notifications
+      </span>
       <span
         aria-checked="false"
+        class="switch-control"
         role="switch"
         tabindex="0"
       >

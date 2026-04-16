@@ -28,6 +28,19 @@ const AlertDialog = ({ isOpen, title, message, onClose }) => {
         }
     }, [isOpen]);
 
+    // Document-level Escape handler so the key works regardless of focus target.
+    useEffect(() => {
+        if (!isOpen) return;
+        const onKeyDown = (e) => {
+            if (e.key === "Escape") {
+                e.stopPropagation();
+                onClose();
+            }
+        };
+        document.addEventListener("keydown", onKeyDown);
+        return () => document.removeEventListener("keydown", onKeyDown);
+    }, [isOpen, onClose]);
+
     if (!isOpen) return null;
 
     return (

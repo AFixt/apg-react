@@ -1,0 +1,61 @@
+.grid-wrapper {
+    width: 100%;
+    border: var(--apg-border-width) solid var(--apg-border-color);
+    border-radius: var(--apg-radius-md);
+    overflow: hidden;
+    background-color: var(--apg-color-white);
+    color: var(--apg-color-black);
+}
+
+.grid {
+    display: table;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.grid-caption {
+    display: block;
+    width: 100%;
+    padding: var(--apg-space-sm) var(--apg-space-lg);
+    background-color: var(--apg-color-gray-50);
+    font-weight: var(--apg-font-weight-semibold);
+    border-bottom: var(--apg-border-width) solid var(--apg-border-color);
+    box-sizing: border-box;
+}
+
+.grid-row {
+    display: table-row;
+}
+
+.grid-header-row {
+    background-color: var(--apg-color-gray-100);
+}
+
+.grid-cell {
+    display: table-cell;
+    padding: var(--apg-space-sm) var(--apg-space-lg);
+    border-top: var(--apg-border-width) solid var(--apg-border-color);
+    outline: none;
+    transition: background-color var(--apg-transition-fast), box-shadow var(--apg-transition-fast);
+}
+
+.grid-header-row .grid-cell {
+    border-top: 0;
+}
+
+.grid-columnheader {
+    font-weight: var(--apg-font-weight-semibold);
+    text-align: left;
+}
+
+.grid-cell:focus,
+.grid-cell:focus-visible {
+    outline: none;
+    background-color: #e7f1ff;
+    box-shadow: inset 0 0 0 2px var(--apg-color-primary);
+}
+
+.grid-row:hover .grid-cell {
+    background-color: var(--apg-color-gray-50);
+}

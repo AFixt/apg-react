@@ -7,11 +7,21 @@ exports[`Alert Component Alert Snapshot 1`] = `
     class="alert alert-info"
     role="alert"
   >
-    <span>
+    <span
+      class="alert-message"
+    >
       This is a test alert
     </span>
-    <button>
-      Dismiss
+    <button
+      aria-label="Dismiss"
+      class="alert-close"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+      >
+        ×
+      </span>
     </button>
   </div>
 </DocumentFragment>

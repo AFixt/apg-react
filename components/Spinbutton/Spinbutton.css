@@ -1,53 +1,77 @@
-/* Base styles for the spinbutton container */
 .spinbutton-container {
-    display: inline-block;
+    display: inline-flex;
     position: relative;
+    height: 2.375rem;
 }
 
-/* Styles for the input field of the spin button */
 .spinbutton-container input[type="text"] {
-    width: 80px; /* Width of the input field */
-    height: 30px; /* Height of the input field */
-    border: 1px solid #ccc; /* Border color */
-    border-radius: 4px; /* Rounded corners */
-    padding: 0 10px; /* Padding inside the input field */
-    font-size: 1rem; /* Font size */
-    text-align: center; /* Center the text */
+    width: 6rem;
+    height: 100%;
+    border: var(--apg-border-width) solid var(--apg-color-gray-400);
+    border-radius: var(--apg-radius-md);
+    padding: 0.375rem 1.75rem 0.375rem 0.75rem;
+    font-size: var(--apg-font-size-base);
+    font-family: var(--apg-font-family);
+    line-height: var(--apg-line-height-normal);
+    color: var(--apg-color-black);
+    background-color: var(--apg-color-white);
+    text-align: left;
+    box-sizing: border-box;
+    transition: border-color var(--apg-transition-fast), box-shadow var(--apg-transition-fast);
 }
 
-/* Styling for when the input is invalid */
+.spinbutton-container input[type="text"]:focus,
+.spinbutton-container input[type="text"]:focus-visible {
+    outline: none;
+    border-color: var(--apg-color-primary);
+    box-shadow: var(--apg-focus-ring);
+}
+
 .spinbutton-container input[type="text"].is-invalid {
-    border-color: red; /* Red border for invalid input */
+    border-color: var(--apg-color-invalid);
 }
 
-/* Optional: Styles for up/down arrows or buttons for increment/decrement */
+.spinbutton-container input[type="text"].is-invalid:focus {
+    box-shadow: 0 0 0 var(--apg-focus-ring-width) rgba(220, 53, 69, 0.25);
+}
+
 .spinbutton-container .spinbutton-arrow {
     position: absolute;
-    width: 20px; /* Width of the arrow/button */
-    height: 15px; /* Height of the arrow/button */
-    background-color: #f5f5f5; /* Background color */
-    border: 1px solid #ccc; /* Border color */
-    text-align: center; /* Center the arrow symbol */
-    cursor: pointer; /* Pointer cursor on hover */
+    right: 1px;
+    width: 1.25rem;
+    height: calc(50% - 1px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--apg-color-gray-100);
+    border: 0;
+    border-left: var(--apg-border-width) solid var(--apg-color-gray-400);
+    color: var(--apg-color-gray-700);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    font-size: 0.625rem;
+    transition: background-color var(--apg-transition-fast), color var(--apg-transition-fast);
 }
 
-/* Positioning the up arrow/button */
+.spinbutton-container .spinbutton-arrow:hover {
+    background-color: var(--apg-color-primary);
+    color: var(--apg-color-white);
+}
+
+.spinbutton-container .spinbutton-arrow:focus-visible {
+    outline: none;
+    box-shadow: var(--apg-focus-ring);
+    z-index: 1;
+}
+
 .spinbutton-container .spinbutton-arrow-up {
-    right: 0;
-    top: 0;
-    border-bottom: none; /* Remove bottom border */
+    top: 1px;
+    border-top-right-radius: var(--apg-radius-md);
+    border-bottom: var(--apg-border-width) solid var(--apg-color-gray-400);
 }
 
-/* Positioning the down arrow/button */
 .spinbutton-container .spinbutton-arrow-down {
-    right: 0;
-    bottom: 0;
-    border-top: none; /* Remove top border */
-}
-
-/* Styling for arrow symbols or icons (if used) */
-.spinbutton-container .spinbutton-arrow::before {
-    content: ""; /* Add arrow symbols or use background-image for icons */
-    display: block;
-    /* Additional styling for the arrow symbol/icon */
+    bottom: 1px;
+    border-bottom-right-radius: var(--apg-radius-md);
 }

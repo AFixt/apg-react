@@ -13,7 +13,15 @@ exports[`Accordion Component matches the snapshot 1`] = `
           class="accordion-header"
           id="accordion-header-0"
         >
-          Section 1
+          <span
+            class="accordion-title"
+          >
+            Section 1
+          </span>
+          <span
+            aria-hidden="true"
+            class="accordion-chevron"
+          />
         </button>
       </h2>
       <div
@@ -33,7 +41,15 @@ exports[`Accordion Component matches the snapshot 1`] = `
           class="accordion-header"
           id="accordion-header-1"
         >
-          Section 2
+          <span
+            class="accordion-title"
+          >
+            Section 2
+          </span>
+          <span
+            aria-hidden="true"
+            class="accordion-chevron"
+          />
         </button>
       </h2>
       <div

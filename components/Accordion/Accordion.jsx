@@ -44,7 +44,8 @@ const Accordion = ({ items, toggleItem, openIndex }) => {
                             aria-expanded={openIndex === index}
                             aria-controls={`panel-${index}`}
                         >
-                            {item.title}
+                            <span className="accordion-title">{item.title}</span>
+                            <span className="accordion-chevron" aria-hidden="true" />
                         </button>
                     </h2>
                     <div

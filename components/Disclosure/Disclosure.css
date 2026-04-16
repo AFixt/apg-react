@@ -1,45 +1,59 @@
-/* Base styles for the disclosure widget */
 .disclosure-widget {
-    margin-bottom: 20px; /* Space at the bottom of each disclosure widget */
+    margin-bottom: var(--apg-space-xl);
 }
 
-/* Styles for the disclosure control (button) */
 .disclosure-control {
-    background-color: #007bff; /* Background color of the button */
-    color: white; /* Text color of the button */
-    padding: 10px 15px; /* Padding inside the button */
-    border: none; /* No border for the button */
-    border-radius: 4px; /* Rounded corners for the button */
-    font-size: 1rem; /* Font size for the button text */
-    cursor: pointer; /* Cursor to pointer to indicate it's clickable */
-    display: inline-block; /* Inline block for proper alignment */
-    margin-bottom: 5px; /* Margin at the bottom of the button */
-    transition: background-color 0.3s; /* Transition for hover effect */
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--apg-space-sm);
+    background-color: var(--apg-color-primary);
+    color: var(--apg-color-white);
+    padding: 0.375rem 0.75rem;
+    border: var(--apg-border-width) solid var(--apg-color-primary);
+    border-radius: var(--apg-radius-md);
+    font-size: var(--apg-font-size-base);
+    font-family: var(--apg-font-family);
+    font-weight: var(--apg-font-weight-normal);
+    line-height: var(--apg-line-height-normal);
+    cursor: pointer;
+    margin-bottom: var(--apg-space-sm);
+    transition:
+        background-color var(--apg-transition-fast),
+        border-color var(--apg-transition-fast),
+        box-shadow var(--apg-transition-fast);
 }
 
 .disclosure-control:hover {
-    background-color: #0056b3; /* Darker background on hover */
+    background-color: var(--apg-color-primary-hover);
+    border-color: var(--apg-color-primary-hover);
 }
 
-/* Styles for the indicator icon in the button */
+.disclosure-control:focus,
+.disclosure-control:focus-visible {
+    outline: none;
+    background-color: var(--apg-color-primary-hover);
+    border-color: var(--apg-color-primary-hover);
+    box-shadow: var(--apg-focus-ring);
+}
+
 .disclosure-control .indicator {
-    float: right; /* Position the indicator to the right */
-    transition: transform 0.3s; /* Smooth transition for the indicator rotation */
+    display: inline-block;
+    transition: transform var(--apg-transition-normal);
 }
 
-/* Rotate the indicator when the content is visible */
 .disclosure-control[aria-expanded="true"] .indicator {
-    transform: rotate(180deg); /* Rotate the indicator arrow */
+    transform: rotate(180deg);
 }
 
-/* Styles for the disclosure content */
 .disclosure-content {
-    padding: 15px; /* Padding around the content */
-    border: 1px solid #ddd; /* Border around the content */
-    border-radius: 4px; /* Rounded corners for the content box */
-    margin-top: 10px; /* Space above the content box */
-    background-color: #f8f9fa; /* Light background for the content */
-    display: none; /* Hide by default */
+    padding: var(--apg-space-lg);
+    border: var(--apg-border-width) solid var(--apg-border-color);
+    border-radius: var(--apg-radius-md);
+    margin-top: var(--apg-space-sm);
+    background-color: var(--apg-color-white);
+    box-shadow: var(--apg-shadow-sm);
+    display: none;
 }
 
 .disclosure-content.hidden {

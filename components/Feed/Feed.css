@@ -1,49 +1,49 @@
-/* Styles for the feed container */
 .feed {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Spacing between articles */
-    padding: 20px; /* Padding around the feed */
-    max-width: 600px; /* Maximum width of the feed */
-    margin: auto; /* Centering the feed */
+    gap: var(--apg-space-lg);
+    padding: var(--apg-space-lg);
+    max-width: 680px;
+    margin: auto;
 }
 
-/* Styles for individual articles */
-.article {
-    border: 1px solid #ddd; /* Border around each article */
-    padding: 15px; /* Padding inside each article */
-    border-radius: 8px; /* Rounded corners for articles */
-    background-color: white; /* Background color */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    transition: box-shadow 0.3s ease; /* Smooth transition for hover effect */
+.feed .article {
+    border: var(--apg-border-width) solid var(--apg-border-color);
+    padding: var(--apg-space-xl);
+    border-radius: var(--apg-radius-lg);
+    background-color: var(--apg-color-white);
+    box-shadow: var(--apg-shadow-sm);
+    transition: box-shadow var(--apg-transition-normal), transform var(--apg-transition-normal);
 }
 
-.article:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect on hover */
+.feed .article:hover {
+    box-shadow: var(--apg-shadow-md);
+    transform: translateY(-2px);
 }
 
-/* Styles for the article title */
-.article h2 {
+.feed .article h2 {
     margin-top: 0;
-    color: #333; /* Color for article titles */
-    font-size: 1.2rem; /* Font size for titles */
+    margin-bottom: var(--apg-space-md);
+    color: var(--apg-color-black);
+    font-size: var(--apg-font-size-lg);
+    font-weight: var(--apg-font-weight-medium);
 }
 
-/* Styles for the article content */
-.article p {
-    color: #666; /* Color for article text */
-    line-height: 1.5; /* Line height for readability */
+.feed .article p {
+    color: var(--apg-color-gray-700);
+    line-height: var(--apg-line-height-normal);
+    margin: 0;
 }
 
-/* Loading indicator styles */
 .feed-loading {
-    text-align: center; /* Center the loading indicator */
-    padding: 20px; /* Padding around the loading indicator */
+    text-align: center;
+    padding: var(--apg-space-xl);
+    color: var(--apg-color-gray-600);
 }
 
-/* Styles for the end of the feed */
 .feed-end {
-    text-align: center; /* Center the end of feed indicator */
-    color: #999; /* Color for the end of feed text */
-    padding: 20px; /* Padding around the text */
+    text-align: center;
+    color: var(--apg-color-gray-500);
+    padding: var(--apg-space-xl);
+    font-size: var(--apg-font-size-sm);
 }

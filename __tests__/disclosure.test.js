@@ -3,58 +3,86 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Disclosure from "../components/Disclosure/Disclosure";
 
-describe("Disclosure Component", () => {
-    const title = "Disclosure Title";
-    const content = "Disclosure Content";
+/**
+ * APG pattern: Disclosure
+ * https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/
+ *
+ * Contract:
+ *   - Trigger is a <button> with aria-expanded and aria-controls.
+ *   - Enter and Space toggle content visibility.
+ *   - Click toggles content visibility.
+ */
+describe("Disclosure Component (APG disclosure pattern)", () => {
+    const title = "More details";
+    const content = "Hidden content";
 
-    test("Toggling the Visibility of Content with Keyboard", () => {
+    const getButton = () =>
+        screen.getByRole("button", { name: new RegExp(title) });
 
-        const { asFragment } = render(<Disclosure title={title}>{content}</Disclosure>);
-
-        // Snapshot before interaction
-        expect(asFragment()).toMatchSnapshot();
-
-        // Adjust the query to include the visual indicator
-        const button = screen.getByRole("button", {
-            name: /Disclosure Title ▼/,
-        });
-        expect(screen.queryByText(content)).not.toBeInTheDocument();
-
-        fireEvent.keyDown(button, { key: "Enter" });
-        expect(screen.getByText(content)).toBeInTheDocument();
-
-        // Snapshot after opening
-        expect(asFragment()).toMatchSnapshot();
-
-        fireEvent.keyDown(button, { key: "Enter" });
-        expect(screen.queryByText(content)).not.toBeInTheDocument();
-
-        // Snapshot after closing
-        expect(asFragment()).toMatchSnapshot();
+    test("button starts with aria-expanded=false", () => {
+        render(<Disclosure title={title}>{content}</Disclosure>);
+        expect(getButton()).toHaveAttribute("aria-expanded", "false");
     });
 
-    test("Accessibility Features of the Disclosure Control", () => {
-        const { asFragment } = render(<Disclosure title={title}>{content}</Disclosure>);
-        expect(asFragment()).toMatchSnapshot();
+    test("button references controlled content via aria-controls", () => {
+        render(<Disclosure title={title}>{content}</Disclosure>);
+        const button = getButton();
+        const controlledId = button.getAttribute("aria-controls");
+        expect(controlledId).toBeTruthy();
+        const panel = document.getElementById(controlledId);
+        expect(panel).toHaveTextContent(content);
+    });
 
-        const button = screen.getByRole("button", {
-            name: /Disclosure Title ▼/,
-        });
-        expect(button).toHaveAttribute("aria-expanded", "false");
+    test("content is hidden initially", () => {
+        render(<Disclosure title={title}>{content}</Disclosure>);
+        expect(
+            screen.getByText(content).closest(".disclosure-content")
+        ).toHaveClass("hidden");
+    });
+
+    test("click toggles aria-expanded and content visibility", () => {
+        render(<Disclosure title={title}>{content}</Disclosure>);
+        const button = getButton();
 
         fireEvent.click(button);
         expect(button).toHaveAttribute("aria-expanded", "true");
-    });
-
-    test("Visual Indicators for Content Visibility", () => {
-        render(<Disclosure title={title}>{content}</Disclosure>);
-
-        const button = screen.getByRole("button", {
-            name: /Disclosure Title ▼/,
-        });
-        const indicator = screen.getByText(/▼/); // Indicator when content is hidden
+        expect(
+            screen.getByText(content).closest(".disclosure-content")
+        ).not.toHaveClass("hidden");
 
         fireEvent.click(button);
-        expect(screen.getByText(/▲/)).toBeInTheDocument(); // Indicator when content is visible
+        expect(button).toHaveAttribute("aria-expanded", "false");
+        expect(
+            screen.getByText(content).closest(".disclosure-content")
+        ).toHaveClass("hidden");
+    });
+
+    test("Enter key toggles content", () => {
+        render(<Disclosure title={title}>{content}</Disclosure>);
+        const button = getButton();
+        fireEvent.keyDown(button, { key: "Enter" });
+        expect(button).toHaveAttribute("aria-expanded", "true");
+        fireEvent.keyDown(button, { key: "Enter" });
+        expect(button).toHaveAttribute("aria-expanded", "false");
+    });
+
+    test("visual indicator flips between ▼ and ▲", () => {
+        render(<Disclosure title={title}>{content}</Disclosure>);
+        const button = getButton();
+        expect(button).toHaveTextContent("▼");
+        fireEvent.click(button);
+        expect(button).toHaveTextContent("▲");
+    });
+
+    test("button is a real <button> (native keyboard semantics)", () => {
+        render(<Disclosure title={title}>{content}</Disclosure>);
+        expect(getButton().tagName).toBe("BUTTON");
+    });
+
+    test("matches the snapshot (closed)", () => {
+        const { asFragment } = render(
+            <Disclosure title={title}>{content}</Disclosure>
+        );
+        expect(asFragment()).toMatchSnapshot();
     });
 });
