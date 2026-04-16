@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tooltip Component (APG tooltip pattern) tooltip snapshot (closed) 1`] = `
+<DocumentFragment>
+  <div
+    class="tooltip-container"
+  >
+    <button
+      tabindex="0"
+    >
+      Trigger
+    </button>
+  </div>
+</DocumentFragment>
+`;

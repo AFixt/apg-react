@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Alert Component Alert Snapshot 1`] = `
+<DocumentFragment>
+  <div
+    aria-live="assertive"
+    class="alert alert-info"
+    role="alert"
+  >
+    <span
+      class="alert-message"
+    >
+      This is a test alert
+    </span>
+    <button
+      aria-label="Dismiss"
+      class="alert-close"
+      type="button"
+    >
+      <span
+        aria-hidden="true"
+      >
+        ×
+      </span>
+    </button>
+  </div>
+</DocumentFragment>
+`;

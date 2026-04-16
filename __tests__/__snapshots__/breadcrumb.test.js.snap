@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Breadcrumb Component (APG breadcrumb pattern) matches the snapshot 1`] = `
+<DocumentFragment>
+  <nav
+    aria-label="Breadcrumb"
+    class="breadcrumb-nav"
+  >
+    <ol
+      class="breadcrumb-list"
+    >
+      <li
+        class="breadcrumb-item"
+      >
+        <a
+          href="/"
+        >
+          Home
+        </a>
+      </li>
+      <li
+        class="breadcrumb-item"
+      >
+        <a
+          href="/library"
+        >
+          Library
+        </a>
+      </li>
+      <li
+        class="breadcrumb-item"
+      >
+        <a
+          href="/library/data"
+        >
+          Data
+        </a>
+      </li>
+      <li
+        class="breadcrumb-item"
+      >
+        <span
+          aria-current="page"
+        >
+          Reports
+        </span>
+      </li>
+    </ol>
+  </nav>
+</DocumentFragment>
+`;

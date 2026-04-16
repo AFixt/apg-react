@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Checkbox Component (APG checkbox pattern) matches the snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="checkbox"
+  >
+    <input
+      aria-checked="false"
+      class="checkbox-input"
+      id="checkbox-accept"
+      type="checkbox"
+    />
+    <label
+      for="checkbox-accept"
+    >
+      Accept
+    </label>
+  </div>
+</DocumentFragment>
+`;

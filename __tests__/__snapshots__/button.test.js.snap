@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button Component Button Snapshot 1`] = `
+<DocumentFragment>
+  <button
+    class="button"
+    role="button"
+  >
+    Test Button
+  </button>
+</DocumentFragment>
+`;
+
+exports[`Button Component Toggle Button Snapshot 1`] = `
+<DocumentFragment>
+  <button
+    aria-pressed="false"
+    class="button button-toggle"
+    role="button"
+  >
+    Test Button
+  </button>
+</DocumentFragment>
+`;

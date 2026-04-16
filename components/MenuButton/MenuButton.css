@@ -1,0 +1,88 @@
+.menu-button-container {
+    position: relative;
+    display: inline-block;
+}
+
+.menu-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--apg-space-sm);
+    padding: 0.375rem 0.75rem;
+    background-color: var(--apg-color-white);
+    color: var(--apg-color-black);
+    border: var(--apg-border-width) solid var(--apg-color-gray-400);
+    border-radius: var(--apg-radius-md);
+    font-size: var(--apg-font-size-base);
+    font-family: var(--apg-font-family);
+    cursor: pointer;
+    transition:
+        background-color var(--apg-transition-fast),
+        border-color var(--apg-transition-fast),
+        box-shadow var(--apg-transition-fast);
+}
+
+.menu-button:hover {
+    background-color: var(--apg-color-gray-50);
+}
+
+.menu-button:focus,
+.menu-button:focus-visible {
+    outline: none;
+    border-color: var(--apg-color-primary);
+    box-shadow: var(--apg-focus-ring);
+}
+
+.menu-button[aria-expanded="true"] {
+    background-color: var(--apg-color-gray-100);
+}
+
+.menu-button-caret {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 10rem;
+    list-style: none;
+    padding: var(--apg-space-xs) 0;
+    margin: 0;
+    background-color: var(--apg-color-white);
+    border: var(--apg-border-width) solid var(--apg-border-color);
+    border-radius: var(--apg-radius-md);
+    box-shadow: var(--apg-shadow-md);
+    z-index: var(--apg-z-dropdown);
+}
+
+.menu > li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu > li::marker {
+    content: "";
+}
+
+.menuitem {
+    display: block;
+    width: 100%;
+    padding: var(--apg-space-sm) var(--apg-space-lg);
+    background: transparent;
+    border: 0;
+    text-align: left;
+    color: var(--apg-color-black);
+    font-size: var(--apg-font-size-base);
+    font-family: var(--apg-font-family);
+    cursor: pointer;
+}
+
+.menuitem:hover,
+.menuitem:focus,
+.menuitem:focus-visible {
+    outline: none;
+    background-color: var(--apg-color-primary);
+    color: var(--apg-color-white);
+}
