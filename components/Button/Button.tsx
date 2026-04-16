@@ -26,6 +26,7 @@ interface ButtonProps {
     label: string;
     shortcutKey?: string;
     ariaDescribedby?: string;
+    ariaHaspopup?: "menu" | "listbox" | "tree" | "grid" | "dialog" | "true";
     isDisabled?: boolean;
     isToggleButton?: boolean;
     toggleState?: boolean;
@@ -36,6 +37,7 @@ const Button: React.FC<ButtonProps> = ({
     label,
     shortcutKey,
     ariaDescribedby,
+    ariaHaspopup,
     isDisabled,
     isToggleButton,
     toggleState,
@@ -84,12 +86,10 @@ const Button: React.FC<ButtonProps> = ({
         <button
             ref={buttonRef}
             className={`button${isToggleButton ? " button-toggle" : ""}${isToggleButton && pressed ? " is-pressed" : ""}`}
-            role="button"
             aria-pressed={isToggleButton ? pressed : undefined}
-            aria-haspopup={label === "Menu" ? "menu" : undefined}
-            aria-disabled={isDisabled || undefined}
+            aria-haspopup={ariaHaspopup || undefined}
             aria-describedby={ariaDescribedby || undefined}
-            disabled={isDisabled}
+            disabled={isDisabled || undefined}
             onClick={buttonAction}
             onKeyDown={handleKeyDown}
         >

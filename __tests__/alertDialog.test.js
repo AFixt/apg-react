@@ -47,8 +47,9 @@ describe("AlertDialog Component", () => {
             />
         );
         const alertDialog = screen.getByRole("alertdialog");
-
-        expect(alertDialog).toHaveAttribute("aria-labelledby", "dialogTitle");
+        const labelId = alertDialog.getAttribute("aria-labelledby");
+        expect(labelId).toBeTruthy();
+        expect(document.getElementById(labelId)).toHaveTextContent(title);
     });
 
     test("Describing the Alert Dialog Content", () => {
@@ -61,8 +62,9 @@ describe("AlertDialog Component", () => {
             />
         );
         const alertDialog = screen.getByRole("alertdialog");
-
-        expect(alertDialog).toHaveAttribute("aria-describedby", "dialogDesc");
+        const descId = alertDialog.getAttribute("aria-describedby");
+        expect(descId).toBeTruthy();
+        expect(document.getElementById(descId)).toHaveTextContent(message);
     });
 
     test("Keyboard Interaction with Alert Dialog", () => {

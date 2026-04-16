@@ -43,5 +43,6 @@ const slides = [
 export const Default = {
   args: {
     slides,
+    ariaLabel: 'Featured content',
   },
 };

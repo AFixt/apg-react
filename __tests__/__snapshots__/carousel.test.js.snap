@@ -9,6 +9,12 @@ exports[`Carousel Component Carousel Initial Render Snapshot 1`] = `
     tabindex="0"
   >
     <button
+      aria-label="Pause rotation"
+      class="carousel-control carousel-control-play"
+    >
+      ‖
+    </button>
+    <button
       aria-label="Previous slide"
       class="carousel-control carousel-control-prev"
     >
@@ -27,12 +33,6 @@ exports[`Carousel Component Carousel Initial Render Snapshot 1`] = `
       >
         ›
       </span>
-    </button>
-    <button
-      aria-label="Pause rotation"
-      class="carousel-control carousel-control-play"
-    >
-      ‖
     </button>
     <div
       class="slides"
@@ -71,8 +71,8 @@ exports[`Carousel Component Carousel Initial Render Snapshot 1`] = `
       class="slide-selectors"
     >
       <button
+        aria-current="true"
         aria-label="Select slide 1"
-        disabled=""
       >
         1
       </button>
@@ -100,6 +100,12 @@ exports[`Carousel Component Carousel Snapshot After Navigation 1`] = `
     tabindex="0"
   >
     <button
+      aria-label="Start rotation"
+      class="carousel-control carousel-control-play"
+    >
+      ▶
+    </button>
+    <button
       aria-label="Previous slide"
       class="carousel-control carousel-control-prev"
     >
@@ -118,12 +124,6 @@ exports[`Carousel Component Carousel Snapshot After Navigation 1`] = `
       >
         ›
       </span>
-    </button>
-    <button
-      aria-label="Start rotation"
-      class="carousel-control carousel-control-play"
-    >
-      ▶
     </button>
     <div
       class="slides"
@@ -167,8 +167,8 @@ exports[`Carousel Component Carousel Snapshot After Navigation 1`] = `
         1
       </button>
       <button
+        aria-current="true"
         aria-label="Select slide 2"
-        disabled=""
       >
         2
       </button>

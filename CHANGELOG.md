@@ -4,6 +4,32 @@ All notable changes to this project are documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] — 2026-04-16
+
+### Fixed
+
+- **AlertDialog**: Added focus trap, focus return to invoking element, initial focus on close
+  button, unique IDs via `useId()`.
+- **Button**: Removed redundant `role="button"` and `aria-disabled` on native `<button>`;
+  replaced hardcoded `aria-haspopup` with configurable `ariaHaspopup` prop.
+- **Carousel**: Added required `ariaLabel` prop; replaced `disabled` selector buttons with
+  `aria-current="true"` (preserves focus); DOM order now matches visual order.
+- **Disclosure**: Unique content IDs via `useId()` (was hardcoded, broke with multiple instances).
+- **Feed**: Now passes `ariaPosinset`/`ariaSetsize` to Article children; added `ariaLabel` prop.
+- **Link**: Removed redundant `role="link"` and `tabIndex={0}` on native `<a>`.
+
+### Changed
+
+- **ModalDialog**: Renamed `ariaLabel` prop to `ariaLabelledby` (it accepts an element ID, not a
+  label string). **Breaking** for consumers who used `ariaLabel` — rename to `ariaLabelledby`.
+- **Switch**: Replaced `<label>` wrapper with `<span id>` + `aria-labelledby` on the switch.
+- **CheckboxGroup**: Unique group label IDs via `useId()`.
+- **MenuButton**: Menu popup uses `aria-labelledby` referencing the trigger button.
+- **Menubar**: Submenus use `aria-labelledby` referencing their parent bar item.
+- **Combobox**: Popup listbox gets `aria-labelledby` referencing the input.
+- **Tabs**: Bootstrap 5 nav-tabs styling.
+- **TreeView / TreeGrid**: Larger chevron carets.
+
 ## [1.1.0] — 2026-04-16
 
 ### Changed

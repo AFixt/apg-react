@@ -1,18 +1,15 @@
 .switch-container {
-    display: inline-block;
-}
-
-.switch-container label {
     display: inline-flex;
     align-items: center;
     gap: var(--apg-space-md);
-    cursor: pointer;
-    color: var(--apg-color-black);
-    font-size: var(--apg-font-size-base);
 }
 
 .switch-label-text {
+    cursor: pointer;
+    color: var(--apg-color-black);
+    font-size: var(--apg-font-size-base);
     line-height: var(--apg-line-height-normal);
+    user-select: none;
 }
 
 .switch-control {

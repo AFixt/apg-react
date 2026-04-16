@@ -47,10 +47,10 @@
 }
 
 .treeitem-chevron {
-    width: 0.75rem;
+    width: 1.25rem;
     display: inline-block;
     text-align: center;
-    font-size: 0.625rem;
+    font-size: 1.125rem;
 }
 
 .treeitem-bullet {

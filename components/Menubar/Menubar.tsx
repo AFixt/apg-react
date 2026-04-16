@@ -181,6 +181,7 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
                     <div key={menu.id} className="menubar-group">
                         <button
                             ref={(el) => (barRefs.current[mIdx] = el)}
+                            id={`menubar-item-${menu.id}`}
                             type="button"
                             role="menuitem"
                             aria-haspopup="menu"
@@ -194,7 +195,7 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
                             {menu.label}
                         </button>
                         {isOpen && (
-                            <ul role="menu" aria-label={menu.label as string} className="menubar-menu">
+                            <ul role="menu" aria-labelledby={`menubar-item-${menu.id}`} className="menubar-menu">
                                 {menu.items.map((item, iIdx) => (
                                     <li key={item.id} role="none">
                                         <button

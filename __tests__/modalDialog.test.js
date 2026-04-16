@@ -38,7 +38,7 @@ const DialogHarness = ({ initialOpen = false, ...rest }) => {
 
 describe("ModalDialog Component (APG modal dialog pattern)", () => {
     test("is not rendered when closed", () => {
-        render(<DialogHarness ariaLabel="modal-title" />);
+        render(<DialogHarness ariaLabelledby="modal-title" />);
         expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
 
@@ -46,7 +46,7 @@ describe("ModalDialog Component (APG modal dialog pattern)", () => {
         render(
             <DialogHarness
                 initialOpen
-                ariaLabel="modal-title"
+                ariaLabelledby="modal-title"
                 ariaDescribedby="modal-desc"
             />
         );
@@ -59,7 +59,7 @@ describe("ModalDialog Component (APG modal dialog pattern)", () => {
         render(
             <DialogHarness
                 initialOpen
-                ariaLabel="modal-title"
+                ariaLabelledby="modal-title"
                 ariaDescribedby="modal-desc"
             />
         );
@@ -74,7 +74,7 @@ describe("ModalDialog Component (APG modal dialog pattern)", () => {
         render(
             <DialogHarness
                 initialOpen
-                ariaLabel="modal-title"
+                ariaLabelledby="modal-title"
                 ariaDescribedby="modal-desc"
             />
         );
@@ -86,7 +86,7 @@ describe("ModalDialog Component (APG modal dialog pattern)", () => {
         render(
             <DialogHarness
                 initialOpen
-                ariaLabel="modal-title"
+                ariaLabelledby="modal-title"
                 ariaDescribedby="modal-desc"
             />
         );
@@ -98,7 +98,7 @@ describe("ModalDialog Component (APG modal dialog pattern)", () => {
         render(
             <DialogHarness
                 initialOpen
-                ariaLabel="modal-title"
+                ariaLabelledby="modal-title"
                 ariaDescribedby="modal-desc"
             />
         );
@@ -111,7 +111,7 @@ describe("ModalDialog Component (APG modal dialog pattern)", () => {
         render(
             <DialogHarness
                 initialOpen
-                ariaLabel="modal-title"
+                ariaLabelledby="modal-title"
                 ariaDescribedby="modal-desc"
             />
         );
@@ -123,7 +123,7 @@ describe("ModalDialog Component (APG modal dialog pattern)", () => {
         render(
             <DialogHarness
                 initialOpen
-                ariaLabel="modal-title"
+                ariaLabelledby="modal-title"
                 ariaDescribedby="modal-desc"
             />
         );
@@ -133,7 +133,7 @@ describe("ModalDialog Component (APG modal dialog pattern)", () => {
     });
 
     test("opening from a trigger places the dialog in the DOM", () => {
-        render(<DialogHarness ariaLabel="modal-title" />);
+        render(<DialogHarness ariaLabelledby="modal-title" />);
         fireEvent.click(screen.getByText("Open modal"));
         expect(screen.getByRole("dialog")).toBeInTheDocument();
     });

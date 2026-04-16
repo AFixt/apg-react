@@ -21,7 +21,9 @@ interface ModalDialogLabels {
 interface ModalDialogProps {
     isOpen: boolean;
     onClose: () => void;
-    ariaLabel?: string;
+    /** ID of the element that labels the dialog (e.g., a heading inside children). */
+    ariaLabelledby?: string;
+    /** ID of the element that describes the dialog. */
     ariaDescribedby?: string;
     children: React.ReactNode;
     initialFocusRef?: React.RefObject<HTMLElement>;
@@ -35,7 +37,7 @@ const defaultLabels = {
 const ModalDialog: React.FC<ModalDialogProps> = ({
     isOpen,
     onClose,
-    ariaLabel,
+    ariaLabelledby,
     ariaDescribedby,
     children,
     initialFocusRef,
@@ -56,9 +58,19 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
         setIsAnimatingIn(false);
     }, [isOpen, initialFocusRef]);
 
+    // Restore focus to the element that opened the dialog, then call onClose.
+    // If onClose moves focus somewhere else, that naturally takes precedence.
+    const closeAndRestoreFocus = () => {
+        const invoker = invokingElementRef.current as HTMLElement | null;
+        if (invoker && typeof invoker.focus === "function") {
+            invoker.focus();
+        }
+        onClose();
+    };
+
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "Escape") {
-            onClose();
+            closeAndRestoreFocus();
         }
     };
 
@@ -67,7 +79,7 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
         const onDocKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
                 e.stopPropagation();
-                onClose();
+                closeAndRestoreFocus();
             }
         };
         document.addEventListener("keydown", onDocKeyDown);
@@ -89,15 +101,6 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
         }
     }, [isOpen]);
 
-    useEffect(() => {
-        return () => {
-            // Return focus to the invoking element when the dialog closes
-            if (!isOpen && invokingElementRef.current) {
-                (invokingElementRef.current as HTMLElement).focus();
-            }
-        };
-    }, [isOpen]);
-
     if (!isOpen) return null;
 
     return (
@@ -105,7 +108,7 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
             <div
                 role="dialog"
                 aria-modal="true"
-                aria-labelledby={ariaLabel}
+                aria-labelledby={ariaLabelledby}
                 aria-describedby={ariaDescribedby}
                 ref={dialogRef}
                 className={`modal-dialog${isAnimatingIn ? " open" : ""}`}
@@ -116,7 +119,7 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
                 <button
                     type="button"
                     className="modal-dialog-close"
-                    onClick={onClose}
+                    onClick={closeAndRestoreFocus}
                     aria-label={l.closeDialog}
                 >
                     <span aria-hidden="true">&times;</span>

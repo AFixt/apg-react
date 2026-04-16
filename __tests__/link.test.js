@@ -29,10 +29,11 @@ describe("Link Component (APG link pattern)", () => {
         expect(screen.getByRole("link", { name: "Go home" })).toBeInTheDocument();
     });
 
-    test("is keyboard focusable via tabindex=0", () => {
+    test("is keyboard focusable as a native link", () => {
         renderLink();
         const link = screen.getByRole("link", { name: "Go home" });
-        expect(link).toHaveAttribute("tabindex", "0");
+        // Native <a> with href is focusable without explicit tabindex
+        expect(link.tagName).toBe("A");
     });
 
     test("Enter key triggers the onClick handler", () => {

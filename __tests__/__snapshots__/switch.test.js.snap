@@ -5,23 +5,23 @@ exports[`Switch Component (APG switch pattern) matches the snapshot 1`] = `
   <div
     class="switch-container"
   >
-    <label>
+    <span
+      class="switch-label-text"
+      id="switch-label-:ra:"
+    >
+      Enable notifications
+    </span>
+    <span
+      aria-checked="false"
+      aria-labelledby="switch-label-:ra:"
+      class="switch-control"
+      role="switch"
+      tabindex="0"
+    >
       <span
-        class="switch-label-text"
-      >
-        Enable notifications
-      </span>
-      <span
-        aria-checked="false"
-        class="switch-control"
-        role="switch"
-        tabindex="0"
-      >
-        <span
-          class="switch switch-off"
-        />
-      </span>
-    </label>
+        class="switch switch-off"
+      />
+    </span>
   </div>
 </DocumentFragment>
 `;
