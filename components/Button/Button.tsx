@@ -80,6 +80,7 @@ const Button: React.FC<ButtonProps> = ({
                 window.removeEventListener("keydown", handleKeyDown as EventListener);
             };
         }
+        return undefined;
     }, [shortcutKey]);
 
     return (

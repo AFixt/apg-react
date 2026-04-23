@@ -28,7 +28,6 @@ yarn-error.log*
 atlassian-ide-plugin.xml
 .settings
 *.iml
-.npmrc
 [._]*.s[a-w][a-z]
 [._]s[a-w][a-z]
 *.un~
@@ -46,7 +45,6 @@ all.json
 setup.pl
 .vscode/
 .vscode/*
-.npmrc
 .env
 .nyc_output/*
 coverage/
@@ -54,4 +52,6 @@ cypress/instrumented/*
 logs
 sessions
 **/*.log
-docs/
+
+# Claude Code local config (not committed)
+.claude/
