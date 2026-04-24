@@ -79,9 +79,6 @@ const TreeView: React.FC<TreeViewProps> = ({ label, nodes, onSelect, defaultExpa
         [nodes, expanded]
     );
 
-    const focusIndex = visible.findIndex((v) => v.id === focusId);
-    const currentEntry = visible[focusIndex];
-
     const focusAt = (i: number) => {
         const target = visible[i];
         if (!target) return;

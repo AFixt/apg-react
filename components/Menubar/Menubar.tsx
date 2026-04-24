@@ -70,7 +70,7 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
     };
 
     const activate = (mIdx: number, iIdx: number) => {
-        menus[mIdx].items[iIdx].onSelect?.();
+        menus[mIdx]?.items[iIdx]?.onSelect?.();
         closeMenu(true);
     };
 
@@ -98,7 +98,7 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
                 openAt(mIdx, 0);
                 break;
             case "ArrowUp":
-                openAt(mIdx, menus[mIdx].items.length - 1);
+                openAt(mIdx, (menus[mIdx]?.items.length ?? 1) - 1);
                 break;
             case "Home":
                 setActiveMenu(0);
@@ -113,7 +113,7 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
     };
 
     const handleMenuKey = (e: React.KeyboardEvent, mIdx: number, iIdx: number) => {
-        const last = menus[mIdx].items.length - 1;
+        const last = (menus[mIdx]?.items.length ?? 1) - 1;
         let handled = true;
         switch (e.key) {
             case "ArrowDown":

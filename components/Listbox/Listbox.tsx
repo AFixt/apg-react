@@ -53,13 +53,16 @@ const Listbox: React.FC<ListboxProps> = ({
     }, [value, multiple]);
 
     const commitSingle = (i: number) => {
-        const next = options[i].value;
-        onChange?.(next);
+        const opt = options[i];
+        if (!opt) return;
+        onChange?.(opt.value);
     };
 
     const toggleMulti = (i: number) => {
+        const opt = options[i];
+        if (!opt) return;
         const next = new Set(selectedSet);
-        const v = options[i].value;
+        const v = opt.value;
         if (next.has(v)) next.delete(v);
         else next.add(v);
         onChange?.(Array.from(next));
@@ -68,7 +71,10 @@ const Listbox: React.FC<ListboxProps> = ({
     const selectRange = (from: number, to: number) => {
         const [a, b] = from <= to ? [from, to] : [to, from];
         const next = new Set(selectedSet);
-        for (let i = a; i <= b; i++) next.add(options[i].value);
+        for (let i = a; i <= b; i++) {
+            const opt = options[i];
+            if (opt) next.add(opt.value);
+        }
         onChange?.(Array.from(next));
     };
 
@@ -88,16 +94,16 @@ const Listbox: React.FC<ListboxProps> = ({
         let handled = true;
         switch (e.key) {
             case "ArrowDown":
-                moveFocus(i + 1, { extend: multiple && e.shiftKey });
+                moveFocus(i + 1, { extend: Boolean(multiple && e.shiftKey) });
                 break;
             case "ArrowUp":
-                moveFocus(i - 1, { extend: multiple && e.shiftKey });
+                moveFocus(i - 1, { extend: Boolean(multiple && e.shiftKey) });
                 break;
             case "Home":
-                moveFocus(0, { extend: multiple && e.shiftKey });
+                moveFocus(0, { extend: Boolean(multiple && e.shiftKey) });
                 break;
             case "End":
-                moveFocus(options.length - 1, { extend: multiple && e.shiftKey });
+                moveFocus(options.length - 1, { extend: Boolean(multiple && e.shiftKey) });
                 break;
             case " ":
                 if (multiple) toggleMulti(i);

@@ -56,6 +56,7 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
             return () => cancelAnimationFrame(id);
         }
         setIsAnimatingIn(false);
+        return undefined;
     }, [isOpen, initialFocusRef]);
 
     // Restore focus to the element that opened the dialog, then call onClose.
@@ -99,6 +100,7 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
             return () =>
                 document.removeEventListener("focus", handleFocusTrap, true);
         }
+        return undefined;
     }, [isOpen]);
 
     if (!isOpen) return null;

@@ -38,9 +38,10 @@ const RadioGroup: React.FC<RadioGroupProps> = ({ label, labelId, options, value,
 
     const focusIndex = (i: number) => {
         const el = radioRefs.current[i];
-        if (el) {
+        const opt = options[i];
+        if (el && opt) {
             el.focus();
-            select(options[i].value);
+            select(opt.value);
         }
     };
 
@@ -62,9 +63,11 @@ const RadioGroup: React.FC<RadioGroupProps> = ({ label, labelId, options, value,
             case "End":
                 focusIndex(last);
                 break;
-            case " ":
-                select(options[idx].value);
+            case " ": {
+                const opt = options[idx];
+                if (opt) select(opt.value);
                 break;
+            }
             default:
                 handled = false;
         }

@@ -79,6 +79,7 @@ const Carousel: React.FC<CarouselProps> = ({ slides, ariaLabel, labels }) => {
             const rotation = setInterval(nextSlide, 3000);
             return () => clearInterval(rotation);
         }
+        return undefined;
     }, [isRotating, activeIndex]);
 
     return (

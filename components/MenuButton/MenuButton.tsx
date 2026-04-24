@@ -71,7 +71,7 @@ const MenuButton: React.FC<MenuButtonProps> = ({ label, items, idPrefix }) => {
     };
 
     const activate = (i: number) => {
-        items[i].onSelect?.();
+        items[i]?.onSelect?.();
         closeMenu(true);
     };
 

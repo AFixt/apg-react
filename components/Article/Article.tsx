@@ -9,7 +9,7 @@
  * @returns {JSX.Element} The rendered article component.
  */
 
-import React from "react";
+import React, { forwardRef } from "react";
 import "./Article.css";
 
 interface ArticleData {
@@ -24,13 +24,21 @@ interface ArticleProps {
     ariaSetsize: number;
 }
 
-const Article: React.FC<ArticleProps> = ({ article, ariaPosinset, ariaSetsize }) => {
-    return (
-        <article aria-posinset={ariaPosinset} aria-setsize={ariaSetsize}>
-            <h2 id={`article-title-${article.id}`}>{article.title}</h2>
-            <div>{article.content}</div>
-        </article>
-    );
-};
+const Article = forwardRef<HTMLElement, ArticleProps>(
+    ({ article, ariaPosinset, ariaSetsize }, ref) => {
+        return (
+            <article
+                ref={ref}
+                tabIndex={-1}
+                aria-posinset={ariaPosinset}
+                aria-setsize={ariaSetsize}
+            >
+                <h2 id={`article-title-${article.id}`}>{article.title}</h2>
+                <div>{article.content}</div>
+            </article>
+        );
+    }
+);
+Article.displayName = "Article";
 
 export default Article;
