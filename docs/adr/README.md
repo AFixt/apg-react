@@ -22,3 +22,5 @@ files sequentially: `NNNN-short-slug.md`.
 - [0004 — Skip Express backend tooling](0004-skip-express-backend-tooling.md)
 - [0005 — Accessibility assertion strategy](0005-a11y-assertion-strategy.md)
 - [0006 — ESLint rule calibration](0006-eslint-rule-calibration.md)
+- [0007 — Security scan placement (pre-push vs CI vs scheduled)](0007-security-scan-placement.md)
+- [0008 — Defer automated release.yml workflow](0008-release-workflow-deferred.md)

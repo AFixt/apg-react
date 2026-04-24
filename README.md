@@ -188,11 +188,64 @@ npm run test:all       # both
 ## Development
 
 ```sh
+# First-time setup: installs optional binaries (gitleaks, lychee, etc.)
+# used by git hooks. Safe to re-run.
+bash scripts/bootstrap.sh
+
 npm install
 npm run storybook     # http://localhost:6006
 npm test
 npm run build         # produces dist/
 ```
+
+### Quality gates
+
+Every PR runs the same gates locally and in CI. Run them all with one command:
+
+```sh
+npm run check:all
+```
+
+which runs, in order: `typecheck` → `lint` → `stylelint` → `format:check` →
+`markdownlint` → `test` → `dupes` → `license:check` → `build` → `size` →
+`security:audit`.
+
+Individual gates:
+
+```sh
+npm run typecheck     # tsc --noEmit with strict + noUncheckedIndexedAccess
+npm run lint          # ESLint flat config (components + tests + stories)
+npm run stylelint     # Stylelint on all CSS (incl. a11y rules)
+npm run format        # Prettier --write
+npm run format:check  # Prettier --check (CI gate)
+npm run markdownlint  # markdownlint-cli2 on all Markdown
+npm run dupes         # jscpd duplicate detection
+npm run license:check # production-dep license allowlist
+npm run size          # size-limit bundle budgets
+npm run security      # npm audit + OSV-Scanner + gitleaks
+```
+
+Git hooks (installed automatically via Husky's `prepare` script):
+
+- **pre-commit** — lint-staged (ESLint, Prettier, Stylelint, markdownlint on
+  staged files only) + typecheck of staged TS + gitleaks.
+- **commit-msg** — commitlint with `@commitlint/config-conventional`.
+- **pre-push** — runs the full `check` suite + tests + `dupes` +
+  `license:check` + optional link check.
+- **post-merge** — reinstall + `npm audit` when `package-lock.json` changes
+  after a pull.
+
+Bypass a hook with `--no-verify` (use sparingly).
+
+Scheduled workflows:
+
+- **`.github/workflows/security.yml`** (Mondays 06:00 UTC) — CodeQL,
+  OSV-Scanner, Semgrep OWASP Top 10, npm audit.
+- **`.github/workflows/docs.yml`** (Mondays 07:00 UTC) — lychee link check
+  across Markdown.
+
+See `docs/adr/` for tooling decisions (why Jest not Vitest, why Rollup not Vite,
+etc.).
 
 ## Contributing
 
