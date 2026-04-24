@@ -35,11 +35,23 @@ install_via_brew_or_warn gitleaks \
 install_via_brew_or_warn lychee \
   "Install from https://github.com/lycheeverse/lychee/releases or via 'cargo install lychee'"
 
-# Reserved for PR4 — uncomment when those tools are wired into scripts:
-# install_via_brew_or_warn osv-scanner \
-#   "Install from https://github.com/google/osv-scanner/releases"
-# install_via_brew_or_warn semgrep \
-#   "Install via 'pip install --user semgrep'"
+# Used by npm run security:osv
+install_via_brew_or_warn osv-scanner \
+  "Install from https://github.com/google/osv-scanner/releases"
+
+# Used by npm run security:semgrep.
+# Note: semgrep isn't a Homebrew default on some systems; pip is the fallback.
+if have semgrep; then
+  echo "  semgrep: present"
+elif have brew; then
+  echo "  installing semgrep via brew..."
+  brew install semgrep || warn "brew install semgrep failed; try 'pip install --user semgrep'"
+elif have pip3; then
+  echo "  installing semgrep via pip..."
+  pip3 install --user semgrep
+else
+  warn "semgrep not installed; install via 'brew install semgrep' or 'pip install --user semgrep'"
+fi
 
 echo ""
 echo "Installing npm dependencies..."
