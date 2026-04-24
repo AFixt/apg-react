@@ -1,25 +1,34 @@
 .meter-container {
-    width: 100%;
+  width: 100%;
 }
 
 .meter-label {
-    margin-bottom: var(--apg-space-xs);
-    color: var(--apg-color-black);
-    font-size: var(--apg-font-size-sm);
+  margin-bottom: var(--apg-space-xs);
+  color: var(--apg-color-black);
+  font-size: var(--apg-font-size-sm);
 }
 
 .meter {
-    width: 100%;
-    height: 1rem;
-    background-color: #dddddd;
-    border-radius: var(--apg-radius-md);
-    overflow: hidden;
-    position: relative;
+  width: 100%;
+  height: 1rem;
+  background-color: #ddd;
+  border-radius: var(--apg-radius-md);
+  overflow: hidden;
+  position: relative;
 }
 
-.meter-fill {
+@media screen and (prefers-reduced-motion: reduce) {
+  .meter-fill {
     height: 100%;
     background-color: var(--apg-color-primary);
     border-radius: var(--apg-radius-md) 0 0 var(--apg-radius-md);
-    transition: width 0.3s ease;
+    transition: none;
+  }
+}
+
+.meter-fill {
+  height: 100%;
+  background-color: var(--apg-color-primary);
+  border-radius: var(--apg-radius-md) 0 0 var(--apg-radius-md);
+  transition: width 0.3s ease;
 }

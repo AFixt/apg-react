@@ -1,52 +1,61 @@
 .breadcrumb-nav {
-    margin: 0 0 var(--apg-space-lg) 0;
+  margin: 0 0 var(--apg-space-lg) 0;
 }
 
 .breadcrumb-nav .breadcrumb-list {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    list-style: none;
-    padding: var(--apg-space-md) var(--apg-space-lg);
-    margin: 0;
-    background-color: var(--apg-color-gray-100);
-    border-radius: var(--apg-radius-md);
-    font-size: var(--apg-font-size-sm);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+  padding: var(--apg-space-md) var(--apg-space-lg);
+  margin: 0;
+  background-color: var(--apg-color-gray-100);
+  border-radius: var(--apg-radius-md);
+  font-size: var(--apg-font-size-sm);
 }
 
 .breadcrumb-item {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .breadcrumb-item + .breadcrumb-item::before {
-    content: "/";
-    padding: 0 var(--apg-space-sm);
-    color: var(--apg-color-gray-500);
+  content: '/';
+  padding: 0 var(--apg-space-sm);
+  color: var(--apg-color-gray-500);
+}
+
+@media screen and (prefers-reduced-motion: reduce) {
+  .breadcrumb-item a {
+    color: var(--apg-color-primary);
+    text-decoration: none;
+    transition: none;
+  }
 }
 
 .breadcrumb-item a {
-    color: var(--apg-color-primary);
-    text-decoration: none;
-    transition: color var(--apg-transition-fast);
+  color: var(--apg-color-primary);
+  text-decoration: none;
+  transition: color var(--apg-transition-fast);
 }
 
-.breadcrumb-item a:hover {
-    color: var(--apg-color-primary-hover);
-    text-decoration: underline;
+.breadcrumb-item a:hover,
+.breadcrumb-item a:focus {
+  color: var(--apg-color-primary-hover);
+  text-decoration: underline;
 }
 
 .breadcrumb-item a:focus-visible {
-    outline: none;
-    box-shadow: var(--apg-focus-ring);
-    border-radius: var(--apg-radius-sm);
+  outline: none;
+  box-shadow: var(--apg-focus-ring);
+  border-radius: var(--apg-radius-sm);
 }
 
-.breadcrumb-item span[aria-current="page"] {
-    color: var(--apg-color-gray-600);
-    font-weight: var(--apg-font-weight-normal);
+.breadcrumb-item span[aria-current='page'] {
+  color: var(--apg-color-gray-600);
+  font-weight: var(--apg-font-weight-normal);
 }
 
 .breadcrumb-item::after {
-    content: none;
+  content: none;
 }

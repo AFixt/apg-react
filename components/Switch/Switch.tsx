@@ -12,59 +12,58 @@
  * @param {boolean} props.initialChecked - The initial checked state of the switch.
  * @returns {JSX.Element} The switch component.
  */
-import React, { useId, useState } from "react";
-import "./Switch.css";
+import React, { useId, useState } from 'react';
+import './Switch.css';
 
 interface SwitchProps {
-    label?: string;
-    ariaLabelledby?: string;
-    ariaDescribedby?: string;
-    initialChecked?: boolean;
+  label?: string;
+  ariaLabelledby?: string;
+  ariaDescribedby?: string;
+  initialChecked?: boolean;
 }
 
-const Switch: React.FC<SwitchProps> = ({ label, ariaLabelledby, ariaDescribedby, initialChecked = false }) => {
-    const [isChecked, setIsChecked] = useState(initialChecked);
-    const generatedId = useId();
-    const labelId = `switch-label-${generatedId}`;
+const Switch: React.FC<SwitchProps> = ({
+  label,
+  ariaLabelledby,
+  ariaDescribedby,
+  initialChecked = false,
+}) => {
+  const [isChecked, setIsChecked] = useState(initialChecked);
+  const generatedId = useId();
+  const labelId = `switch-label-${generatedId}`;
 
-    const toggleSwitch = () => {
-        setIsChecked(!isChecked);
-    };
+  const toggleSwitch = () => {
+    setIsChecked(!isChecked);
+  };
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === " " || e.key === "Enter") {
-            e.preventDefault();
-            toggleSwitch();
-        }
-    };
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      toggleSwitch();
+    }
+  };
 
-    return (
-        <div className="switch-container">
-            {label && (
-                <span
-                    id={labelId}
-                    className="switch-label-text"
-                    onClick={toggleSwitch}
-                >
-                    {label}
-                </span>
-            )}
-            <span
-                role="switch"
-                aria-checked={isChecked}
-                tabIndex={0}
-                onKeyDown={handleKeyDown}
-                onClick={toggleSwitch}
-                aria-labelledby={ariaLabelledby || (label ? labelId : undefined)}
-                aria-describedby={ariaDescribedby}
-                className="switch-control"
-            >
-                <span
-                    className={`switch ${isChecked ? "switch-on" : "switch-off"}`}
-                ></span>
-            </span>
-        </div>
-    );
+  return (
+    <div className="switch-container">
+      {label && (
+        <span id={labelId} className="switch-label-text" onClick={toggleSwitch}>
+          {label}
+        </span>
+      )}
+      <span
+        role="switch"
+        aria-checked={isChecked}
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        onClick={toggleSwitch}
+        aria-labelledby={ariaLabelledby || (label ? labelId : undefined)}
+        aria-describedby={ariaDescribedby}
+        className="switch-control"
+      >
+        <span className={`switch ${isChecked ? 'switch-on' : 'switch-off'}`} />
+      </span>
+    </div>
+  );
 };
 
 export default Switch;

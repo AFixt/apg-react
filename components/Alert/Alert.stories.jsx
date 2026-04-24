@@ -1,5 +1,4 @@
-import React from 'react';
-import { within, userEvent, expect } from '@storybook/test';
+import { expect, within } from '@storybook/test';
 import Alert from './Alert';
 
 export default {
@@ -14,20 +13,22 @@ export default {
   },
 };
 
-const alertPlay = (expectedClass) => async ({ canvasElement, step }) => {
-  const canvas = within(canvasElement);
-  await step('Has role=alert with correct variant class', async () => {
-    const alert = canvas.getByRole('alert');
-    await expect(alert).toHaveClass(expectedClass);
-    await expect(alert).toHaveAttribute('aria-live', 'assertive');
-  });
-  await step('Dismiss button is present with accessible name', async () => {
-    const dismiss = canvas.getByRole('button', { name: 'Dismiss' });
-    await expect(dismiss).toBeInTheDocument();
-  });
-  // NOTE: we intentionally do NOT click dismiss; doing so unmounts the alert
-  // and leaves the Storybook canvas blank after the play completes.
-};
+const alertPlay =
+  (expectedClass) =>
+  async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    await step('Has role=alert with correct variant class', async () => {
+      const alert = canvas.getByRole('alert');
+      await expect(alert).toHaveClass(expectedClass);
+      await expect(alert).toHaveAttribute('aria-live', 'assertive');
+    });
+    await step('Dismiss button is present with accessible name', async () => {
+      const dismiss = canvas.getByRole('button', { name: 'Dismiss' });
+      await expect(dismiss).toBeInTheDocument();
+    });
+    // NOTE: we intentionally do NOT click dismiss; doing so unmounts the alert
+    // and leaves the Storybook canvas blank after the play completes.
+  };
 
 export const Info = {
   args: {

@@ -16,34 +16,30 @@ import { Link as RouterLink } from 'react-router-dom';
 import './Link.css';
 
 interface LinkProps {
-    to: string | object;
-    children: React.ReactNode;
-    onClick?: (e: React.MouseEvent | React.KeyboardEvent) => void;
-    [extra: string]: unknown;
+  to: string | object;
+  children: React.ReactNode;
+  onClick?: (e: React.MouseEvent | React.KeyboardEvent) => void;
+  [extra: string]: unknown;
 }
 
 const AccessibleLink: React.FC<LinkProps> = ({ to, children, onClick, ...props }) => {
-    const handleKeyDown = (event: React.KeyboardEvent) => {
-        const { key, shiftKey } = event;
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    const { key, shiftKey } = event;
 
-        if (key === 'Enter' && onClick) {
-            onClick(event);
-        }
+    if (key === 'Enter' && onClick) {
+      onClick(event);
+    }
 
-        if (key === 'F10' && shiftKey) {
-            event.preventDefault();
-        }
-    };
+    if (key === 'F10' && shiftKey) {
+      event.preventDefault();
+    }
+  };
 
-    return (
-        <RouterLink
-            to={to as string}
-            {...props}
-            onKeyDown={handleKeyDown}
-        >
-            {children}
-        </RouterLink>
-    );
+  return (
+    <RouterLink to={to as string} {...props} onKeyDown={handleKeyDown}>
+      {children}
+    </RouterLink>
+  );
 };
 
 export default AccessibleLink;

@@ -18,85 +18,85 @@
  * @param {boolean} [props.toggleState=false] - The initial state of the toggle button.
  * @returns {JSX.Element} The rendered Button component.
  */
-import React, { useState, useEffect, useRef } from "react";
-import "./Button.css";
+import React, { useEffect, useRef, useState } from 'react';
+import './Button.css';
 
 interface ButtonProps {
-    action: () => void;
-    label: string;
-    shortcutKey?: string;
-    ariaDescribedby?: string;
-    ariaHaspopup?: "menu" | "listbox" | "tree" | "grid" | "dialog" | "true";
-    isDisabled?: boolean;
-    isToggleButton?: boolean;
-    toggleState?: boolean;
+  action: () => void;
+  label: string;
+  shortcutKey?: string;
+  ariaDescribedby?: string;
+  ariaHaspopup?: 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | 'true';
+  isDisabled?: boolean;
+  isToggleButton?: boolean;
+  toggleState?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
-    action,
-    label,
-    shortcutKey,
-    ariaDescribedby,
-    ariaHaspopup,
-    isDisabled,
-    isToggleButton,
-    toggleState,
+  action,
+  label,
+  shortcutKey,
+  ariaDescribedby,
+  ariaHaspopup,
+  isDisabled,
+  isToggleButton,
+  toggleState,
 }) => {
-    const [pressed, setPressed] = useState(toggleState);
-    const buttonRef = useRef<HTMLButtonElement>(null);
+  const [pressed, setPressed] = useState(toggleState);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
-    // Handle keydown events for Enter, Space, and shortcut keys
-    const handleKeyDown = (event: KeyboardEvent | React.KeyboardEvent) => {
-        if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            buttonAction();
-        }
-        if (shortcutKey && event.key === shortcutKey) {
-            event.preventDefault();
-            buttonAction();
-        }
-    };
+  // Handle keydown events for Enter, Space, and shortcut keys
+  const handleKeyDown = (event: KeyboardEvent | React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      buttonAction();
+    }
+    if (shortcutKey && event.key === shortcutKey) {
+      event.preventDefault();
+      buttonAction();
+    }
+  };
 
-    // Toggle button action
-    const toggleButtonAction = () => {
-        setPressed(!pressed);
-        action();
-    };
+  // Toggle button action
+  const toggleButtonAction = () => {
+    setPressed(!pressed);
+    action();
+  };
 
-    // Button action
-    const buttonAction = () => {
-        if (isToggleButton) {
-            toggleButtonAction();
-        } else {
-            action();
-        }
-        // Focus management after activation can be handled here
-    };
+  // Button action
+  const buttonAction = () => {
+    if (isToggleButton) {
+      toggleButtonAction();
+    } else {
+      action();
+    }
+    // Focus management after activation can be handled here
+  };
 
-    useEffect(() => {
-        if (shortcutKey) {
-            window.addEventListener("keydown", handleKeyDown as EventListener);
-            return () => {
-                window.removeEventListener("keydown", handleKeyDown as EventListener);
-            };
-        }
-        return undefined;
-    }, [shortcutKey]);
+  useEffect(() => {
+    if (shortcutKey) {
+      window.addEventListener('keydown', handleKeyDown as EventListener);
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown as EventListener);
+      };
+    }
+    return undefined;
+  }, [shortcutKey]);
 
-    return (
-        <button
-            ref={buttonRef}
-            className={`button${isToggleButton ? " button-toggle" : ""}${isToggleButton && pressed ? " is-pressed" : ""}`}
-            aria-pressed={isToggleButton ? pressed : undefined}
-            aria-haspopup={ariaHaspopup || undefined}
-            aria-describedby={ariaDescribedby || undefined}
-            disabled={isDisabled || undefined}
-            onClick={buttonAction}
-            onKeyDown={handleKeyDown}
-        >
-            {label}
-        </button>
-    );
+  return (
+    <button
+      ref={buttonRef}
+      className={`button${isToggleButton ? ' button-toggle' : ''}${isToggleButton && pressed ? ' is-pressed' : ''}`}
+      aria-pressed={isToggleButton ? pressed : undefined}
+      aria-haspopup={ariaHaspopup || undefined}
+      aria-describedby={ariaDescribedby || undefined}
+      disabled={isDisabled || undefined}
+      onClick={buttonAction}
+      onKeyDown={handleKeyDown}
+    >
+      {label}
+    </button>
+  );
 };
 
 export default Button;

@@ -1,13 +1,13 @@
 .checkbox {
-    display: flex;
-    align-items: center;
-    gap: var(--apg-space-sm);
-    padding: var(--apg-space-xs) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--apg-space-sm);
+  padding: var(--apg-space-xs) 0;
 }
 
-.checkbox-input {
+@media screen and (prefers-reduced-motion: reduce) {
+  .checkbox-input {
     appearance: none;
-    -webkit-appearance: none;
     display: inline-block;
     width: 1rem;
     height: 1rem;
@@ -21,38 +21,57 @@
     border: var(--apg-border-width) solid var(--apg-color-gray-500);
     border-radius: var(--apg-radius-sm);
     cursor: pointer;
-    transition:
-        background-color var(--apg-transition-fast),
-        border-color var(--apg-transition-fast),
-        box-shadow var(--apg-transition-fast);
+    transition: none;
+  }
+}
+
+.checkbox-input {
+  appearance: none;
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  margin: 0;
+  vertical-align: middle;
+  background-color: var(--apg-color-white);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border: var(--apg-border-width) solid var(--apg-color-gray-500);
+  border-radius: var(--apg-radius-sm);
+  cursor: pointer;
+  transition:
+    background-color var(--apg-transition-fast),
+    border-color var(--apg-transition-fast),
+    box-shadow var(--apg-transition-fast);
 }
 
 .checkbox-input:hover {
-    border-color: var(--apg-color-primary);
+  border-color: var(--apg-color-primary);
 }
 
 .checkbox-input:checked {
-    background-color: var(--apg-color-primary);
-    border-color: var(--apg-color-primary);
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+  background-color: var(--apg-color-primary);
+  border-color: var(--apg-color-primary);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
 }
 
 .checkbox-input:indeterminate {
-    background-color: var(--apg-color-primary);
-    border-color: var(--apg-color-primary);
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M5 10h10'/%3e%3c/svg%3e");
+  background-color: var(--apg-color-primary);
+  border-color: var(--apg-color-primary);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M5 10h10'/%3e%3c/svg%3e");
 }
 
 .checkbox-input:focus,
 .checkbox-input:focus-visible {
-    outline: none;
-    border-color: var(--apg-color-primary);
-    box-shadow: var(--apg-focus-ring);
+  outline: none;
+  border-color: var(--apg-color-primary);
+  box-shadow: var(--apg-focus-ring);
 }
 
 .checkbox label {
-    font-size: var(--apg-font-size-base);
-    color: var(--apg-color-black);
-    cursor: pointer;
-    user-select: none;
+  font-size: var(--apg-font-size-base);
+  color: var(--apg-color-black);
+  cursor: pointer;
+  user-select: none;
 }

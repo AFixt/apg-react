@@ -1,54 +1,54 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import Alert from "../components/Alert/Alert";
+import '@testing-library/jest-dom';
+import { fireEvent, render, screen } from '@testing-library/react';
+import React from 'react';
+import Alert from '../components/Alert/Alert';
 
-describe("Alert Component", () => {
-    const message = "This is a test alert";
-    const type = "info";
+describe('Alert Component', () => {
+  const message = 'This is a test alert';
+  const type = 'info';
 
-    test("Alert Snapshot", () => {
-        const { asFragment } = render(<Alert message={message} type={type} />);
-        expect(asFragment()).toMatchSnapshot();
-    });
+  test('Alert Snapshot', () => {
+    const { asFragment } = render(<Alert message={message} type={type} />);
+    expect(asFragment()).toMatchSnapshot();
+  });
 
-    test("Alert Role and Accessibility", () => {
-        render(<Alert message={message} type={type} />);
-        const alert = screen.getByRole("alert");
+  test('Alert Role and Accessibility', () => {
+    render(<Alert message={message} type={type} />);
+    const alert = screen.getByRole('alert');
 
-        expect(alert).toBeInTheDocument();
-        expect(alert).toHaveAttribute("aria-live", "assertive");
-        expect(alert).toHaveTextContent(message);
-    });
+    expect(alert).toBeInTheDocument();
+    expect(alert).toHaveAttribute('aria-live', 'assertive');
+    expect(alert).toHaveTextContent(message);
+  });
 
-    test("Alert Appearance and Behavior", () => {
-        render(<Alert message={message} type={type} />);
-        const alert = screen.getByRole("alert");
-        const dismissButton = screen.getByLabelText("Dismiss");
+  test('Alert Appearance and Behavior', () => {
+    render(<Alert message={message} type={type} />);
+    const alert = screen.getByRole('alert');
+    const dismissButton = screen.getByLabelText('Dismiss');
 
-        expect(alert).toBeVisible();
-        fireEvent.click(dismissButton);
-        expect(alert).not.toBeInTheDocument();
-    });
+    expect(alert).toBeVisible();
+    fireEvent.click(dismissButton);
+    expect(alert).not.toBeInTheDocument();
+  });
 
-    test("Alert Content and Importance", () => {
-        render(<Alert message={message} type={type} />);
-        const alert = screen.getByRole("alert");
+  test('Alert Content and Importance', () => {
+    render(<Alert message={message} type={type} />);
+    const alert = screen.getByRole('alert');
 
-        expect(alert).toHaveTextContent(message);
-    });
+    expect(alert).toHaveTextContent(message);
+  });
 
-    test("Alert Design Considerations", () => {
-        const { container } = render(<Alert message={message} type={type} />);
-        const alert = container.querySelector(`.alert-${type}`);
+  test('Alert Design Considerations', () => {
+    const { container } = render(<Alert message={message} type={type} />);
+    const alert = container.querySelector(`.alert-${type}`);
 
-        expect(alert).toBeInTheDocument();
-    });
+    expect(alert).toBeInTheDocument();
+  });
 
-    test("Alert on Page Load", () => {
-        render(<Alert message={message} type={type} />);
-        const alert = screen.getByRole("alert");
+  test('Alert on Page Load', () => {
+    render(<Alert message={message} type={type} />);
+    const alert = screen.getByRole('alert');
 
-        expect(alert).toBeInTheDocument();
-    });
+    expect(alert).toBeInTheDocument();
+  });
 });

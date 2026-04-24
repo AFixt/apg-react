@@ -8,8 +8,8 @@
 
 Issue #61 proposes Playwright for E2E tests. This project currently uses
 Puppeteer driven by a Jest config (`e2e/jest.config.js`) against a built
-Storybook (`storybook-static/`). The E2E layer exercises keyboard interaction
-on every APG component.
+Storybook (`storybook-static/`). The E2E layer exercises keyboard interaction on
+every APG component.
 
 ## Decision
 
@@ -24,8 +24,8 @@ Keep Puppeteer + Jest for E2E.
 
 ## Alternatives considered
 
-- **Migrate to Playwright** — rejected. Cross-browser E2E is not a
-  requirement for this APG component library; the patterns under test are
-  keyboard- and DOM-level and do not depend on browser-specific rendering.
-  The migration cost (rewriting every `e2e/*.e2e.js` file, new CI setup)
-  outweighs the marginal benefit.
+- **Migrate to Playwright** — rejected. Cross-browser E2E is not a requirement
+  for this APG component library; the patterns under test are keyboard- and
+  DOM-level and do not depend on browser-specific rendering. The migration cost
+  (rewriting every `e2e/*.e2e.js` file, new CI setup) outweighs the marginal
+  benefit.

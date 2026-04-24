@@ -1,50 +1,52 @@
 .listbox-container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--apg-space-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--apg-space-xs);
 }
 
 .listbox-label {
-    font-size: var(--apg-font-size-sm);
-    font-weight: var(--apg-font-weight-semibold);
-    color: var(--apg-color-black);
+  font-size: var(--apg-font-size-sm);
+  font-weight: var(--apg-font-weight-semibold);
+  color: var(--apg-color-black);
 }
 
 .listbox {
-    list-style: none;
-    padding: var(--apg-space-xs);
-    margin: 0;
-    background-color: var(--apg-color-white);
-    border: var(--apg-border-width) solid var(--apg-border-color);
-    border-radius: var(--apg-radius-md);
-    max-height: 12rem;
-    overflow-y: auto;
-    outline: none;
+  list-style: none;
+  padding: var(--apg-space-xs);
+  margin: 0;
+  background-color: var(--apg-color-white);
+  border: var(--apg-border-width) solid var(--apg-border-color);
+  border-radius: var(--apg-radius-md);
+  max-height: 12rem;
+  overflow-y: auto;
+  outline: none;
 }
 
 .listbox-option {
-    padding: var(--apg-space-sm) var(--apg-space-md);
-    border-radius: var(--apg-radius-sm);
-    cursor: pointer;
-    user-select: none;
-    color: var(--apg-color-black);
-    outline: none;
+  padding: var(--apg-space-sm) var(--apg-space-md);
+  border-radius: var(--apg-radius-sm);
+  cursor: pointer;
+  user-select: none;
+  color: var(--apg-color-black);
+  outline: none;
 }
 
-.listbox-option:hover {
-    background-color: var(--apg-color-gray-100);
+.listbox-option:hover,
+.listbox-option:focus {
+  background-color: var(--apg-color-gray-100);
 }
 
 .listbox-option.is-focused:focus,
 .listbox-option.is-focused:focus-visible {
-    box-shadow: var(--apg-focus-ring);
+  box-shadow: var(--apg-focus-ring);
 }
 
 .listbox-option.is-selected {
-    background-color: var(--apg-color-primary);
-    color: var(--apg-color-white);
+  background-color: var(--apg-color-primary);
+  color: var(--apg-color-white);
 }
 
-.listbox-option.is-selected:hover {
-    background-color: var(--apg-color-primary-hover);
+.listbox-option.is-selected:hover,
+.listbox-option.is-selected:focus {
+  background-color: var(--apg-color-primary-hover);
 }

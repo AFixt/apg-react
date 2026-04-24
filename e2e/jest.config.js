@@ -9,18 +9,18 @@
  *   npm run test:e2e            # starts http-server + runs this config
  */
 module.exports = {
-    rootDir: __dirname,
-    testEnvironment: "node",
-    testMatch: ["<rootDir>/**/*.e2e.js"],
-    globalSetup: "<rootDir>/globalSetup.js",
-    globalTeardown: "<rootDir>/globalTeardown.js",
-    setupFilesAfterEach: [],
-    testTimeout: 30000,
-    verbose: false,
-    transform: {
-        "^.+\\.[t|j]sx?$": [
-            "babel-jest",
-            { presets: [["@babel/preset-env", { targets: { node: "current" } }]] },
-        ],
-    },
+  rootDir: __dirname,
+  testEnvironment: 'node',
+  testMatch: ['<rootDir>/**/*.e2e.js'],
+  globalSetup: '<rootDir>/globalSetup.js',
+  globalTeardown: '<rootDir>/globalTeardown.js',
+  setupFilesAfterEach: [],
+  testTimeout: 30000,
+  verbose: false,
+  transform: {
+    '^.+\\.[t|j]sx?$': [
+      'babel-jest',
+      { presets: [['@babel/preset-env', { targets: { node: 'current' } }]] },
+    ],
+  },
 };
