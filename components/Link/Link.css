@@ -1,21 +1,30 @@
-a[role="link"] {
+@media screen and (prefers-reduced-motion: reduce) {
+  a[role='link'] {
     color: var(--apg-color-primary);
     text-decoration: underline;
     cursor: pointer;
-    transition: color var(--apg-transition-fast);
+    transition: none;
+  }
 }
 
-a[role="link"]:hover {
-    color: var(--apg-color-primary-hover);
+a[role='link'] {
+  color: var(--apg-color-primary);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color var(--apg-transition-fast);
 }
 
-a[role="link"]:focus,
-a[role="link"]:focus-visible {
-    outline: none;
-    box-shadow: var(--apg-focus-ring);
-    border-radius: var(--apg-radius-sm);
+a[role='link']:hover {
+  color: var(--apg-color-primary-hover);
 }
 
-a[role="link"]:active {
-    color: var(--apg-color-primary-active);
+a[role='link']:focus,
+a[role='link']:focus-visible {
+  outline: none;
+  box-shadow: var(--apg-focus-ring);
+  border-radius: var(--apg-radius-sm);
+}
+
+a[role='link']:active {
+  color: var(--apg-color-primary-active);
 }

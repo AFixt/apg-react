@@ -1,5 +1,5 @@
+import { expect, userEvent, within } from '@storybook/test';
 import React, { useState } from 'react';
-import { within, userEvent, expect } from '@storybook/test';
 import Textbox from './Textbox';
 
 export default {

@@ -1,8 +1,8 @@
-import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
-import postcss from 'rollup-plugin-postcss';
 import { readFileSync } from 'fs';
+import postcss from 'rollup-plugin-postcss';
 
 const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
 
@@ -20,11 +20,7 @@ export default {
       sourcemap: true,
     },
   ],
-  external: [
-    'react',
-    'react-dom',
-    'react-router-dom',
-  ],
+  external: ['react', 'react-dom', 'react-router-dom'],
   plugins: [
     resolve({ extensions: ['.ts', '.tsx', '.js', '.jsx'] }),
     commonjs(),

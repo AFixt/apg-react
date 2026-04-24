@@ -26,40 +26,40 @@
  * to handle closing the modal when the escape key is pressed.
  */
 
-import React, { useState, useRef } from "react";
-import ModalDialog from "./ModalDialog"; // Adjust the import path based on your project structure
+import React, { useRef, useState } from 'react';
+import ModalDialog from './ModalDialog'; // Adjust the import path based on your project structure
 
 function MyComponent() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const initialFocusRef = useRef(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const initialFocusRef = useRef(null);
 
-    const openModal = () => {
-        setIsModalOpen(true);
-    };
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-    };
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
-    return (
+  return (
+    <div>
+      <h1>My React Component</h1>
+      <button onClick={openModal}>Open Modal</button>
+
+      <ModalDialog
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        ariaLabel="My Modal Dialog"
+        initialFocusRef={initialFocusRef}
+      >
         <div>
-            <h1>My React Component</h1>
-            <button onClick={openModal}>Open Modal</button>
-
-            <ModalDialog
-                isOpen={isModalOpen}
-                onClose={closeModal}
-                ariaLabel="My Modal Dialog"
-                initialFocusRef={initialFocusRef}
-            >
-                <div>
-                    <h2 ref={initialFocusRef}>Modal Title</h2>
-                    <p>Content of the modal dialog goes here.</p>
-                    <button onClick={closeModal}>Close</button>
-                </div>
-            </ModalDialog>
+          <h2 ref={initialFocusRef}>Modal Title</h2>
+          <p>Content of the modal dialog goes here.</p>
+          <button onClick={closeModal}>Close</button>
         </div>
-    );
+      </ModalDialog>
+    </div>
+  );
 }
 
 export default MyComponent;

@@ -11,47 +11,47 @@
  * @param {string} items[].label - The label of the breadcrumb item.
  * @returns {JSX.Element} The rendered Breadcrumb component.
  */
-import React from "react";
-import { Link } from "react-router-dom";
-import "./Breadcrumb.css";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './Breadcrumb.css';
 
 interface BreadcrumbItem {
-    path: string;
-    label: string;
+  path: string;
+  label: string;
 }
 
 interface BreadcrumbLabels {
-    nav?: string;
+  nav?: string;
 }
 
 interface BreadcrumbProps {
-    items: BreadcrumbItem[];
-    navLabel?: string;
-    labels?: BreadcrumbLabels;
+  items: BreadcrumbItem[];
+  navLabel?: string;
+  labels?: BreadcrumbLabels;
 }
 
 const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, navLabel, labels }) => {
-    const defaultLabels: BreadcrumbLabels = {
-        nav: "Breadcrumb",
-    };
-    const l = { ...defaultLabels, ...labels };
-    const isLast = (index: number) => index === items.length - 1;
+  const defaultLabels: BreadcrumbLabels = {
+    nav: 'Breadcrumb',
+  };
+  const l = { ...defaultLabels, ...labels };
+  const isLast = (index: number) => index === items.length - 1;
 
-    return (
-        <nav aria-label={navLabel || l.nav} className="breadcrumb-nav">
-            <ol className="breadcrumb-list">
-                {items.map((item, index) => (
-                    <li key={item.path} className="breadcrumb-item">
-                        {!isLast(index) ? (
-                            <Link to={item.path}>{item.label}</Link>
-                        ) : (
-                            <span aria-current="page">{item.label}</span>
-                        )}
-                    </li>
-                ))}
-            </ol>
-        </nav>
-    );
+  return (
+    <nav aria-label={navLabel || l.nav} className="breadcrumb-nav">
+      <ol className="breadcrumb-list">
+        {items.map((item, index) => (
+          <li key={item.path} className="breadcrumb-item">
+            {!isLast(index) ? (
+              <Link to={item.path}>{item.label}</Link>
+            ) : (
+              <span aria-current="page">{item.label}</span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
 };
 
 export default Breadcrumb;

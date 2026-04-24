@@ -1,5 +1,5 @@
+import { expect, userEvent, within } from '@storybook/test';
 import React from 'react';
-import { within, userEvent, expect } from '@storybook/test';
 import Tabs from './Tabs';
 
 export default {
