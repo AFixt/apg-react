@@ -1,0 +1,30 @@
+[
+  {
+    "name": "ESM bundle (whole library, gzipped)",
+    "path": "dist/index.esm.js",
+    "import": "*",
+    "limit": "35 KB"
+  },
+  {
+    "name": "CJS bundle (whole library, gzipped)",
+    "path": "dist/index.cjs.js",
+    "limit": "45 KB"
+  },
+  {
+    "name": "Tree-shaken: single Accordion import",
+    "path": "dist/index.esm.js",
+    "import": "{ Accordion }",
+    "limit": "4 KB"
+  },
+  {
+    "name": "Tree-shaken: single Button import",
+    "path": "dist/index.esm.js",
+    "import": "{ Button }",
+    "limit": "4 KB"
+  },
+  {
+    "name": "Bundled CSS (gzipped)",
+    "path": "dist/styles.css",
+    "limit": "10 KB"
+  }
+]
