@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import './Checkbox.css';
 
+/** Props for the Checkbox component. */
 interface CheckboxProps {
   label: string;
   checked: boolean | null;
@@ -64,4 +65,5 @@ const Checkbox: React.FC<CheckboxProps> = ({
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Checkbox pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Checkbox;

@@ -1,6 +1,7 @@
 import React, { useId, useState } from 'react';
 import './Disclosure.css';
 
+/** Props for the Disclosure component. */
 interface DisclosureProps {
   title: React.ReactNode;
   children: React.ReactNode;
@@ -43,4 +44,5 @@ const Disclosure: React.FC<DisclosureProps> = ({ title, children }) => {
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Disclosure pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Disclosure;

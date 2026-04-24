@@ -16,11 +16,13 @@
 import React, { useMemo, useRef, useState } from 'react';
 import './Listbox.css';
 
+/** A single option in a Listbox. */
 interface ListboxOption {
   value: string;
   label: React.ReactNode;
 }
 
+/** Props for the Listbox component. */
 interface ListboxProps {
   options: ListboxOption[];
   value?: string | string[];
@@ -170,4 +172,5 @@ const Listbox: React.FC<ListboxProps> = ({
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Listbox pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Listbox;

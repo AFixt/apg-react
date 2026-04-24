@@ -12,11 +12,13 @@ import React, { useEffect, useId, useState } from 'react';
 import Checkbox from '../Checkbox/Checkbox';
 import './CheckboxGroup.css';
 
+/** A single item in a CheckboxGroup. */
 interface CheckboxGroupItem {
   id: string;
   label: string;
 }
 
+/** Props for the CheckboxGroup component. */
 interface CheckboxGroupProps {
   items: CheckboxGroupItem[];
   label: string;
@@ -67,4 +69,5 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ items, label }) => {
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG CheckboxGroup pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default CheckboxGroup;

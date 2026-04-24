@@ -20,12 +20,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import Article from '../Article/Article';
 import './Feed.css';
 
+/** Article Data used by the Feed component. */
 interface ArticleData {
   id: string;
   title: React.ReactNode;
   content: React.ReactNode;
 }
 
+/** Props for the Feed component. */
 interface FeedProps {
   fetchArticles: () => Promise<ArticleData[]>;
   /** Accessible name for the feed region. */
@@ -111,4 +113,5 @@ const Feed: React.FC<FeedProps> = ({ fetchArticles, ariaLabel }) => {
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Feed pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Feed;

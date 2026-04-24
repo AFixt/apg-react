@@ -1,10 +1,12 @@
 import React from 'react';
 
+/** A single item in a Accordion. */
 interface AccordionItem {
   title: React.ReactNode;
   content: React.ReactNode;
 }
 
+/** Props for the Accordion component. */
 interface AccordionProps {
   items: AccordionItem[];
   openIndex: number | null;
@@ -73,4 +75,5 @@ const Accordion: React.FC<AccordionProps> = ({ items, toggleItem, openIndex }) =
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Accordion pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Accordion;

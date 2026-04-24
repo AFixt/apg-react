@@ -21,6 +21,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Button.css';
 
+/** Props for the Button component. */
 interface ButtonProps {
   action: () => void;
   label: string;
@@ -99,4 +100,5 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Button pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Button;

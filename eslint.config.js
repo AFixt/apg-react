@@ -135,12 +135,27 @@ export default tseslint.config(
       'promise/no-nesting': 'warn',
 
       // ----- JSDoc -----
-      // NOTE: jsdoc/require-jsdoc is intentionally OFF pending a bulk JSDoc
-      // pass on all 31 components (tracked separately). See ADR-0006.
       'jsdoc/check-tag-names': [
         'error',
         { definedTags: ['remarks', 'public', 'internal', 'beta', 'component'] },
       ],
+      'jsdoc/require-jsdoc': [
+        'error',
+        {
+          contexts: [
+            // Exported component variables: `export default const Foo = ...`
+            'ExportDefaultDeclaration > VariableDeclaration',
+            // Components defined as `const Foo: React.FC = ...; export default Foo`
+            'VariableDeclaration:has(VariableDeclarator > ArrowFunctionExpression) ~ ExportDefaultDeclaration',
+            // Prop + data interfaces and type aliases
+            'TSInterfaceDeclaration',
+            'TSTypeAliasDeclaration',
+          ],
+          checkConstructors: false,
+          publicOnly: false,
+        },
+      ],
+      'jsdoc/require-description': ['error', { contexts: ['any'] }],
 
       // ----- Secrets -----
       'no-secrets/no-secrets': [

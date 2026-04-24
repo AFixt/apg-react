@@ -15,6 +15,7 @@
 import React, { useId, useState } from 'react';
 import './Switch.css';
 
+/** Props for the Switch component. */
 interface SwitchProps {
   label?: string;
   ariaLabelledby?: string;
@@ -66,4 +67,5 @@ const Switch: React.FC<SwitchProps> = ({
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Switch pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Switch;

@@ -9,6 +9,7 @@
 import React, { useEffect, useId, useRef } from 'react';
 import './AlertDialog.css';
 
+/** Props for the AlertDialog component. */
 interface AlertDialogProps {
   isOpen: boolean;
   title: string;
@@ -89,4 +90,5 @@ const AlertDialog: React.FC<AlertDialogProps> = ({ isOpen, title, message, onClo
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG AlertDialog pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default AlertDialog;

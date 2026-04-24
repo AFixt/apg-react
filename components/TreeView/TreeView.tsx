@@ -19,12 +19,14 @@
 import React, { useMemo, useRef, useState } from 'react';
 import './TreeView.css';
 
+/** Tree Node used by the TreeView component. */
 interface TreeNode {
   id: string;
   label: React.ReactNode;
   children?: TreeNode[];
 }
 
+/** Props for the TreeView component. */
 interface TreeViewProps {
   label: string;
   nodes: TreeNode[];
@@ -32,6 +34,7 @@ interface TreeViewProps {
   defaultExpanded?: string[];
 }
 
+/** Internal flat entry representation used while rendering TreeView. */
 interface FlatEntry {
   id: string;
   label: React.ReactNode;
@@ -203,4 +206,5 @@ const TreeView: React.FC<TreeViewProps> = ({ label, nodes, onSelect, defaultExpa
   return renderNodes(nodes);
 };
 
+/** Accessible implementation of the WAI-ARIA APG TreeView pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default TreeView;

@@ -15,12 +15,14 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
 import './MenuButton.css';
 
+/** A single item inside a menu. */
 interface MenuItem {
   id: string;
   label: React.ReactNode;
   onSelect?: () => void;
 }
 
+/** Props for the MenuButton component. */
 interface MenuButtonProps {
   label: React.ReactNode;
   items: MenuItem[];
@@ -162,4 +164,5 @@ const MenuButton: React.FC<MenuButtonProps> = ({ label, items, idPrefix }) => {
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG MenuButton pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default MenuButton;

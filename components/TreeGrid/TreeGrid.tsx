@@ -19,17 +19,20 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './TreeGrid.css';
 
+/** A single column in a TreeGrid. */
 interface TreeGridColumn {
   key: string;
   label: React.ReactNode;
 }
 
+/** A row in a TreeGrid. */
 interface TreeGridRow {
   id: string;
   children?: TreeGridRow[];
   [column: string]: unknown;
 }
 
+/** Props for the TreeGrid component. */
 interface TreeGridProps {
   label: string;
   columns: TreeGridColumn[];
@@ -37,6 +40,7 @@ interface TreeGridProps {
   defaultExpanded?: string[];
 }
 
+/** Internal flat row representation used while rendering TreeGrid. */
 interface FlatRow extends TreeGridRow {
   level: number;
   parentId: string | null;
@@ -229,4 +233,5 @@ const TreeGrid: React.FC<TreeGridProps> = ({ label, columns, rows, defaultExpand
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG TreeGrid pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default TreeGrid;

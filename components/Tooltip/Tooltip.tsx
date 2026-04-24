@@ -11,6 +11,7 @@
 import React, { cloneElement, isValidElement, useRef, useState } from 'react';
 import './Tooltip.css';
 
+/** Props for the Tooltip component. */
 interface TooltipProps {
   children: React.ReactNode;
   text: string;
@@ -61,4 +62,5 @@ const Tooltip: React.FC<TooltipProps> = ({ children, text, position = 'top' }) =
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Tooltip pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Tooltip;
