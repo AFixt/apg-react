@@ -26,20 +26,6 @@
 
 @media screen and (prefers-reduced-motion: reduce) {
   .accordion-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--apg-space-md);
-    width: 100%;
-    padding: var(--apg-space-lg) var(--apg-space-xl);
-    background-color: var(--apg-color-gray-50);
-    color: var(--apg-color-black);
-    border: 0;
-    text-align: left;
-    cursor: pointer;
-    font-size: var(--apg-font-size-base);
-    font-family: var(--apg-font-family);
-    font-weight: var(--apg-font-weight-medium);
     transition: none;
   }
 }

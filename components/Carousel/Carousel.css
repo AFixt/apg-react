@@ -8,7 +8,6 @@
 
 @media screen and (prefers-reduced-motion: reduce) {
   .carousel .slides {
-    display: flex;
     transition: none;
   }
 }
@@ -25,16 +24,6 @@
 
 @media screen and (prefers-reduced-motion: reduce) {
   .carousel-control {
-    position: absolute;
-    background-color: rgb(0 0 0 / 55%);
-    color: var(--apg-color-white);
-    border: 0;
-    padding: var(--apg-space-md);
-    cursor: pointer;
-    opacity: 100%;
-    z-index: var(--apg-z-dropdown);
-    font-size: var(--apg-font-size-2xl);
-    line-height: 1;
     transition: none;
   }
 }
@@ -122,20 +111,6 @@
 
 @media screen and (prefers-reduced-motion: reduce) {
   .carousel .slide-selectors button {
-    position: static;
-    transform: none;
-    min-width: 1.75rem;
-    height: 1.75rem;
-    padding: 0 var(--apg-space-sm);
-    margin: 0;
-    background-color: rgb(255 255 255 / 50%);
-    color: var(--apg-color-black);
-    border: 0;
-    opacity: 80%;
-    border-radius: var(--apg-radius-full);
-    cursor: pointer;
-    font-size: var(--apg-font-size-sm);
-    line-height: 1;
     transition: none;
   }
 }

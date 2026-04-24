@@ -5,19 +5,7 @@
 
 @media screen and (prefers-reduced-motion: reduce) {
   .tooltip-text {
-    position: absolute;
-    background-color: var(--apg-color-black);
-    color: var(--apg-color-white);
-    padding: var(--apg-space-xs) var(--apg-space-sm);
-    border-radius: var(--apg-radius-sm);
-    z-index: var(--apg-z-tooltip);
-    white-space: nowrap;
-    opacity: 0%;
-    pointer-events: none;
     transition: none;
-    font-size: var(--apg-font-size-sm);
-    line-height: var(--apg-line-height-normal);
-    box-shadow: var(--apg-shadow-sm);
   }
 }
 
