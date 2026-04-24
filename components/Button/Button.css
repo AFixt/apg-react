@@ -1,64 +1,70 @@
+@media screen and (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+}
+
 .button {
-    display: inline-block;
-    font-family: var(--apg-font-family);
-    font-weight: var(--apg-font-weight-normal);
-    line-height: var(--apg-line-height-normal);
-    color: var(--apg-color-white);
-    background-color: var(--apg-color-primary);
-    border: var(--apg-border-width) solid var(--apg-color-primary);
-    padding: 0.375rem 0.75rem;
-    font-size: var(--apg-font-size-base);
-    border-radius: var(--apg-radius-md);
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    vertical-align: middle;
-    user-select: none;
-    outline: none;
-    transition:
-        color var(--apg-transition-fast),
-        background-color var(--apg-transition-fast),
-        border-color var(--apg-transition-fast),
-        box-shadow var(--apg-transition-fast);
+  display: inline-block;
+  font-family: var(--apg-font-family);
+  font-weight: var(--apg-font-weight-normal);
+  line-height: var(--apg-line-height-normal);
+  color: var(--apg-color-white);
+  background-color: var(--apg-color-primary);
+  border: var(--apg-border-width) solid var(--apg-color-primary);
+  padding: 0.375rem 0.75rem;
+  font-size: var(--apg-font-size-base);
+  border-radius: var(--apg-radius-md);
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  user-select: none;
+  outline: none;
+  transition:
+    color var(--apg-transition-fast),
+    background-color var(--apg-transition-fast),
+    border-color var(--apg-transition-fast),
+    box-shadow var(--apg-transition-fast);
 }
 
 .button:hover {
-    background-color: var(--apg-color-primary-hover);
-    border-color: var(--apg-color-primary-hover);
-    color: var(--apg-color-white);
+  background-color: var(--apg-color-primary-hover);
+  border-color: var(--apg-color-primary-hover);
+  color: var(--apg-color-white);
 }
 
 .button:focus,
 .button:focus-visible {
-    background-color: var(--apg-color-primary-hover);
-    border-color: var(--apg-color-primary-hover);
-    box-shadow: var(--apg-focus-ring);
+  background-color: var(--apg-color-primary-hover);
+  border-color: var(--apg-color-primary-hover);
+  box-shadow: var(--apg-focus-ring);
 }
 
 .button:active {
-    background-color: var(--apg-color-primary-active);
-    border-color: var(--apg-color-primary-active);
-    box-shadow: var(--apg-shadow-inset);
+  background-color: var(--apg-color-primary-active);
+  border-color: var(--apg-color-primary-active);
+  box-shadow: var(--apg-shadow-inset);
 }
 
 .button:disabled {
-    background-color: var(--apg-color-primary);
-    border-color: var(--apg-color-primary);
-    opacity: 0.65;
-    cursor: not-allowed;
-    box-shadow: none;
+  background-color: var(--apg-color-primary);
+  border-color: var(--apg-color-primary);
+  opacity: 65%;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .button-toggle.is-pressed,
-.button[aria-pressed="true"] {
-    background-color: var(--apg-color-primary-active);
-    border-color: var(--apg-color-primary-active);
-    color: var(--apg-color-white);
-    box-shadow: var(--apg-shadow-inset);
+.button[aria-pressed='true'] {
+  background-color: var(--apg-color-primary-active);
+  border-color: var(--apg-color-primary-active);
+  color: var(--apg-color-white);
+  box-shadow: var(--apg-shadow-inset);
 }
 
 .button-toggle.is-pressed::before,
-.button[aria-pressed="true"]::before {
-    content: "\2713\00a0";
-    font-weight: var(--apg-font-weight-bold);
+.button[aria-pressed='true']::before {
+  content: '\2713\00a0';
+  font-weight: var(--apg-font-weight-bold);
 }

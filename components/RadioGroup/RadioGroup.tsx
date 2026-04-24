@@ -7,102 +7,115 @@
  *   - Space: selects focused radio (if not already selected).
  *   - Home / End: move to first / last radio.
  */
-import React, { useRef, useState } from "react";
-import "./RadioGroup.css";
+import React, { useRef, useState } from 'react';
+import './RadioGroup.css';
 
+/** Radio Option used by the RadioGroup component. */
 interface RadioOption {
-    value: string;
-    label: string;
+  value: string;
+  label: string;
 }
 
+/** Props for the RadioGroup component. */
 interface RadioGroupProps {
-    name: string;
-    label?: string;
-    labelId?: string;
-    options: RadioOption[];
-    value?: string;
-    onChange?: (next: string) => void;
+  name: string;
+  label?: string;
+  labelId?: string;
+  options: RadioOption[];
+  value?: string;
+  onChange?: (next: string) => void;
 }
 
-const RadioGroup: React.FC<RadioGroupProps> = ({ label, labelId, options, value, onChange, name }) => {
-    const [internalValue, setInternalValue] = useState(value ?? options[0]?.value);
-    const current = value !== undefined ? value : internalValue;
-    const radioRefs = useRef<(HTMLDivElement | null)[]>([]);
+const RadioGroup: React.FC<RadioGroupProps> = ({
+  label,
+  labelId,
+  options,
+  value,
+  onChange,
+  name,
+}) => {
+  const [internalValue, setInternalValue] = useState(value ?? options[0]?.value);
+  const current = value !== undefined ? value : internalValue;
+  const radioRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-    const groupLabelId = labelId || `${name}-label`;
+  const groupLabelId = labelId || `${name}-label`;
 
-    const select = (newValue: string) => {
-        if (value === undefined) setInternalValue(newValue);
-        onChange?.(newValue);
-    };
+  const select = (newValue: string) => {
+    if (value === undefined) setInternalValue(newValue);
+    onChange?.(newValue);
+  };
 
-    const focusIndex = (i: number) => {
-        const el = radioRefs.current[i];
-        if (el) {
-            el.focus();
-            select(options[i].value);
-        }
-    };
+  const focusIndex = (i: number) => {
+    const el = radioRefs.current[i];
+    const opt = options[i];
+    if (el && opt) {
+      el.focus();
+      select(opt.value);
+    }
+  };
 
-    const handleKeyDown = (e: React.KeyboardEvent, idx: number) => {
-        const last = options.length - 1;
-        let handled = true;
-        switch (e.key) {
-            case "ArrowDown":
-            case "ArrowRight":
-                focusIndex(idx === last ? 0 : idx + 1);
-                break;
-            case "ArrowUp":
-            case "ArrowLeft":
-                focusIndex(idx === 0 ? last : idx - 1);
-                break;
-            case "Home":
-                focusIndex(0);
-                break;
-            case "End":
-                focusIndex(last);
-                break;
-            case " ":
-                select(options[idx].value);
-                break;
-            default:
-                handled = false;
-        }
-        if (handled) e.preventDefault();
-    };
+  const handleKeyDown = (e: React.KeyboardEvent, idx: number) => {
+    const last = options.length - 1;
+    let handled = true;
+    switch (e.key) {
+      case 'ArrowDown':
+      case 'ArrowRight':
+        focusIndex(idx === last ? 0 : idx + 1);
+        break;
+      case 'ArrowUp':
+      case 'ArrowLeft':
+        focusIndex(idx === 0 ? last : idx - 1);
+        break;
+      case 'Home':
+        focusIndex(0);
+        break;
+      case 'End':
+        focusIndex(last);
+        break;
+      case ' ': {
+        const opt = options[idx];
+        if (opt) select(opt.value);
+        break;
+      }
+      default:
+        handled = false;
+    }
+    if (handled) e.preventDefault();
+  };
 
-    return (
-        <div
-            className="radiogroup"
-            role="radiogroup"
-            aria-labelledby={groupLabelId}
-        >
-            {label && <div id={groupLabelId} className="radiogroup-label">{label}</div>}
-            <div className="radiogroup-items">
-                {options.map((opt, idx) => {
-                    const selected = current === opt.value;
-                    return (
-                        <div
-                            key={opt.value}
-                            ref={(el) => (radioRefs.current[idx] = el)}
-                            role="radio"
-                            className={`radio${selected ? " is-checked" : ""}`}
-                            aria-checked={selected}
-                            tabIndex={selected ? 0 : -1}
-                            onClick={() => {
-                                radioRefs.current[idx]?.focus();
-                                select(opt.value);
-                            }}
-                            onKeyDown={(e) => handleKeyDown(e, idx)}
-                        >
-                            <span className="radio-indicator" aria-hidden="true" />
-                            <span className="radio-label">{opt.label}</span>
-                        </div>
-                    );
-                })}
-            </div>
+  return (
+    <div className="radiogroup" role="radiogroup" aria-labelledby={groupLabelId}>
+      {label && (
+        <div id={groupLabelId} className="radiogroup-label">
+          {label}
         </div>
-    );
+      )}
+      <div className="radiogroup-items">
+        {options.map((opt, idx) => {
+          const selected = current === opt.value;
+          return (
+            <div
+              key={opt.value}
+              ref={(el) => (radioRefs.current[idx] = el)}
+              role="radio"
+              className={`radio${selected ? ' is-checked' : ''}`}
+              aria-checked={selected}
+              tabIndex={selected ? 0 : -1}
+              onClick={() => {
+                radioRefs.current[idx]?.focus();
+                select(opt.value);
+              }}
+              onKeyDown={(e) => handleKeyDown(e, idx)}
+            >
+              <span className="radio-indicator" aria-hidden="true" />
+              <span className="radio-label">{opt.label}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 };
 
+/** Accessible implementation of the WAI-ARIA APG RadioGroup pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default RadioGroup;

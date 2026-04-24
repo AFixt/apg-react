@@ -1,36 +1,55 @@
 .progressbar-container {
-    width: 100%;
+  width: 100%;
 }
 
 .progressbar-label {
-    margin-bottom: var(--apg-space-xs);
-    color: var(--apg-color-black);
-    font-size: var(--apg-font-size-sm);
+  margin-bottom: var(--apg-space-xs);
+  color: var(--apg-color-black);
+  font-size: var(--apg-font-size-sm);
 }
 
 .progressbar {
-    width: 100%;
-    height: 1rem;
-    background-color: #dddddd;
-    border-radius: var(--apg-radius-md);
-    overflow: hidden;
-    position: relative;
+  width: 100%;
+  height: 1rem;
+  background-color: #ddd;
+  border-radius: var(--apg-radius-md);
+  overflow: hidden;
+  position: relative;
+}
+
+@media screen and (prefers-reduced-motion: reduce) {
+  .progressbar-fill {
+    transition: none;
+  }
 }
 
 .progressbar-fill {
-    height: 100%;
-    background-color: var(--apg-color-primary);
-    border-radius: var(--apg-radius-md) 0 0 var(--apg-radius-md);
-    transition: width 0.3s ease;
+  height: 100%;
+  background-color: var(--apg-color-primary);
+  border-radius: var(--apg-radius-md) 0 0 var(--apg-radius-md);
+  transition: width 0.3s ease;
+}
+
+@media screen and (prefers-reduced-motion: reduce) {
+  .progressbar.is-indeterminate .progressbar-fill {
+    width: 40%;
+    border-radius: var(--apg-radius-md);
+    animation: none;
+  }
 }
 
 .progressbar.is-indeterminate .progressbar-fill {
-    width: 40%;
-    border-radius: var(--apg-radius-md);
-    animation: progressbar-indeterminate 1.2s ease-in-out infinite;
+  width: 40%;
+  border-radius: var(--apg-radius-md);
+  animation: progressbar-indeterminate 1.2s ease-in-out infinite;
 }
 
 @keyframes progressbar-indeterminate {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(250%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(250%);
+  }
 }

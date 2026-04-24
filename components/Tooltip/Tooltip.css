@@ -1,54 +1,60 @@
 .tooltip-container {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
+}
+
+@media screen and (prefers-reduced-motion: reduce) {
+  .tooltip-text {
+    transition: none;
+  }
 }
 
 .tooltip-text {
-    position: absolute;
-    background-color: var(--apg-color-black);
-    color: var(--apg-color-white);
-    padding: var(--apg-space-xs) var(--apg-space-sm);
-    border-radius: var(--apg-radius-sm);
-    z-index: var(--apg-z-tooltip);
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--apg-transition-normal);
-    font-size: var(--apg-font-size-sm);
-    line-height: var(--apg-line-height-normal);
-    box-shadow: var(--apg-shadow-sm);
+  position: absolute;
+  background-color: var(--apg-color-black);
+  color: var(--apg-color-white);
+  padding: var(--apg-space-xs) var(--apg-space-sm);
+  border-radius: var(--apg-radius-sm);
+  z-index: var(--apg-z-tooltip);
+  white-space: nowrap;
+  opacity: 0%;
+  pointer-events: none;
+  transition: opacity var(--apg-transition-normal);
+  font-size: var(--apg-font-size-sm);
+  line-height: var(--apg-line-height-normal);
+  box-shadow: var(--apg-shadow-sm);
 }
 
 .tooltip-container:hover .tooltip-text,
 .tooltip-container:focus .tooltip-text,
 .tooltip-container:focus-within .tooltip-text {
-    opacity: 0.9;
+  opacity: 90%;
 }
 
-.tooltip-container .tooltip-text[data-position="top"] {
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-bottom: var(--apg-space-xs);
+.tooltip-container .tooltip-text[data-position='top'] {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: var(--apg-space-xs);
 }
 
-.tooltip-container .tooltip-text[data-position="right"] {
-    top: 50%;
-    left: 100%;
-    transform: translateY(-50%);
-    margin-left: var(--apg-space-xs);
+.tooltip-container .tooltip-text[data-position='right'] {
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+  margin-left: var(--apg-space-xs);
 }
 
-.tooltip-container .tooltip-text[data-position="bottom"] {
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: var(--apg-space-xs);
+.tooltip-container .tooltip-text[data-position='bottom'] {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: var(--apg-space-xs);
 }
 
-.tooltip-container .tooltip-text[data-position="left"] {
-    top: 50%;
-    right: 100%;
-    transform: translateY(-50%);
-    margin-right: var(--apg-space-xs);
+.tooltip-container .tooltip-text[data-position='left'] {
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%);
+  margin-right: var(--apg-space-xs);
 }

@@ -1,66 +1,72 @@
 .textbox-container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--apg-space-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--apg-space-xs);
 }
 
 .textbox-label {
-    font-size: var(--apg-font-size-sm);
-    font-weight: var(--apg-font-weight-medium);
-    color: var(--apg-color-black);
+  font-size: var(--apg-font-size-sm);
+  font-weight: var(--apg-font-weight-medium);
+  color: var(--apg-color-black);
 }
 
 .textbox-required {
-    color: var(--apg-color-error);
-    margin-left: 0.125rem;
+  color: var(--apg-color-error);
+  margin-left: 0.125rem;
+}
+
+@media screen and (prefers-reduced-motion: reduce) {
+  .textbox-input {
+    transition: none;
+  }
 }
 
 .textbox-input {
-    width: 100%;
-    padding: 0.375rem 0.75rem;
-    font-size: var(--apg-font-size-base);
-    font-family: var(--apg-font-family);
-    line-height: var(--apg-line-height-normal);
-    color: var(--apg-color-black);
-    background-color: var(--apg-color-white);
-    border: var(--apg-border-width) solid var(--apg-color-gray-400);
-    border-radius: var(--apg-radius-md);
-    box-sizing: border-box;
-    transition:
-        border-color var(--apg-transition-fast),
-        box-shadow var(--apg-transition-fast);
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: var(--apg-font-size-base);
+  font-family: var(--apg-font-family);
+  line-height: var(--apg-line-height-normal);
+  color: var(--apg-color-black);
+  background-color: var(--apg-color-white);
+  border: var(--apg-border-width) solid var(--apg-color-gray-400);
+  border-radius: var(--apg-radius-md);
+  box-sizing: border-box;
+  transition:
+    border-color var(--apg-transition-fast),
+    box-shadow var(--apg-transition-fast);
 }
 
 .textbox-input:focus,
 .textbox-input:focus-visible {
-    outline: none;
-    border-color: var(--apg-color-primary);
-    box-shadow: var(--apg-focus-ring);
+  outline: none;
+  border-color: var(--apg-color-primary);
+  box-shadow: var(--apg-focus-ring);
 }
 
 .textbox-input[readonly] {
-    background-color: var(--apg-color-gray-100);
-    color: var(--apg-color-gray-700);
+  background-color: var(--apg-color-gray-100);
+  color: var(--apg-color-gray-700);
 }
 
 .textbox-input.is-invalid {
-    border-color: var(--apg-color-invalid);
+  border-color: var(--apg-color-invalid);
 }
 
 .textbox-input.is-invalid:focus {
-    box-shadow: 0 0 0 var(--apg-focus-ring-width) rgba(220, 53, 69, 0.25);
+  box-shadow: 0 0 0 var(--apg-focus-ring-width) rgb(220 53 69 / 25%);
 }
 
 textarea.textbox-input {
-    resize: vertical;
+  resize: vertical;
 }
 
 .textbox-helper {
-    font-size: var(--apg-font-size-sm);
-    color: var(--apg-color-gray-600);
+  font-size: var(--apg-font-size-sm);
+  color: var(--apg-color-gray-600);
 }
 
 .textbox-error {
-    font-size: var(--apg-font-size-sm);
-    color: var(--apg-color-error);
+  font-size: var(--apg-font-size-sm);
+  color: var(--apg-color-error);
 }

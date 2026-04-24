@@ -1,5 +1,5 @@
+import { expect, userEvent, within } from '@storybook/test';
 import React, { useState } from 'react';
-import { within, userEvent, expect } from '@storybook/test';
 import Combobox from './Combobox';
 
 export default {
@@ -26,7 +26,11 @@ const Template = (args) => {
 
 export const AutocompleteList = {
   render: Template,
-  args: { label: 'Country (filters as you type)', autocomplete: 'list', placeholder: 'Type to search…' },
+  args: {
+    label: 'Country (filters as you type)',
+    autocomplete: 'list',
+    placeholder: 'Type to search…',
+  },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('combobox');

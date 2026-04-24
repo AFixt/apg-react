@@ -1,5 +1,4 @@
-import React from 'react';
-import { within, expect } from '@storybook/test';
+import { expect, within } from '@storybook/test';
 import Progressbar from './Progressbar';
 
 export default {

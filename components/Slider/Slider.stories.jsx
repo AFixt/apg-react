@@ -1,5 +1,5 @@
+import { expect, userEvent, within } from '@storybook/test';
 import React from 'react';
-import { within, userEvent, expect } from '@storybook/test';
 import Slider from './Slider';
 
 export default {
@@ -47,7 +47,13 @@ export const Vertical = {
     isVertical: true,
     ariaLabel: 'Volume',
   },
-  decorators: [(Story) => <div style={{ height: 200 }}><Story /></div>],
+  decorators: [
+    (Story) => (
+      <div style={{ height: 200 }}>
+        <Story />
+      </div>
+    ),
+  ],
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     const slider = canvas.getByRole('slider');

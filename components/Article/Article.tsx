@@ -9,28 +9,33 @@
  * @returns {JSX.Element} The rendered article component.
  */
 
-import React from "react";
-import "./Article.css";
+import React, { forwardRef } from 'react';
+import './Article.css';
 
+/** Data shape consumed by the Article component. */
 interface ArticleData {
-    id: string;
-    title: React.ReactNode;
-    content: React.ReactNode;
+  id: string;
+  title: React.ReactNode;
+  content: React.ReactNode;
 }
 
+/** Props for the Article component. */
 interface ArticleProps {
-    article: ArticleData;
-    ariaPosinset: number;
-    ariaSetsize: number;
+  article: ArticleData;
+  ariaPosinset: number;
+  ariaSetsize: number;
 }
 
-const Article: React.FC<ArticleProps> = ({ article, ariaPosinset, ariaSetsize }) => {
+const Article = forwardRef<HTMLElement, ArticleProps>(
+  ({ article, ariaPosinset, ariaSetsize }, ref) => {
     return (
-        <article aria-posinset={ariaPosinset} aria-setsize={ariaSetsize}>
-            <h2 id={`article-title-${article.id}`}>{article.title}</h2>
-            <div>{article.content}</div>
-        </article>
+      <article ref={ref} tabIndex={-1} aria-posinset={ariaPosinset} aria-setsize={ariaSetsize}>
+        <h2 id={`article-title-${article.id}`}>{article.title}</h2>
+        <div>{article.content}</div>
+      </article>
     );
-};
+  },
+);
+Article.displayName = 'Article';
 
 export default Article;

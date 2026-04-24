@@ -1,5 +1,4 @@
-import React from 'react';
-import { within, userEvent, expect } from '@storybook/test';
+import { expect, userEvent, within } from '@storybook/test';
 import Menubar from './Menubar';
 
 export default {

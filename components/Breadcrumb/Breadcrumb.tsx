@@ -11,47 +11,51 @@
  * @param {string} items[].label - The label of the breadcrumb item.
  * @returns {JSX.Element} The rendered Breadcrumb component.
  */
-import React from "react";
-import { Link } from "react-router-dom";
-import "./Breadcrumb.css";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './Breadcrumb.css';
 
+/** A single item in a Breadcrumb. */
 interface BreadcrumbItem {
-    path: string;
-    label: string;
+  path: string;
+  label: string;
 }
 
+/** Translatable labels for the Breadcrumb component. English defaults are used when a key is omitted. */
 interface BreadcrumbLabels {
-    nav?: string;
+  nav?: string;
 }
 
+/** Props for the Breadcrumb component. */
 interface BreadcrumbProps {
-    items: BreadcrumbItem[];
-    navLabel?: string;
-    labels?: BreadcrumbLabels;
+  items: BreadcrumbItem[];
+  navLabel?: string;
+  labels?: BreadcrumbLabels;
 }
 
 const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, navLabel, labels }) => {
-    const defaultLabels: BreadcrumbLabels = {
-        nav: "Breadcrumb",
-    };
-    const l = { ...defaultLabels, ...labels };
-    const isLast = (index: number) => index === items.length - 1;
+  const defaultLabels: BreadcrumbLabels = {
+    nav: 'Breadcrumb',
+  };
+  const l = { ...defaultLabels, ...labels };
+  const isLast = (index: number) => index === items.length - 1;
 
-    return (
-        <nav aria-label={navLabel || l.nav} className="breadcrumb-nav">
-            <ol className="breadcrumb-list">
-                {items.map((item, index) => (
-                    <li key={item.path} className="breadcrumb-item">
-                        {!isLast(index) ? (
-                            <Link to={item.path}>{item.label}</Link>
-                        ) : (
-                            <span aria-current="page">{item.label}</span>
-                        )}
-                    </li>
-                ))}
-            </ol>
-        </nav>
-    );
+  return (
+    <nav aria-label={navLabel || l.nav} className="breadcrumb-nav">
+      <ol className="breadcrumb-list">
+        {items.map((item, index) => (
+          <li key={item.path} className="breadcrumb-item">
+            {!isLast(index) ? (
+              <Link to={item.path}>{item.label}</Link>
+            ) : (
+              <span aria-current="page">{item.label}</span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Breadcrumb pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Breadcrumb;

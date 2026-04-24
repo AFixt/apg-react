@@ -1,5 +1,5 @@
+import { expect, userEvent, within } from '@storybook/test';
 import React, { useState } from 'react';
-import { within, userEvent, expect } from '@storybook/test';
 import Accordion from './Accordion';
 
 export default {
@@ -9,9 +9,19 @@ export default {
 };
 
 const sampleItems = [
-  { title: 'What is APG-React?', content: 'A library of accessible React components implementing WAI-ARIA Authoring Practices Guide patterns.' },
-  { title: 'How do I use it?', content: 'Install from npm, import the components you need, and include the styles.' },
-  { title: 'Is it accessible?', content: 'Yes — every component implements the full keyboard and ARIA contract from the APG.' },
+  {
+    title: 'What is APG-React?',
+    content:
+      'A library of accessible React components implementing WAI-ARIA Authoring Practices Guide patterns.',
+  },
+  {
+    title: 'How do I use it?',
+    content: 'Install from npm, import the components you need, and include the styles.',
+  },
+  {
+    title: 'Is it accessible?',
+    content: 'Yes — every component implements the full keyboard and ARIA contract from the APG.',
+  },
 ];
 
 const Template = (args) => {

@@ -1,5 +1,5 @@
+import { expect, fn, userEvent, within } from '@storybook/test';
 import React, { useState } from 'react';
-import { fn, within, userEvent, expect } from '@storybook/test';
 import Button from './Button';
 
 export default {
@@ -14,7 +14,9 @@ export default {
 const ToggleTemplate = (args) => {
   const [pressed, setPressed] = useState(args.toggleState ?? false);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'flex-start' }}>
+    <div
+      style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'flex-start' }}
+    >
       <Button
         {...args}
         action={() => setPressed((p) => !p)}
