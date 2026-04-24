@@ -25,20 +25,6 @@
 
 @media screen and (prefers-reduced-motion: reduce) {
   .tab {
-    display: block;
-    padding: 0.5rem 1rem;
-    background-color: transparent;
-    color: var(--apg-color-primary);
-    border: var(--apg-border-width) solid transparent;
-    border-top-left-radius: var(--apg-radius-md);
-    border-top-right-radius: var(--apg-radius-md);
-    font-size: var(--apg-font-size-base);
-    font-family: inherit;
-    font-weight: var(--apg-font-weight-normal);
-    line-height: var(--apg-line-height-normal);
-    cursor: pointer;
-    margin-bottom: -2px;
-    text-decoration: none;
     transition: none;
   }
 }

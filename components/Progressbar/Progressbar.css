@@ -19,9 +19,6 @@
 
 @media screen and (prefers-reduced-motion: reduce) {
   .progressbar-fill {
-    height: 100%;
-    background-color: var(--apg-color-primary);
-    border-radius: var(--apg-radius-md) 0 0 var(--apg-radius-md);
     transition: none;
   }
 }

@@ -16,14 +16,6 @@
 @media screen and (prefers-reduced-motion: reduce) {
   .toolbar > button,
   .toolbar > [role='button'] {
-    padding: var(--apg-space-xs) var(--apg-space-md);
-    background-color: transparent;
-    color: var(--apg-color-gray-800);
-    border: var(--apg-border-width) solid transparent;
-    border-radius: var(--apg-radius-sm);
-    cursor: pointer;
-    font-size: var(--apg-font-size-sm);
-    font-family: var(--apg-font-family);
     transition: none;
   }
 }

@@ -9,11 +9,6 @@
 
 @media screen and (prefers-reduced-motion: reduce) {
   .feed .article {
-    border: var(--apg-border-width) solid var(--apg-border-color);
-    padding: var(--apg-space-xl);
-    border-radius: var(--apg-radius-lg);
-    background-color: var(--apg-color-white);
-    box-shadow: var(--apg-shadow-sm);
     transition: none;
   }
 }

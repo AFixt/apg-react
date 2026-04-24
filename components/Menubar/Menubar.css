@@ -13,14 +13,6 @@
 
 @media screen and (prefers-reduced-motion: reduce) {
   .menubar-item {
-    padding: var(--apg-space-xs) var(--apg-space-md);
-    background-color: transparent;
-    color: var(--apg-color-black);
-    border: 0;
-    border-radius: var(--apg-radius-sm);
-    cursor: pointer;
-    font-size: var(--apg-font-size-base);
-    font-family: var(--apg-font-family);
     transition: none;
   }
 }
