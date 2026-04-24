@@ -15,15 +15,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Breadcrumb.css';
 
+/** A single item in a Breadcrumb. */
 interface BreadcrumbItem {
   path: string;
   label: string;
 }
 
+/** Translatable labels for the Breadcrumb component. English defaults are used when a key is omitted. */
 interface BreadcrumbLabels {
   nav?: string;
 }
 
+/** Props for the Breadcrumb component. */
 interface BreadcrumbProps {
   items: BreadcrumbItem[];
   navLabel?: string;
@@ -54,4 +57,5 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, navLabel, labels }) => {
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Breadcrumb pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Breadcrumb;

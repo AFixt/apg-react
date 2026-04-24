@@ -10,11 +10,13 @@
 import React, { useRef, useState } from 'react';
 import './RadioGroup.css';
 
+/** Radio Option used by the RadioGroup component. */
 interface RadioOption {
   value: string;
   label: string;
 }
 
+/** Props for the RadioGroup component. */
 interface RadioGroupProps {
   name: string;
   label?: string;
@@ -115,4 +117,5 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG RadioGroup pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default RadioGroup;

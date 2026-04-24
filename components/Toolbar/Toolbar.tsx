@@ -10,6 +10,7 @@
 import React, { Children, cloneElement, useRef, useState } from 'react';
 import './Toolbar.css';
 
+/** Props for the Toolbar component. */
 interface ToolbarProps {
   label?: string;
   ariaLabelledby?: string;
@@ -22,6 +23,7 @@ interface ToolbarProps {
 // require every consumer to declare a matching prop shape, so we use a
 // narrow any for the child-cloning surface.
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/** Toolbar Child used by the Toolbar component. */
 type ToolbarChild = React.ReactElement<any>;
 
 const Toolbar: React.FC<ToolbarProps> = ({ label, ariaLabelledby, orientation, children }) => {
@@ -104,4 +106,5 @@ const Toolbar: React.FC<ToolbarProps> = ({ label, ariaLabelledby, orientation, c
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
+/** Accessible implementation of the WAI-ARIA APG Toolbar pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Toolbar;

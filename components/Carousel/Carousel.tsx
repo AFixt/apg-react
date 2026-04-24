@@ -15,12 +15,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Carousel.css';
 
+/** A slide in a Carousel. */
 interface CarouselSlide {
   id: string;
   label: string;
   content: React.ReactNode;
 }
 
+/** Translatable labels for the Carousel component. English defaults are used when a key is omitted. */
 interface CarouselLabels {
   previousSlide?: string;
   nextSlide?: string;
@@ -29,6 +31,7 @@ interface CarouselLabels {
   selectSlide?: (i: number) => string;
 }
 
+/** Props for the Carousel component. */
 interface CarouselProps {
   slides: CarouselSlide[];
   /** Accessible name for the carousel region. Required for ARIA compliance. */
@@ -141,4 +144,5 @@ const Carousel: React.FC<CarouselProps> = ({ slides, ariaLabel, labels }) => {
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Carousel pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Carousel;

@@ -17,6 +17,7 @@
 import React, { useRef, useState } from 'react';
 import './SliderMultiThumb.css';
 
+/** Props for the SliderMultiThumb component. */
 interface SliderMultiThumbProps {
   min: number;
   max: number;
@@ -160,4 +161,5 @@ const SliderMultiThumb: React.FC<SliderMultiThumbProps> = ({
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG SliderMultiThumb pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default SliderMultiThumb;

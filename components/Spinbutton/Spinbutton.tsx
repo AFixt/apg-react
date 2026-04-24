@@ -4,11 +4,13 @@
 import React, { useState } from 'react';
 import './Spinbutton.css';
 
+/** Translatable labels for the Spinbutton component. English defaults are used when a key is omitted. */
 interface SpinbuttonLabels {
   increaseValue?: string;
   decreaseValue?: string;
 }
 
+/** Props for the Spinbutton component. */
 interface SpinbuttonProps {
   min: number;
   max: number;
@@ -125,4 +127,5 @@ const Spinbutton: React.FC<SpinbuttonProps> = ({
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Spinbutton pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Spinbutton;

@@ -6,6 +6,7 @@
 import React, { useRef, useState } from 'react';
 import './Slider.css';
 
+/** Props for the Slider component. */
 interface SliderProps {
   min: number;
   max: number;
@@ -128,4 +129,5 @@ const Slider: React.FC<SliderProps> = ({
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Slider pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Slider;

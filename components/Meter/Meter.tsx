@@ -17,6 +17,7 @@
 import React from 'react';
 import './Meter.css';
 
+/** Props for the Meter component. */
 interface MeterProps {
   value: number;
   minValue?: number;
@@ -60,4 +61,5 @@ const Meter: React.FC<MeterProps> = ({
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Meter pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Meter;

@@ -7,6 +7,7 @@
 import React from 'react';
 import './Progressbar.css';
 
+/** Props for the Progressbar component. */
 interface ProgressbarProps {
   value?: number;
   min?: number;
@@ -52,4 +53,5 @@ const Progressbar: React.FC<ProgressbarProps> = ({
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Progressbar pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Progressbar;
