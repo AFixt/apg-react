@@ -84,7 +84,7 @@ jobs:
       - run: npm ci
       - run: npm run build-storybook
       - name: Upload Storybook to Pages
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: storybook-static
       - name: Deploy to GitHub Pages
