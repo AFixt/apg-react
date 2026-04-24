@@ -21,11 +21,13 @@
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import './Combobox.css';
 
+/** A single option in a Combobox. */
 interface ComboboxOption {
   value: string;
   label: string;
 }
 
+/** Props for the Combobox component. */
 interface ComboboxProps {
   options: ComboboxOption[];
   value?: string;
@@ -244,4 +246,5 @@ const Combobox: React.FC<ComboboxProps> = ({
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Combobox pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Combobox;

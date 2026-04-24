@@ -14,10 +14,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './ModalDialog.css'; // Assume appropriate CSS for styling
 
+/** Translatable labels for the ModalDialog component. English defaults are used when a key is omitted. */
 interface ModalDialogLabels {
   closeDialog?: string;
 }
 
+/** Props for the ModalDialog component. */
 interface ModalDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -130,4 +132,5 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG ModalDialog pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default ModalDialog;

@@ -13,10 +13,12 @@
 import React, { useState } from 'react';
 import './Alert.css';
 
+/** Translatable labels for the Alert component. English defaults are used when a key is omitted. */
 interface AlertLabels {
   dismiss?: string;
 }
 
+/** Props for the Alert component. */
 interface AlertProps {
   message: string;
   type: 'info' | 'warning' | 'error';
@@ -46,4 +48,5 @@ const Alert: React.FC<AlertProps> = ({ message, type, labels }) => {
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Alert pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Alert;

@@ -16,11 +16,13 @@
 import React, { useRef, useState } from 'react';
 import './Grid.css';
 
+/** A single column in a Grid. */
 interface GridColumn {
   key: string;
   label: React.ReactNode;
 }
 
+/** Props for the Grid component. */
 interface GridProps {
   /** The accessible name for the grid. When `showCaption` is true this also
    *  renders as a visible caption above the grid and is referenced via
@@ -150,4 +152,5 @@ const Grid: React.FC<GridProps> = ({ label, showCaption = false, columns, rows, 
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Grid pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Grid;

@@ -12,12 +12,14 @@
 import React, { forwardRef } from 'react';
 import './Article.css';
 
+/** Data shape consumed by the Article component. */
 interface ArticleData {
   id: string;
   title: React.ReactNode;
   content: React.ReactNode;
 }
 
+/** Props for the Article component. */
 interface ArticleProps {
   article: ArticleData;
   ariaPosinset: number;

@@ -12,12 +12,14 @@
 import React, { useRef, useState } from 'react';
 import './Tabs.css';
 
+/** Tab Def used by the Tabs component. */
 interface TabDef {
   id: string;
   label: React.ReactNode;
   content: React.ReactNode;
 }
 
+/** Props for the Tabs component. */
 interface TabsProps {
   tabs: TabDef[];
   defaultIndex?: number;
@@ -117,4 +119,5 @@ const Tabs: React.FC<TabsProps> = ({
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Tabs pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Tabs;

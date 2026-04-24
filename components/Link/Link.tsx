@@ -15,6 +15,7 @@ import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import './Link.css';
 
+/** Props for the Link component. */
 interface LinkProps {
   to: string | object;
   children: React.ReactNode;
@@ -42,4 +43,5 @@ const AccessibleLink: React.FC<LinkProps> = ({ to, children, onClick, ...props }
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG AccessibleLink pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default AccessibleLink;

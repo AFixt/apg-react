@@ -9,6 +9,7 @@
 import React, { useId } from 'react';
 import './Textbox.css';
 
+/** Props for the Textbox component. */
 interface TextboxProps {
   label?: string;
   value?: string;
@@ -103,4 +104,5 @@ const Textbox: React.FC<TextboxProps> = ({
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Textbox pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Textbox;

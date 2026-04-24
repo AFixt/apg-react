@@ -26,18 +26,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Menubar.css';
 
+/** A single item inside a menu. */
 interface MenuItem {
   id: string;
   label: React.ReactNode;
   onSelect?: () => void;
 }
 
+/** A single menu in a Menubar. */
 interface MenubarMenu {
   id: string;
   label: React.ReactNode;
   items: MenuItem[];
 }
 
+/** Props for the Menubar component. */
 interface MenubarProps {
   label: string;
   menus: MenubarMenu[];
@@ -214,4 +217,5 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
   );
 };
 
+/** Accessible implementation of the WAI-ARIA APG Menubar pattern. See the top-of-file comment for keyboard and ARIA details. */
 export default Menubar;
