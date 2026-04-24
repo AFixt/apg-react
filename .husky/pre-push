@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+
+# Run the same gates CI runs, plus duplication + license + link checks.
+# Tests and E2E are left to CI (E2E needs a Storybook build).
+# To bypass: git push --no-verify
+
+npm run check || exit 1
+npm test || exit 1
+npm run dupes || exit 1
+npm run license:check || exit 1
+
+# Lychee link check is optional — warn if missing.
+if command -v lychee >/dev/null 2>&1; then
+  npm run links || exit 1
+else
+  echo "warning: lychee not installed — skipping link check."
+  echo "         install with 'brew install lychee' or 'bash scripts/bootstrap.sh'"
+fi
