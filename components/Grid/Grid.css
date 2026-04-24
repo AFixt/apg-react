@@ -34,10 +34,6 @@
 
 @media screen and (prefers-reduced-motion: reduce) {
   .grid-cell {
-    display: table-cell;
-    padding: var(--apg-space-sm) var(--apg-space-lg);
-    border-top: var(--apg-border-width) solid var(--apg-border-color);
-    outline: none;
     transition: none;
   }
 }

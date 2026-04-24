@@ -1,15 +1,5 @@
 @media screen and (prefers-reduced-motion: reduce) {
   .article {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--apg-color-white);
-    background-clip: border-box;
-    border: var(--apg-border-width) solid var(--apg-border-color);
-    border-radius: var(--apg-radius-lg);
-    padding: var(--apg-space-xl);
-    margin-bottom: var(--apg-space-xl);
-    box-shadow: var(--apg-shadow-sm);
     transition: none;
   }
 }
@@ -68,8 +58,6 @@
 
 @media screen and (prefers-reduced-motion: reduce) {
   .article a {
-    color: var(--apg-color-primary);
-    text-decoration: none;
     transition: none;
   }
 }

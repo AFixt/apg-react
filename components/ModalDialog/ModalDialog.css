@@ -1,16 +1,5 @@
 @media screen and (prefers-reduced-motion: reduce) {
   .modal-dialog-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--apg-overlay-bg);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: var(--apg-z-overlay);
-    opacity: 0%;
     transition: none;
   }
 }
@@ -36,16 +25,6 @@
 
 @media screen and (prefers-reduced-motion: reduce) {
   .modal-dialog {
-    background-color: var(--apg-color-white);
-    padding: var(--apg-space-xl);
-    border: var(--apg-border-width) solid rgb(0 0 0 / 20%);
-    border-radius: var(--apg-radius-lg);
-    box-shadow: var(--apg-shadow-lg);
-    max-width: var(--apg-dialog-max-width);
-    width: 90%;
-    z-index: var(--apg-z-modal);
-    position: relative;
-    transform: translateY(-50px);
     transition: none;
   }
 }
@@ -70,22 +49,6 @@
 
 @media screen and (prefers-reduced-motion: reduce) {
   .modal-dialog-close {
-    position: absolute;
-    top: var(--apg-space-md);
-    right: var(--apg-space-md);
-    width: 1.75rem;
-    height: 1.75rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 0;
-    background-color: transparent;
-    cursor: pointer;
-    font-size: 1.5rem;
-    line-height: 1;
-    padding: 0;
-    border-radius: var(--apg-radius-sm);
-    opacity: 60%;
     transition: none;
   }
 }

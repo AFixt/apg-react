@@ -1,8 +1,5 @@
 @media screen and (prefers-reduced-motion: reduce) {
   a[role='link'] {
-    color: var(--apg-color-primary);
-    text-decoration: underline;
-    cursor: pointer;
     transition: none;
   }
 }
