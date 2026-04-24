@@ -1,0 +1,30 @@
+{
+  "threshold": 5,
+  "minTokens": 100,
+  "minLines": 8,
+  "maxLines": 1000,
+  "maxSize": "100kb",
+  "reporters": ["console"],
+  "format": ["typescript", "tsx", "javascript", "jsx", "css", "markdown"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/storybook-static/**",
+    "**/__snapshots__/**",
+    "**/__mocks__/**",
+    "**/*.test.{ts,tsx,js,jsx}",
+    "**/*.spec.{ts,tsx,js,jsx}",
+    "**/*.stories.{ts,tsx,js,jsx}",
+    "__tests__/**",
+    "e2e/**",
+    "**/*.generated.*",
+    "**/*.min.*",
+    "CHANGELOG.md"
+  ],
+  "absolute": false,
+  "gitignore": true,
+  "silent": false,
+  "exitCode": 1
+}

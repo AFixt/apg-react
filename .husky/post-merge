@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+# After a pull/merge, if package-lock.json changed, reinstall and audit.
+changed=$(git diff HEAD@{1} HEAD --name-only 2>/dev/null || true)
+if echo "$changed" | grep -q "package-lock.json"; then
+  echo "post-merge: lockfile changed — installing and auditing"
+  npm install
+  npm audit --production --audit-level=high || true
+fi
