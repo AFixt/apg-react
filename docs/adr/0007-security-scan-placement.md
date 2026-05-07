@@ -44,7 +44,7 @@ Both are real tools with real value — the question is _where_ they fire.
 - Weekly security workflow still catches Semgrep's OWASP Top 10 findings — just
   not per-commit.
 - Supply-chain coverage remains layered:
-  - `gitleaks` on every commit (pre-commit)
+  - `trufflehog` on every commit (pre-commit) and every PR (CI)
   - `npm audit` on every PR (CI)
   - `OSV-Scanner` + `CodeQL` + `Semgrep` + `npm audit` every Monday (scheduled)
   - Dependabot weekly dependency updates (opens PRs)

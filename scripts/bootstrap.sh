@@ -28,8 +28,8 @@ install_via_brew_or_warn() {
 }
 
 # Used by .husky/pre-commit
-install_via_brew_or_warn gitleaks \
-  "Install from https://github.com/gitleaks/gitleaks/releases"
+install_via_brew_or_warn trufflehog \
+  "Install from https://github.com/trufflesecurity/trufflehog/releases"
 
 # Used by .husky/pre-push
 install_via_brew_or_warn lychee \

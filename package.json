@@ -80,7 +80,7 @@
     "security:audit": "npm audit --omit=dev --audit-level=high",
     "security:osv": "osv-scanner --lockfile=package-lock.json",
     "security:semgrep": "semgrep --config=p/javascript --config=p/typescript --config=p/react --config=p/owasp-top-ten --config=p/security-audit --config=p/secrets --error --metrics=off",
-    "security:secrets": "gitleaks detect --no-banner",
+    "security:secrets": "trufflehog git file://. --only-verified --fail",
     "security": "npm-run-all -s security:audit security:osv security:secrets",
     "check": "npm run typecheck && npm run lint && npm run stylelint && npm run format:check && npm run markdownlint",
     "check:all": "npm-run-all -s check test dupes license:check build size security:audit",
