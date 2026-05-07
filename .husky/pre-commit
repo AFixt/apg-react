@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-# Lint + format staged files; typecheck only staged TS; scan staged files for secrets.
+# Lint + format staged files; typecheck only staged TS; scan recent history for verified secrets.
 # To bypass (e.g., WIP commits): git commit --no-verify
 
 npx lint-staged || exit 1
@@ -8,11 +8,11 @@ npx lint-staged || exit 1
 # Typecheck only the staged TS files for speed.
 npx tsc-files --noEmit || exit 1
 
-# Gitleaks is optional — warn if missing rather than block.
-# Install locally with `bash scripts/bootstrap.sh` or `brew install gitleaks`.
-if command -v gitleaks >/dev/null 2>&1; then
-  gitleaks protect --staged --no-banner || exit 1
+# Trufflehog is optional — warn if missing rather than block.
+# Install locally with `bash scripts/bootstrap.sh` or `brew install trufflehog`.
+if command -v trufflehog >/dev/null 2>&1; then
+  trufflehog git file://. --since-commit HEAD --only-verified --fail || exit 1
 else
-  echo "warning: gitleaks not installed — skipping secret scan."
-  echo "         install with 'brew install gitleaks' or 'bash scripts/bootstrap.sh'"
+  echo "warning: trufflehog not installed — skipping secret scan."
+  echo "         install with 'brew install trufflehog' or 'bash scripts/bootstrap.sh'"
 fi

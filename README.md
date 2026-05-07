@@ -188,7 +188,7 @@ npm run test:all       # both
 ## Development
 
 ```sh
-# First-time setup: installs optional binaries (gitleaks, lychee, etc.)
+# First-time setup: installs optional binaries (trufflehog, lychee, etc.)
 # used by git hooks. Safe to re-run.
 bash scripts/bootstrap.sh
 
@@ -222,13 +222,13 @@ npm run markdownlint  # markdownlint-cli2 on all Markdown
 npm run dupes         # jscpd duplicate detection
 npm run license:check # production-dep license allowlist
 npm run size          # size-limit bundle budgets
-npm run security      # npm audit + OSV-Scanner + gitleaks
+npm run security      # npm audit + OSV-Scanner + trufflehog
 ```
 
 Git hooks (installed automatically via Husky's `prepare` script):
 
 - **pre-commit** — lint-staged (ESLint, Prettier, Stylelint, markdownlint on
-  staged files only) + typecheck of staged TS + gitleaks.
+  staged files only) + typecheck of staged TS + trufflehog.
 - **commit-msg** — commitlint with `@commitlint/config-conventional`.
 - **pre-push** — runs the full `check` suite + tests + `dupes` +
   `license:check` + optional link check.
