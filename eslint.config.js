@@ -70,6 +70,28 @@ export default tseslint.config(
         { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
       ],
       '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@typescript-eslint/naming-convention': [
+        'error',
+        // Quoted property names (e.g. 'aria-describedby', 'data-*') are exempt.
+        {
+          selector: ['objectLiteralProperty', 'typeProperty'],
+          modifiers: ['requiresQuotes'],
+          format: null,
+        },
+        { selector: 'default', format: ['camelCase'] },
+        // PascalCase for React components; UPPER_CASE for module-level constants.
+        { selector: 'variable', format: ['camelCase', 'UPPER_CASE', 'PascalCase'] },
+        { selector: 'parameter', format: ['camelCase'], leadingUnderscore: 'allow' },
+        {
+          selector: 'memberLike',
+          modifiers: ['private'],
+          format: ['camelCase'],
+          leadingUnderscore: 'require',
+        },
+        { selector: 'typeLike', format: ['PascalCase'] },
+        { selector: 'enumMember', format: ['PascalCase', 'UPPER_CASE'] },
+        { selector: 'import', format: ['camelCase', 'PascalCase'] },
+      ],
 
       // ----- React -----
       'react/jsx-key': ['error', { checkFragmentShorthand: true, warnOnDuplicates: true }],
