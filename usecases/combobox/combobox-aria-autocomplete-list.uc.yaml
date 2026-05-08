@@ -1,0 +1,17 @@
+id: combobox-aria-autocomplete-list
+title: 'Combobox — Exposes role="combobox" with aria-autocomplete="list"'
+type: positive
+description: 'A combobox configured for list-style autocomplete advertises
+  aria-autocomplete="list" and starts with aria-expanded="false".'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-combobox--autocomplete-list-bare&viewMode=story"
+
+expected_result: 'The combobox exposes aria-autocomplete="list" and aria-expanded="false".'
+
+steps:
+  - locate: select "Country (filters as you type)"
+  - verify: select "Country (filters as you type)" attribute "aria-autocomplete" is "list"
+  - verify: select "Country (filters as you type)" attribute "aria-expanded" is "false"

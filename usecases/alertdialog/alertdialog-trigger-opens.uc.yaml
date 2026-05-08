@@ -1,0 +1,19 @@
+id: alertdialog-trigger-opens
+title: "AlertDialog — Activating the trigger opens the alert dialog"
+type: positive
+description: 'Activating the trigger button mounts an alertdialog with role="alertdialog"
+  and aria-modal="true".'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-alertdialog--default-bare&viewMode=story"
+
+expected_result: 'After activation an alertdialog is present with aria-modal="true".'
+
+steps:
+  - locate: button "Open alert dialog"
+  - focus: button "Open alert dialog"
+  - activate: button "Open alert dialog"
+  - verify: visible heading "Confirm action"
+  - verify: text "Are you sure you want to continue? This action cannot be undone."

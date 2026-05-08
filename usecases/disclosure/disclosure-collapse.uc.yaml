@@ -1,0 +1,21 @@
+id: disclosure-collapse
+title: "Disclosure — Activating an expanded trigger collapses the content"
+type: positive
+description: 'Activating the trigger after it has been expanded returns aria-expanded to
+  "false" and re-hides the content.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-disclosure--default&viewMode=story"
+
+expected_result: 'aria-expanded returns to "false" after a second activation.'
+
+steps:
+  - locate: button "Show more details"
+  - focus: button "Show more details"
+  - activate: button "Show more details"
+  - verify: button "Show more details" attribute "aria-expanded" is "true"
+  - focus: button "Show more details"
+  - activate: button "Show more details"
+  - verify: button "Show more details" attribute "aria-expanded" is "false"

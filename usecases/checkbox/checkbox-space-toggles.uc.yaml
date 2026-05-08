@@ -1,0 +1,18 @@
+id: checkbox-space-toggles
+title: "Checkbox — Space key toggles the checkbox state"
+type: positive
+description: "Pressing Space while a checkbox has focus toggles its checked state, per the
+  APG keyboard contract."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-checkbox--unchecked-bare&viewMode=story"
+
+expected_result: "After Space the checkbox is checked."
+
+steps:
+  - locate: checkbox "Subscribe to newsletter"
+  - focus: checkbox "Subscribe to newsletter"
+  - keyboard: "Space"
+  - verify: checked checkbox "Subscribe to newsletter"

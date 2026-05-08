@@ -1,0 +1,18 @@
+id: tree-view-enter-selects
+title: "TreeView — Enter selects the focused treeitem"
+type: positive
+description: 'Pressing Enter on a focused treeitem sets aria-selected="true" on it (and
+  toggles expansion when the item has children).'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-treeview--default-bare&viewMode=story"
+
+expected_result: 'README.md reports aria-selected="true" after Enter.'
+
+steps:
+  - locate: role "treeitem" name "README.md"
+  - focus: role "treeitem" name "README.md"
+  - keyboard: "Enter"
+  - verify: role "treeitem" name "README.md" attribute "aria-selected" is "true"

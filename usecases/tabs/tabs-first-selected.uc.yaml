@@ -1,0 +1,17 @@
+id: tabs-first-selected
+title: "Tabs — The first tab is selected by default"
+type: positive
+description: 'Without an explicit defaultIndex the first tab is selected
+  (aria-selected="true").'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-tabs--horizontal-bare&viewMode=story"
+
+expected_result: 'The Overview tab reports aria-selected="true".'
+
+steps:
+  - locate: tab "Overview"
+  - verify: tab "Overview" attribute "aria-selected" is "true"
+  - verify: tab "Pricing" attribute "aria-selected" is "false"

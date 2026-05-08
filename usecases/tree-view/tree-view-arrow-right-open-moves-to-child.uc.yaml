@@ -1,0 +1,19 @@
+id: tree-view-arrow-right-open-moves-to-child
+title: "TreeView — ArrowRight on an open parent moves focus to its first child"
+type: positive
+description: "When focus is on a parent treeitem that is already expanded, ArrowRight
+  moves focus to the first child treeitem."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-treeview--default-bare&viewMode=story"
+
+expected_result: 'Focus moves from "src" to "components" (its first child).'
+
+steps:
+  - locate: role "treeitem" name "src"
+  - focus: role "treeitem" name "src"
+  - verify: role "treeitem" name "src" attribute "aria-expanded" is "true"
+  - keyboard: "ArrowRight"
+  - verify: focus role "treeitem" name "components"

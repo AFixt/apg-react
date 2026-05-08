@@ -1,0 +1,18 @@
+id: tabs-manual-enter-activates
+title: "Tabs — In manual mode, Enter activates the focused tab"
+type: positive
+description: "In manual activation, pressing Enter on the focused tab activates it."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-tabs--manual-activation-bare&viewMode=story"
+
+expected_result: "After ArrowRight + Enter, Pricing is selected."
+
+steps:
+  - locate: tab "Overview"
+  - focus: tab "Overview"
+  - keyboard: "ArrowRight"
+  - keyboard: "Enter"
+  - verify: tab "Pricing" attribute "aria-selected" is "true"

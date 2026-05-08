@@ -1,0 +1,19 @@
+id: tree-view-aria-level
+title: "TreeView — Treeitems advertise aria-level matching their depth"
+type: positive
+description: 'Top-level treeitems report aria-level="1"; children one nesting deeper
+  report aria-level="2".'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-treeview--default-bare&viewMode=story"
+
+expected_result: 'src reports aria-level="1"; the visible "components" treeitem reports
+  aria-level="2".'
+
+steps:
+  - locate: role "treeitem" name "src"
+  - verify: role "treeitem" name "src" attribute "aria-level" is "1"
+  - locate: role "treeitem" name "components"
+  - verify: role "treeitem" name "components" attribute "aria-level" is "2"

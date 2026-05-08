@@ -1,0 +1,18 @@
+id: textbox-typing
+title: "Textbox — Typing into the textbox updates its value"
+type: positive
+description: "A user can locate, focus, and type into the textbox; the new value is
+  reflected back via the input value."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-textbox--single-line&viewMode=story"
+
+expected_result: 'The textbox value is "Jane".'
+
+steps:
+  - locate: field "Full name"
+  - focus: field "Full name"
+  - enter: field "Full name" value "Jane"
+  - verify: field "Full name" has_value "Jane"

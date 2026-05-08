@@ -1,0 +1,18 @@
+id: accordion-arrow-down-wraps
+title: "Accordion — ArrowDown wraps from the last header back to the first"
+type: positive
+description: "When focus is on the last accordion header, ArrowDown wraps focus back to the
+  first header."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-accordion--default-bare&viewMode=story"
+
+expected_result: "Focus moves from the last header to the first header."
+
+steps:
+  - locate: button "Is it accessible?"
+  - focus: button "Is it accessible?"
+  - keyboard: "ArrowDown"
+  - verify: focus button "What is APG-React?"

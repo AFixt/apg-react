@@ -1,0 +1,18 @@
+id: spinbutton-role-and-name
+title: 'Spinbutton — Exposes role="spinbutton" with an accessible name'
+type: positive
+description: 'The spinbutton input advertises role="spinbutton" with the configured
+  aria-label as its accessible name.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-spinbutton--default-bare&viewMode=story"
+
+expected_result: 'A spinbutton named "Quantity" is present and reports its current value.'
+
+steps:
+  - locate: role "spinbutton" name "Quantity"
+  - verify: role "spinbutton" name "Quantity" attribute "aria-valuenow" is "5"
+  - verify: role "spinbutton" name "Quantity" attribute "aria-valuemin" is "0"
+  - verify: role "spinbutton" name "Quantity" attribute "aria-valuemax" is "10"

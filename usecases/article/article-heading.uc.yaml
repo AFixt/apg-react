@@ -1,0 +1,15 @@
+id: article-heading
+title: "Article — Renders an article landmark with a heading"
+type: positive
+description: "The Article component is exposed as an article landmark and includes a
+  level-2 heading for its title."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-article--default&viewMode=story"
+
+expected_result: 'The article heading is exposed via role="heading" with the article title.'
+
+steps:
+  - locate: heading "Building accessible components"

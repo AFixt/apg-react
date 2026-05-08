@@ -1,0 +1,18 @@
+id: radio-group-arrow-up-wraps
+title: "RadioGroup — ArrowUp wraps from the first radio to the last"
+type: positive
+description: "When focus is on the first radio, ArrowUp wraps focus and selection to the
+  last radio."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-radiogroup--default-bare&viewMode=story"
+
+expected_result: 'After ArrowUp the "Push notification" radio is selected.'
+
+steps:
+  - locate: radio "Email"
+  - focus: radio "Email"
+  - keyboard: "ArrowUp"
+  - verify: radio "Push notification" attribute "aria-checked" is "true"

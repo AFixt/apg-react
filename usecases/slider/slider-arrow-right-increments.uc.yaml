@@ -1,0 +1,19 @@
+id: slider-arrow-right-increments
+title: "Slider — ArrowRight increments the value by step"
+type: positive
+description: "Pressing ArrowRight while the slider thumb has focus increments
+  aria-valuenow by the configured step."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-slider--horizontal-bare&viewMode=story"
+
+expected_result: 'aria-valuenow becomes "51" after one ArrowRight from "50".'
+
+steps:
+  - locate: role "slider" name "Volume"
+  - focus: role "slider" name "Volume"
+  - verify: role "slider" name "Volume" attribute "aria-valuenow" is "50"
+  - keyboard: "ArrowRight"
+  - verify: role "slider" name "Volume" attribute "aria-valuenow" is "51"

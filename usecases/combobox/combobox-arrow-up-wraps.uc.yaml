@@ -1,0 +1,19 @@
+id: combobox-arrow-up-wraps
+title: "Combobox — ArrowUp on a closed combobox opens to the last option"
+type: positive
+description: "Per the APG, ArrowUp opens the popup with virtual focus on the last option
+  when the popup is closed."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-combobox--autocomplete-list-bare&viewMode=story"
+
+expected_result: "After ArrowUp the popup is open and aria-activedescendant references the
+  last option."
+
+steps:
+  - locate: select "Country (filters as you type)"
+  - focus: select "Country (filters as you type)"
+  - keyboard: "ArrowUp"
+  - verify: select "Country (filters as you type)" attribute "aria-expanded" is "true"

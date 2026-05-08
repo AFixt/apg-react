@@ -81,6 +81,11 @@ Three layers, all runnable locally:
    tabindex, and label association. Zero external a11y libraries.
 3. **E2E tests** (`e2e/*.e2e.js`) — Puppeteer drives a real Chromium against a
    built Storybook. Separate Jest config at `e2e/jest.config.js`.
+4. **Use cases** (`usecases/<component>/*.uc.yaml`) — one discrete user
+   interaction per file in the DSL of `@afixt/usecase-runner`. Targets each
+   component's Storybook story and is meant to be run via the runner (which
+   generates Playwright specs) rather than Jest. Validate without running:
+   `npx --yes @afixt/usecase-runner validate usecases/`.
 
 Configuration:
 

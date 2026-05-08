@@ -1,0 +1,20 @@
+id: menu-button-click-opens
+title: "MenuButton — Activating the trigger opens the menu and focuses the first item"
+type: positive
+description: 'Activating the trigger button sets aria-expanded="true", reveals the menu,
+  and moves focus to the first menuitem.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubutton--default&viewMode=story"
+
+expected_result: 'aria-expanded is "true", the menu is visible, and the first menuitem has
+  focus.'
+
+steps:
+  - locate: button "Actions"
+  - focus: button "Actions"
+  - activate: button "Actions"
+  - verify: button "Actions" attribute "aria-expanded" is "true"
+  - verify: focus menuitem "New document"

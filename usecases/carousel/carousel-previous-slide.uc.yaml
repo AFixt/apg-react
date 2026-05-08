@@ -1,0 +1,18 @@
+id: carousel-previous-slide
+title: "Carousel — Activating Previous slide wraps from first to last"
+type: positive
+description: "Activating Previous slide on the first slide wraps to the last slide."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+  - "Targets the DefaultBare story with auto-rotation paused for stable assertions"
+
+start_location: "http://localhost:6006/iframe.html?id=components-carousel--default-bare&viewMode=story"
+
+expected_result: "Slide 3 is reported as current after activating Previous slide from slide 1."
+
+steps:
+  - locate: button "Previous slide"
+  - focus: button "Previous slide"
+  - activate: button "Previous slide"
+  - verify: button "Select slide 3" attribute "aria-current" is "true"

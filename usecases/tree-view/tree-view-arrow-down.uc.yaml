@@ -1,0 +1,18 @@
+id: tree-view-arrow-down
+title: "TreeView — ArrowDown moves focus to the next visible treeitem"
+type: positive
+description: "Per the APG, ArrowDown moves focus to the next visible treeitem regardless
+  of nesting depth."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-treeview--default-bare&viewMode=story"
+
+expected_result: 'Focus moves from "src" to "components".'
+
+steps:
+  - locate: role "treeitem" name "src"
+  - focus: role "treeitem" name "src"
+  - keyboard: "ArrowDown"
+  - verify: focus role "treeitem" name "components"

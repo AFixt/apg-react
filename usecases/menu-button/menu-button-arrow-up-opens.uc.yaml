@@ -1,0 +1,18 @@
+id: menu-button-arrow-up-opens
+title: "MenuButton — ArrowUp on the trigger opens the menu (last item focused)"
+type: positive
+description: "Per the APG, pressing ArrowUp while the trigger has focus opens the menu and
+  moves focus to the last menuitem."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubutton--default&viewMode=story"
+
+expected_result: 'The menu opens and "Export as PDF" (the last item) has focus.'
+
+steps:
+  - locate: button "Actions"
+  - focus: button "Actions"
+  - keyboard: "ArrowUp"
+  - verify: focus menuitem "Export as PDF"

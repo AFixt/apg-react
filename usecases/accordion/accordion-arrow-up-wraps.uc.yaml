@@ -1,0 +1,18 @@
+id: accordion-arrow-up-wraps
+title: "Accordion — ArrowUp wraps from the first header to the last"
+type: positive
+description: "When focus is on the first accordion header, ArrowUp wraps focus to the last
+  header."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-accordion--default-bare&viewMode=story"
+
+expected_result: "Focus moves from the first header to the last header."
+
+steps:
+  - locate: button "What is APG-React?"
+  - focus: button "What is APG-React?"
+  - keyboard: "ArrowUp"
+  - verify: focus button "Is it accessible?"

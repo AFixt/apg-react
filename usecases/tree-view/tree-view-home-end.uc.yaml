@@ -1,0 +1,20 @@
+id: tree-view-home-end
+title: "TreeView — Home and End move focus to first and last visible treeitems"
+type: positive
+description: "Home moves focus to the first visible treeitem; End moves focus to the
+  last."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-treeview--default-bare&viewMode=story"
+
+expected_result: 'End focuses "README.md"; Home returns focus to "src".'
+
+steps:
+  - locate: role "treeitem" name "src"
+  - focus: role "treeitem" name "src"
+  - keyboard: "End"
+  - verify: focus role "treeitem" name "README.md"
+  - keyboard: "Home"
+  - verify: focus role "treeitem" name "src"

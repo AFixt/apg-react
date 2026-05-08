@@ -1,0 +1,18 @@
+id: meter-aria-values
+title: "Meter — Reports aria-valuenow, aria-valuemin, and aria-valuemax"
+type: positive
+description: "The meter advertises its current value via aria-valuenow and the bounds via
+  aria-valuemin/aria-valuemax."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-meter--default&viewMode=story"
+
+expected_result: 'aria-valuenow="72", aria-valuemin="0", aria-valuemax="100".'
+
+steps:
+  - locate: role "meter" name "Disk usage"
+  - verify: role "meter" name "Disk usage" attribute "aria-valuenow" is "72"
+  - verify: role "meter" name "Disk usage" attribute "aria-valuemin" is "0"
+  - verify: role "meter" name "Disk usage" attribute "aria-valuemax" is "100"

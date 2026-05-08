@@ -1,0 +1,17 @@
+id: switch-enter-toggles
+title: "Switch — Enter toggles the switch state"
+type: positive
+description: "Pressing Enter while the switch has focus toggles aria-checked."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-switch--off-bare&viewMode=story"
+
+expected_result: 'aria-checked becomes "true" after Enter.'
+
+steps:
+  - locate: role "switch" name "Enable dark mode"
+  - focus: role "switch" name "Enable dark mode"
+  - keyboard: "Enter"
+  - verify: role "switch" name "Enable dark mode" attribute "aria-checked" is "true"

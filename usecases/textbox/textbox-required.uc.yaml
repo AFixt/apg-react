@@ -1,0 +1,16 @@
+id: textbox-required
+title: 'Textbox — Required textbox advertises aria-required="true"'
+type: positive
+description: 'A required textbox exposes aria-required="true" so AT can convey that input
+  is mandatory.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-textbox--required&viewMode=story"
+
+expected_result: 'aria-required is "true".'
+
+steps:
+  - locate: field "Username"
+  - verify: field "Username" attribute "aria-required" is "true"

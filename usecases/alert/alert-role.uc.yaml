@@ -1,0 +1,16 @@
+id: alert-role
+title: 'Alert — Exposes role="alert" with aria-live="assertive"'
+type: positive
+description: "The Alert component is exposed to assistive technology as a live region that
+  is announced immediately."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-alert--info&viewMode=story"
+
+expected_result: 'The alert message is exposed via role="alert" with aria-live="assertive".'
+
+steps:
+  - locate: text "This is an informational message."
+  - verify: alert "This is an informational message."

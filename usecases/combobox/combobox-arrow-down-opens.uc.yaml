@@ -1,0 +1,18 @@
+id: combobox-arrow-down-opens
+title: "Combobox — ArrowDown opens the popup when closed"
+type: positive
+description: "Per the APG, ArrowDown opens the popup if it is closed and moves virtual
+  focus to the first option."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-combobox--autocomplete-list-bare&viewMode=story"
+
+expected_result: "After ArrowDown the popup is open and aria-activedescendant is set."
+
+steps:
+  - locate: select "Country (filters as you type)"
+  - focus: select "Country (filters as you type)"
+  - keyboard: "ArrowDown"
+  - verify: select "Country (filters as you type)" attribute "aria-expanded" is "true"

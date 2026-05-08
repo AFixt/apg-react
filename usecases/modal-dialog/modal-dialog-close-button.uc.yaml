@@ -1,0 +1,18 @@
+id: modal-dialog-close-button
+title: "ModalDialog — Activating the Close button dismisses the dialog"
+type: positive
+description: "A user can dismiss the modal by activating its Close button. The dialog is
+  removed from the accessibility tree."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-modaldialog--open-by-default-bare&viewMode=story"
+
+expected_result: "After activation the dialog is no longer present."
+
+steps:
+  - locate: button "Close dialog"
+  - focus: button "Close dialog"
+  - activate: button "Close dialog"
+  - verify: hidden heading "Modal title"

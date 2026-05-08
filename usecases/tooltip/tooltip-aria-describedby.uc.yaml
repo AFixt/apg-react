@@ -1,0 +1,18 @@
+id: tooltip-aria-describedby
+title: "Tooltip — Trigger references the tooltip via aria-describedby when visible"
+type: positive
+description: "While the tooltip is visible, the trigger advertises aria-describedby
+  pointing at the tooltip element so AT can announce the description."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-tooltip--top&viewMode=story"
+
+expected_result: 'After focus, the trigger has aria-describedby="tooltip-text".'
+
+steps:
+  - locate: button "Hover or focus me"
+  - focus: button "Hover or focus me"
+  - wait_for: text "Tooltip on top"
+  - verify: button "Hover or focus me" attribute "aria-describedby" is "tooltip-text"

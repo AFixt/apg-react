@@ -1,0 +1,16 @@
+id: progressbar-with-valuetext
+title: "Progressbar — aria-valuetext overrides the numeric announcement"
+type: positive
+description: "When valueText is provided, the progressbar exposes aria-valuetext for AT to
+  announce a richer string than the raw number."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-progressbar--with-value-text&viewMode=story"
+
+expected_result: 'aria-valuetext is "3 of 10 steps".'
+
+steps:
+  - locate: role "progressbar" name "Steps completed"
+  - verify: role "progressbar" name "Steps completed" attribute "aria-valuetext" is "3 of 10 steps"

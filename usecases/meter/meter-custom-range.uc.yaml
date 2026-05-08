@@ -1,0 +1,18 @@
+id: meter-custom-range
+title: "Meter — Honors custom minValue and maxValue"
+type: positive
+description: "When configured with custom bounds the meter reports them via
+  aria-valuemin/aria-valuemax."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-meter--with-custom-range&viewMode=story"
+
+expected_result: 'aria-valuemin="0", aria-valuemax="10", aria-valuenow="7".'
+
+steps:
+  - locate: role "meter" name "Satisfaction score"
+  - verify: role "meter" name "Satisfaction score" attribute "aria-valuemin" is "0"
+  - verify: role "meter" name "Satisfaction score" attribute "aria-valuemax" is "10"
+  - verify: role "meter" name "Satisfaction score" attribute "aria-valuenow" is "7"
