@@ -11,6 +11,11 @@ on:
 permissions:
   contents: read
 
+# Supplies the token that .npmrc's @afixt scope auth interpolates. Sourced from
+# the organization-level secret; there is deliberately no repo-level override.
+env:
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
 jobs:
   secrets:
     name: TruffleHog (verified secrets)
