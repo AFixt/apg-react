@@ -3,23 +3,27 @@
     "name": "ESM bundle (whole library, gzipped)",
     "path": "dist/index.esm.js",
     "import": "*",
+    "ignore": ["react", "react-dom", "react-router-dom"],
     "limit": "35 KB"
   },
   {
     "name": "CJS bundle (whole library, gzipped)",
     "path": "dist/index.cjs.js",
+    "ignore": ["react", "react-dom", "react-router-dom"],
     "limit": "45 KB"
   },
   {
     "name": "Tree-shaken: single Accordion import",
     "path": "dist/index.esm.js",
     "import": "{ Accordion }",
+    "ignore": ["react", "react-dom", "react-router-dom"],
     "limit": "4 KB"
   },
   {
     "name": "Tree-shaken: single Button import",
     "path": "dist/index.esm.js",
     "import": "{ Button }",
+    "ignore": ["react", "react-dom", "react-router-dom"],
     "limit": "4 KB"
   },
   {
