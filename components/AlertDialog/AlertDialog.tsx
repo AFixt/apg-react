@@ -7,6 +7,7 @@
  * - Initial focus placed on the close button
  */
 import React, { useEffect, useId, useRef } from 'react';
+import { cycleFocusInDialog } from '../_internal/dialog-focus';
 import './AlertDialog.css';
 
 /** Props for the AlertDialog component. */
@@ -24,16 +25,22 @@ const AlertDialog: React.FC<AlertDialogProps> = ({ isOpen, title, message, onClo
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const invokingElementRef = useRef<Element | null>(null);
+  // Tracks whether the dialog is in the process of closing so the focus trap
+  // doesn't yank focus back to the dialog while we're restoring it to the
+  // invoking element.
+  const closingRef = useRef(false);
 
   // Save invoking element and set initial focus on open.
   useEffect(() => {
     if (isOpen) {
+      closingRef.current = false;
       invokingElementRef.current = document.activeElement;
       closeBtnRef.current?.focus();
     }
   }, [isOpen]);
 
   const closeAndRestoreFocus = () => {
+    closingRef.current = true;
     const invoker = invokingElementRef.current as HTMLElement | null;
     if (invoker && typeof invoker.focus === 'function') {
       invoker.focus();
@@ -48,16 +55,20 @@ const AlertDialog: React.FC<AlertDialogProps> = ({ isOpen, title, message, onClo
       if (e.key === 'Escape') {
         e.stopPropagation();
         closeAndRestoreFocus();
+      } else if (e.key === 'Tab' && dialogRef.current) {
+        cycleFocusInDialog(dialogRef.current, e);
       }
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [isOpen, onClose]);
 
-  // Focus trap — keep focus inside the dialog.
+  // Focus trap — keep focus inside the dialog. Inactive while closing so we
+  // can hand focus back to the invoking element.
   useEffect(() => {
     if (!isOpen) return;
     const handleFocusTrap = (e: FocusEvent) => {
+      if (closingRef.current) return;
       if (dialogRef.current && !dialogRef.current.contains(e.target as Node)) {
         e.stopPropagation();
         closeBtnRef.current?.focus();
