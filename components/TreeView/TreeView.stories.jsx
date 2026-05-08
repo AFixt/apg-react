@@ -60,3 +60,9 @@ export const Default = {
     });
   },
 };
+
+// Render-only variant for use case automation. No play function so the story
+// loads in its initial render state.
+export const DefaultBare = {
+  args: { label: 'Project files', nodes, defaultExpanded: ['src'] },
+};

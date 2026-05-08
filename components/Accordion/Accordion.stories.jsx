@@ -81,3 +81,8 @@ export const FirstOpen = {
     });
   },
 };
+
+// Render-only variants for use case automation. No play function so the story
+// loads in its initial render state.
+export const DefaultBare = { render: Template, args: { items: sampleItems } };
+export const FirstOpenBare = { render: Template, args: { items: sampleItems, openIndex: 0 } };

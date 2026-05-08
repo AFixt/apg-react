@@ -90,3 +90,18 @@ export const TriState = {
     });
   },
 };
+
+// Render-only variants for use case automation. No play function so the story
+// loads in its initial render state.
+export const UncheckedBare = {
+  render: Template,
+  args: { label: 'Subscribe to newsletter', checked: false },
+};
+export const CheckedBare = {
+  render: Template,
+  args: { label: 'I accept the terms', checked: true },
+};
+export const TriStateBare = {
+  render: Template,
+  args: { label: 'Select all', checked: null, isTriState: true },
+};

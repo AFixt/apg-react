@@ -69,3 +69,13 @@ export const ManualActivation = {
     });
   },
 };
+
+// Render-only variants for use case automation. No play function so the story
+// loads in its initial render state.
+export const HorizontalBare = { args: { tabs, idPrefix: 'h' } };
+export const VerticalBare = {
+  args: { tabs, orientation: 'vertical', idPrefix: 'v' },
+};
+export const ManualActivationBare = {
+  args: { tabs, activation: 'manual', idPrefix: 'm' },
+};
