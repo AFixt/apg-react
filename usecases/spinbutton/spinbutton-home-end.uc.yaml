@@ -1,0 +1,19 @@
+id: spinbutton-home-end
+title: "Spinbutton — Home and End jump to min and max"
+type: positive
+description: "Home jumps the value to aria-valuemin; End jumps to aria-valuemax."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-spinbutton--default-bare&viewMode=story"
+
+expected_result: 'After End the value is "10"; after Home it is "0".'
+
+steps:
+  - locate: role "spinbutton" name "Quantity"
+  - focus: role "spinbutton" name "Quantity"
+  - keyboard: "End"
+  - verify: role "spinbutton" name "Quantity" attribute "aria-valuenow" is "10"
+  - keyboard: "Home"
+  - verify: role "spinbutton" name "Quantity" attribute "aria-valuenow" is "0"

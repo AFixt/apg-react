@@ -1,0 +1,21 @@
+id: menubar-submenu-arrow-right-next-menu
+title: "Menubar — ArrowRight inside a submenu opens the next menubar menu"
+type: positive
+description: "Within an open submenu, ArrowRight closes the current submenu and opens the
+  next menubar menu with focus on its first item."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubar--default&viewMode=story"
+
+expected_result: 'After ArrowRight from inside the File submenu, focus is on "Undo" (first
+  item of Edit).'
+
+steps:
+  - locate: menuitem "File"
+  - focus: menuitem "File"
+  - keyboard: "ArrowDown"
+  - verify: focus menuitem "New"
+  - keyboard: "ArrowRight"
+  - verify: focus menuitem "Undo"

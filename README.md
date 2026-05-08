@@ -184,6 +184,10 @@ npm run test:all       # both
   assertion library — no external a11y libraries of any kind.
 - **E2E tests** drive a real Chromium against a built Storybook: accessible-name
   presence, `aria-*` id resolution, ARIA boolean grammar, Tab reachability.
+- **Use cases** (`usecases/`) document every user interaction in the DSL of
+  [`@afixt/usecase-runner`](https://www.npmjs.com/package/@afixt/usecase-runner)
+  so the APG keyboard and ARIA contract for each component can be exercised by
+  automation. See [`usecases/README.md`](./usecases/README.md).
 
 ## Development
 

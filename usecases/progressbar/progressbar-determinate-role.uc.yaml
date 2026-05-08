@@ -1,0 +1,15 @@
+id: progressbar-determinate-role
+title: 'Progressbar — Determinate progressbar exposes role="progressbar" with name'
+type: positive
+description: 'A determinate progressbar advertises role="progressbar" with the configured
+  label as its accessible name.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-progressbar--determinate&viewMode=story"
+
+expected_result: 'A progressbar named "Upload progress" is present.'
+
+steps:
+  - locate: role "progressbar" name "Upload progress"

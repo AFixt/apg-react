@@ -79,3 +79,14 @@ export const MultiSelect = {
     });
   },
 };
+
+// Render-only variants for use case automation. No play function so the story
+// loads in its initial render state.
+export const SingleSelectBare = {
+  render: Single,
+  args: { label: 'Pick a fruit', options: fruits },
+};
+export const MultiSelectBare = {
+  render: Multi,
+  args: { label: 'Pick fruits', options: fruits },
+};

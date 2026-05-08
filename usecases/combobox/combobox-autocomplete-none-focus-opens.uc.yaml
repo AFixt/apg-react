@@ -1,0 +1,18 @@
+id: combobox-autocomplete-none-focus-opens
+title: 'Combobox — autocomplete="none" opens the popup on focus'
+type: positive
+description: 'When configured with aria-autocomplete="none", focusing the combobox opens
+  the popup so the user can choose from the full list.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-combobox--autocomplete-none-bare&viewMode=story"
+
+expected_result: "After focus the popup is open."
+
+steps:
+  - locate: select "Country (choose from list)"
+  - verify: select "Country (choose from list)" attribute "aria-autocomplete" is "none"
+  - focus: select "Country (choose from list)"
+  - verify: select "Country (choose from list)" attribute "aria-expanded" is "true"

@@ -1,0 +1,21 @@
+id: menu-button-escape-closes
+title: "MenuButton — Escape closes the menu and returns focus to the trigger"
+type: positive
+description: "Per the APG, pressing Escape while inside an open menu closes it and returns
+  keyboard focus to the trigger button."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubutton--default&viewMode=story"
+
+expected_result: 'The menu is removed and focus returns to the "Actions" button.'
+
+steps:
+  - locate: button "Actions"
+  - focus: button "Actions"
+  - activate: button "Actions"
+  - verify: focus menuitem "New document"
+  - keyboard: "Escape"
+  - verify: focus button "Actions"
+  - verify: button "Actions" attribute "aria-expanded" is "false"

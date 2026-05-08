@@ -1,0 +1,18 @@
+id: spinbutton-arrow-down
+title: "Spinbutton — ArrowDown decrements by step"
+type: positive
+description: "Pressing ArrowDown while the spinbutton has focus decrements aria-valuenow
+  by the configured step."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-spinbutton--default-bare&viewMode=story"
+
+expected_result: 'aria-valuenow becomes "4" after one ArrowDown from "5".'
+
+steps:
+  - locate: role "spinbutton" name "Quantity"
+  - focus: role "spinbutton" name "Quantity"
+  - keyboard: "ArrowDown"
+  - verify: role "spinbutton" name "Quantity" attribute "aria-valuenow" is "4"

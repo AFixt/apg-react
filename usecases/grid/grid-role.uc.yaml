@@ -1,0 +1,15 @@
+id: grid-role
+title: 'Grid — Exposes role="grid" with an accessible name'
+type: positive
+description: 'The Grid container is exposed via role="grid" with an accessible name from
+  the visible caption (or aria-label fallback).'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-grid--default-bare&viewMode=story"
+
+expected_result: 'A grid named "Notable engineers" is present.'
+
+steps:
+  - locate: role "grid" name "Notable engineers"

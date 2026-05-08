@@ -1,0 +1,16 @@
+id: slider-multi-thumb-two-distinct-thumbs
+title: "SliderMultiThumb — Two sliders with distinct accessible names are exposed"
+type: positive
+description: 'A multi-thumb slider exposes two role="slider" elements, each with a unique
+  aria-label so AT can address them individually.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-slidermultithumb--price-range-bare&viewMode=story"
+
+expected_result: 'Both "Minimum price" and "Maximum price" sliders are present.'
+
+steps:
+  - locate: role "slider" name "Minimum price"
+  - locate: role "slider" name "Maximum price"

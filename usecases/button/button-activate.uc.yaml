@@ -1,0 +1,17 @@
+id: button-activate
+title: "Button — A user can locate, focus, and activate the button"
+type: positive
+description: "The button is exposed in the accessibility tree, can receive keyboard focus,
+  and can be activated by mouse and keyboard."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-button--default&viewMode=story"
+
+expected_result: "The button locates, focuses, and activates without error."
+
+steps:
+  - locate: button "Click me"
+  - focus: button "Click me"
+  - activate: button "Click me"

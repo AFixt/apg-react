@@ -1,0 +1,18 @@
+id: accordion-home
+title: "Accordion — Home moves focus to the first header"
+type: positive
+description: "When focus is on any accordion header, Home moves focus to the first header
+  in the group."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-accordion--default-bare&viewMode=story"
+
+expected_result: "Focus moves from a non-first header to the first header."
+
+steps:
+  - locate: button "Is it accessible?"
+  - focus: button "Is it accessible?"
+  - keyboard: "Home"
+  - verify: focus button "What is APG-React?"

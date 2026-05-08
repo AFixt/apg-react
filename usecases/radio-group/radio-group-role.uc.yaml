@@ -1,0 +1,15 @@
+id: radio-group-role
+title: 'RadioGroup — Container is exposed via role="radiogroup" with a name'
+type: positive
+description: 'The RadioGroup container advertises role="radiogroup" with the supplied
+  label as its accessible name.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-radiogroup--default-bare&viewMode=story"
+
+expected_result: 'A radiogroup named "Preferred contact method" is present.'
+
+steps:
+  - locate: role "radiogroup" name "Preferred contact method"

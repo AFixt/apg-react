@@ -1,0 +1,21 @@
+id: menubar-submenu-escape-closes
+title: "Menubar — Escape closes the open submenu and returns focus to the menubar"
+type: positive
+description: "Pressing Escape while inside an open submenu closes it and restores focus to
+  the parent menubar item."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubar--default&viewMode=story"
+
+expected_result: 'After Escape, focus is on the Edit menubar item with aria-expanded="false".'
+
+steps:
+  - locate: menuitem "Edit"
+  - focus: menuitem "Edit"
+  - keyboard: "ArrowDown"
+  - verify: focus menuitem "Undo"
+  - keyboard: "Escape"
+  - verify: focus menuitem "Edit"
+  - verify: menuitem "Edit" attribute "aria-expanded" is "false"

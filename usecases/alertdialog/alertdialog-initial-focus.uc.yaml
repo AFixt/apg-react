@@ -1,0 +1,18 @@
+id: alertdialog-initial-focus
+title: "AlertDialog — Initial focus lands on the Close button"
+type: positive
+description: "When the alertdialog opens, keyboard focus is moved to the Close button so
+  keyboard users can dismiss it without further navigation."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-alertdialog--default-bare&viewMode=story"
+
+expected_result: "Focus is on the Close button immediately after the dialog opens."
+
+steps:
+  - locate: button "Open alert dialog"
+  - focus: button "Open alert dialog"
+  - activate: button "Open alert dialog"
+  - verify: focus button "Close"

@@ -84,3 +84,22 @@ export const AutocompleteBoth = {
     });
   },
 };
+
+// Render-only variants for use case automation. No play function so the story
+// loads in its initial render state.
+export const AutocompleteListBare = {
+  render: Template,
+  args: {
+    label: 'Country (filters as you type)',
+    autocomplete: 'list',
+    placeholder: 'Type to search…',
+  },
+};
+export const AutocompleteNoneBare = {
+  render: Template,
+  args: { label: 'Country (choose from list)', autocomplete: 'none' },
+};
+export const AutocompleteBothBare = {
+  render: Template,
+  args: { label: 'Country (inline completion)', autocomplete: 'both' },
+};

@@ -1,0 +1,19 @@
+id: listbox-single-arrow-down
+title: "Listbox — ArrowDown moves both focus and selection"
+type: positive
+description: "In a single-select listbox, ArrowDown moves focus and selection from the
+  current option to the next option."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-listbox--single-select-bare&viewMode=story"
+
+expected_result: "After ArrowDown, Banana is selected and Apple is no longer selected."
+
+steps:
+  - locate: role "option" name "Apple"
+  - focus: role "option" name "Apple"
+  - keyboard: "ArrowDown"
+  - verify: role "option" name "Banana" attribute "aria-selected" is "true"
+  - verify: role "option" name "Apple" attribute "aria-selected" is "false"

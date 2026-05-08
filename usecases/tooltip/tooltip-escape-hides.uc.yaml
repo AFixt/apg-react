@@ -1,0 +1,21 @@
+id: tooltip-escape-hides
+title: "Tooltip — Escape hides the visible tooltip"
+type: positive
+description: "Per the APG, pressing Escape while a tooltip is visible dismisses it without
+  moving focus."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-tooltip--top&viewMode=story"
+
+expected_result: "After Escape the tooltip is no longer present and focus stays on the
+  trigger."
+
+steps:
+  - locate: button "Hover or focus me"
+  - focus: button "Hover or focus me"
+  - wait_for: text "Tooltip on top"
+  - keyboard: "Escape"
+  - verify: hidden text "Tooltip on top"
+  - verify: focus button "Hover or focus me"

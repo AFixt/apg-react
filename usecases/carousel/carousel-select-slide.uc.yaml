@@ -1,0 +1,19 @@
+id: carousel-select-slide
+title: "Carousel — Selectors jump to the corresponding slide"
+type: positive
+description: "Activating one of the numbered slide selectors jumps directly to that slide
+  and updates aria-current."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+  - "Targets the DefaultBare story with auto-rotation paused for stable assertions"
+
+start_location: "http://localhost:6006/iframe.html?id=components-carousel--default-bare&viewMode=story"
+
+expected_result: 'After activating "Select slide 3" that selector reports aria-current="true".'
+
+steps:
+  - locate: button "Select slide 3"
+  - focus: button "Select slide 3"
+  - activate: button "Select slide 3"
+  - verify: button "Select slide 3" attribute "aria-current" is "true"

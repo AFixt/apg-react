@@ -1,0 +1,21 @@
+id: spinbutton-pageup-pagedown
+title: "Spinbutton — PageUp and PageDown adjust by 10× step"
+type: positive
+description: "PageUp/PageDown change the value by 10 × step for coarser-grained
+  adjustments."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+  - "Uses the LargeRange story with step=10 and initialValue=100"
+
+start_location: "http://localhost:6006/iframe.html?id=components-spinbutton--large-range-bare&viewMode=story"
+
+expected_result: 'PageUp moves "100" to "200"; PageDown returns to "100".'
+
+steps:
+  - locate: role "spinbutton" name "Amount"
+  - focus: role "spinbutton" name "Amount"
+  - keyboard: "PageUp"
+  - verify: role "spinbutton" name "Amount" attribute "aria-valuenow" is "200"
+  - keyboard: "PageDown"
+  - verify: role "spinbutton" name "Amount" attribute "aria-valuenow" is "100"

@@ -1,0 +1,16 @@
+id: radio-group-first-checked
+title: "RadioGroup — Initial selection is reflected via aria-checked"
+type: positive
+description: "When no value prop is supplied, the first radio option is selected by
+  default."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-radiogroup--default-bare&viewMode=story"
+
+expected_result: 'The "Email" radio reports aria-checked="true".'
+
+steps:
+  - locate: radio "Email"
+  - verify: radio "Email" attribute "aria-checked" is "true"

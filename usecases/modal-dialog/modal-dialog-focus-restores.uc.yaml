@@ -1,0 +1,20 @@
+id: modal-dialog-focus-restores
+title: "ModalDialog — Closing returns focus to the invoking element"
+type: positive
+description: "After dismissing the modal, focus is returned to the element that opened
+  it."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-modaldialog--default-bare&viewMode=story"
+
+expected_result: 'Focus is back on the "Open modal" trigger after the dialog closes.'
+
+steps:
+  - locate: button "Open modal"
+  - focus: button "Open modal"
+  - activate: button "Open modal"
+  - verify: visible heading "Modal title"
+  - keyboard: "Escape"
+  - verify: focus button "Open modal"

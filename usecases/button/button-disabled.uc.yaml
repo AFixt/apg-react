@@ -1,0 +1,16 @@
+id: button-disabled
+title: "Button — Disabled buttons report the disabled state"
+type: positive
+description: "A button rendered with isDisabled is exposed as disabled to assistive
+  technology and cannot be activated."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-button--disabled&viewMode=story"
+
+expected_result: "The Disabled button is disabled."
+
+steps:
+  - locate: button "Disabled"
+  - verify: disabled button "Disabled"

@@ -1,0 +1,19 @@
+id: checkbox-click-toggles-on
+title: "Checkbox — Activating an unchecked checkbox marks it checked"
+type: positive
+description: 'Activating an unchecked checkbox via mouse or keyboard sets aria-checked to
+  "true".'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-checkbox--unchecked-bare&viewMode=story"
+
+expected_result: "After activation the checkbox is checked."
+
+steps:
+  - locate: checkbox "Subscribe to newsletter"
+  - verify: checkbox "Subscribe to newsletter" attribute "aria-checked" is "false"
+  - focus: checkbox "Subscribe to newsletter"
+  - activate: checkbox "Subscribe to newsletter"
+  - verify: checked checkbox "Subscribe to newsletter"

@@ -8,6 +8,10 @@
 # testing
 /coverage
 
+# usecase-runner output
+/reports
+/screenshots
+
 # production
 /build
 /dist

@@ -1,0 +1,22 @@
+id: button-toggle-press
+title: "Button — Toggle buttons flip aria-pressed when activated"
+type: positive
+description: 'A toggle button starts unpressed (aria-pressed="false"). Activating it sets
+  aria-pressed to "true"; activating again returns it to "false".'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-button--toggle&viewMode=story"
+
+expected_result: 'aria-pressed flips between "false" and "true" on each activation.'
+
+steps:
+  - locate: 'button "Notifications: Off"'
+  - verify: 'button "Notifications: Off" attribute "aria-pressed" is "false"'
+  - focus: 'button "Notifications: Off"'
+  - activate: 'button "Notifications: Off"'
+  - verify: 'button "Notifications: On" attribute "aria-pressed" is "true"'
+  - focus: 'button "Notifications: On"'
+  - activate: 'button "Notifications: On"'
+  - verify: 'button "Notifications: Off" attribute "aria-pressed" is "false"'

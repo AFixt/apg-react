@@ -1,0 +1,19 @@
+id: checkbox-group-child-toggle
+title: "CheckboxGroup — A child checkbox toggles independently"
+type: positive
+description: "Activating a single child toggles only that child without affecting its
+  siblings."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-checkboxgroup--default-bare&viewMode=story"
+
+expected_result: "Email notifications becomes checked; SMS notifications stays unchecked."
+
+steps:
+  - locate: checkbox "Email notifications"
+  - focus: checkbox "Email notifications"
+  - activate: checkbox "Email notifications"
+  - verify: checked checkbox "Email notifications"
+  - verify: checkbox "SMS notifications" attribute "aria-checked" is "false"

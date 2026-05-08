@@ -1,0 +1,18 @@
+id: menubar-arrow-left
+title: "Menubar — ArrowLeft cycles to the previous menubar item (wraps)"
+type: positive
+description: "ArrowLeft moves focus to the previous menubar item; from the first item it
+  wraps to the last."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubar--default&viewMode=story"
+
+expected_result: "Focus moves from File to View (wrap)."
+
+steps:
+  - locate: menuitem "File"
+  - focus: menuitem "File"
+  - keyboard: "ArrowLeft"
+  - verify: focus menuitem "View"

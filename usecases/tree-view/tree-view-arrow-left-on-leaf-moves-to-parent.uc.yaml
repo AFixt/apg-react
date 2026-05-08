@@ -1,0 +1,18 @@
+id: tree-view-arrow-left-on-leaf-moves-to-parent
+title: "TreeView — ArrowLeft on a leaf treeitem focuses its parent"
+type: positive
+description: "When focus is on a leaf (or a closed parent) at depth > 1, ArrowLeft moves
+  focus to the parent treeitem."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-treeview--default-bare&viewMode=story"
+
+expected_result: 'Focus moves from "components" (level 2) to "src" (level 1).'
+
+steps:
+  - locate: role "treeitem" name "components"
+  - focus: role "treeitem" name "components"
+  - keyboard: "ArrowLeft"
+  - verify: focus role "treeitem" name "src"

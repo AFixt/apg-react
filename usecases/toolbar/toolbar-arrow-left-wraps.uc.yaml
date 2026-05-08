@@ -1,0 +1,18 @@
+id: toolbar-arrow-left-wraps
+title: "Toolbar — ArrowLeft wraps from the first item to the last"
+type: positive
+description: "When focus is on the first toolbar item, ArrowLeft wraps focus to the last
+  item."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-toolbar--default&viewMode=story"
+
+expected_result: 'Focus moves from "Bold" to "Link".'
+
+steps:
+  - locate: button "Bold"
+  - focus: button "Bold"
+  - keyboard: "ArrowLeft"
+  - verify: focus button "Link"

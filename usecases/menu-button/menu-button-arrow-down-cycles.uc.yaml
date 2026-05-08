@@ -1,0 +1,19 @@
+id: menu-button-arrow-down-cycles
+title: "MenuButton — ArrowDown inside the menu moves focus to the next item"
+type: positive
+description: "When the menu is open, ArrowDown moves focus to the next menuitem."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubutton--default&viewMode=story"
+
+expected_result: 'Focus moves from "New document" to "Open…".'
+
+steps:
+  - locate: button "Actions"
+  - focus: button "Actions"
+  - activate: button "Actions"
+  - verify: focus menuitem "New document"
+  - keyboard: "ArrowDown"
+  - verify: focus menuitem "Open…"

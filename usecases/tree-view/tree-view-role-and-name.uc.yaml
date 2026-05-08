@@ -1,0 +1,15 @@
+id: tree-view-role-and-name
+title: 'TreeView — Outer list is exposed via role="tree" with a name'
+type: positive
+description: 'The TreeView container advertises role="tree" with the configured label as
+  its accessible name.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-treeview--default-bare&viewMode=story"
+
+expected_result: 'A tree named "Project files" is present.'
+
+steps:
+  - locate: role "tree" name "Project files"

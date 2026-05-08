@@ -1,0 +1,22 @@
+id: menu-button-home-end
+title: "MenuButton — Home and End jump to first and last menuitems"
+type: positive
+description: "When the menu is open, Home jumps focus to the first menuitem and End jumps
+  to the last."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubutton--default&viewMode=story"
+
+expected_result: 'End focuses "Export as PDF"; Home returns focus to "New document".'
+
+steps:
+  - locate: button "Actions"
+  - focus: button "Actions"
+  - activate: button "Actions"
+  - verify: focus menuitem "New document"
+  - keyboard: "End"
+  - verify: focus menuitem "Export as PDF"
+  - keyboard: "Home"
+  - verify: focus menuitem "New document"

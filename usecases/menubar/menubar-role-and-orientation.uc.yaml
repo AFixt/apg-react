@@ -1,0 +1,16 @@
+id: menubar-role-and-orientation
+title: 'Menubar — Container is exposed with role="menubar" and aria-orientation="horizontal"'
+type: positive
+description: 'The Menubar container advertises role="menubar" with the configured label
+  and aria-orientation="horizontal".'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubar--default&viewMode=story"
+
+expected_result: 'A menubar named "Main menu" is present and reports horizontal orientation.'
+
+steps:
+  - locate: role "menubar" name "Main menu"
+  - verify: role "menubar" name "Main menu" attribute "aria-orientation" is "horizontal"

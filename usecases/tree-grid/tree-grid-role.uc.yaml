@@ -1,0 +1,15 @@
+id: tree-grid-role
+title: 'TreeGrid — Container is exposed via role="treegrid" with a name'
+type: positive
+description: 'The TreeGrid container advertises role="treegrid" with the configured label
+  as its accessible name.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-treegrid--default-bare&viewMode=story"
+
+expected_result: 'A treegrid named "Project files" is present.'
+
+steps:
+  - locate: role "treegrid" name "Project files"

@@ -1,0 +1,18 @@
+id: slider-multi-thumb-high-arrow-left
+title: "SliderMultiThumb — ArrowLeft on the high thumb decrements it"
+type: positive
+description: "When focus is on the high thumb, ArrowLeft decrements aria-valuenow by the
+  configured step."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-slidermultithumb--price-range-bare&viewMode=story"
+
+expected_result: 'High aria-valuenow becomes "79" after one ArrowLeft.'
+
+steps:
+  - locate: role "slider" name "Maximum price"
+  - focus: role "slider" name "Maximum price"
+  - keyboard: "ArrowLeft"
+  - verify: role "slider" name "Maximum price" attribute "aria-valuenow" is "79"

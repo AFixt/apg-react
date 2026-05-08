@@ -1,0 +1,18 @@
+id: alert-dismiss
+title: "Alert — Activating the Dismiss button removes the alert"
+type: positive
+description: "A user can dismiss the alert by activating its close button. After activation
+  the alert is removed from the accessibility tree."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-alert--info&viewMode=story"
+
+expected_result: "After activating the Dismiss button the alert is no longer present."
+
+steps:
+  - locate: button "Dismiss"
+  - focus: button "Dismiss"
+  - activate: button "Dismiss"
+  - verify: hidden text "This is an informational message."

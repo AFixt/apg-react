@@ -1,0 +1,16 @@
+id: toolbar-role-and-orientation
+title: 'Toolbar — Container is exposed via role="toolbar" with horizontal orientation'
+type: positive
+description: 'The Toolbar container advertises role="toolbar" with the configured label
+  and aria-orientation="horizontal".'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-toolbar--default&viewMode=story"
+
+expected_result: 'A toolbar named "Formatting" is present with horizontal orientation.'
+
+steps:
+  - locate: role "toolbar" name "Formatting"
+  - verify: role "toolbar" name "Formatting" attribute "aria-orientation" is "horizontal"

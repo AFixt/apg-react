@@ -1,0 +1,16 @@
+id: textbox-multiline
+title: 'Textbox — Multi-line textbox advertises aria-multiline="true"'
+type: positive
+description: 'When configured with multiline, the textbox renders a textarea and exposes
+  aria-multiline="true".'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-textbox--multi-line&viewMode=story"
+
+expected_result: 'aria-multiline is "true".'
+
+steps:
+  - locate: field "Bio"
+  - verify: field "Bio" attribute "aria-multiline" is "true"

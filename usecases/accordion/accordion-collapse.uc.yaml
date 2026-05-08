@@ -1,0 +1,20 @@
+id: accordion-collapse
+title: "Accordion — Collapse an expanded panel by activating its header"
+type: positive
+description: "Verify that activating an already-expanded accordion header collapses its
+  associated panel and updates aria-expanded to false."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+  - "The FirstOpen Accordion story is rendered with the first panel expanded"
+
+start_location: "http://localhost:6006/iframe.html?id=components-accordion--first-open-bare&viewMode=story"
+
+expected_result: 'The first panel collapses; its header reports aria-expanded="false".'
+
+steps:
+  - locate: button "What is APG-React?"
+  - verify: button "What is APG-React?" attribute "aria-expanded" is "true"
+  - focus: button "What is APG-React?"
+  - activate: button "What is APG-React?"
+  - verify: button "What is APG-React?" attribute "aria-expanded" is "false"

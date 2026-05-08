@@ -1,0 +1,20 @@
+id: combobox-tab-closes
+title: "Combobox — Tab closes the popup and moves focus away"
+type: positive
+description: "Pressing Tab while the popup is open closes the popup and moves focus to the
+  next focusable element."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-combobox--autocomplete-list-bare&viewMode=story"
+
+expected_result: "After Tab the popup is closed."
+
+steps:
+  - locate: select "Country (filters as you type)"
+  - focus: select "Country (filters as you type)"
+  - keyboard: "ArrowDown"
+  - verify: select "Country (filters as you type)" attribute "aria-expanded" is "true"
+  - keyboard: "Tab"
+  - verify: select "Country (filters as you type)" attribute "aria-expanded" is "false"

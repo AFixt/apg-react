@@ -1,0 +1,18 @@
+id: slider-multi-thumb-low-end-clamps
+title: "SliderMultiThumb — End on the low thumb clamps to the high thumb value"
+type: positive
+description: "Pressing End on the low thumb does not jump to the absolute maximum; it is
+  clamped to the current high thumb value."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-slidermultithumb--price-range-bare&viewMode=story"
+
+expected_result: 'Low aria-valuenow becomes "80" (the high value), not "100".'
+
+steps:
+  - locate: role "slider" name "Minimum price"
+  - focus: role "slider" name "Minimum price"
+  - keyboard: "End"
+  - verify: role "slider" name "Minimum price" attribute "aria-valuenow" is "80"

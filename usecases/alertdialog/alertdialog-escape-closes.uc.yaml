@@ -1,0 +1,18 @@
+id: alertdialog-escape-closes
+title: "AlertDialog — Escape closes the dialog"
+type: positive
+description: "Per the APG, pressing Escape while an alertdialog is open dismisses it."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-alertdialog--open-by-default-bare&viewMode=story"
+
+expected_result: "After pressing Escape the alertdialog is no longer present."
+
+steps:
+  - locate: heading "Session expired"
+  - locate: button "Close"
+  - focus: button "Close"
+  - keyboard: "Escape"
+  - verify: hidden heading "Session expired"

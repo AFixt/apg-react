@@ -1,0 +1,19 @@
+id: menubar-submenu-arrow-down-cycles
+title: "Menubar — ArrowDown inside a submenu moves focus to the next menuitem"
+type: positive
+description: "In an open submenu, ArrowDown moves focus to the next menuitem."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubar--default&viewMode=story"
+
+expected_result: 'Focus moves from "Undo" to "Redo".'
+
+steps:
+  - locate: menuitem "Edit"
+  - focus: menuitem "Edit"
+  - keyboard: "ArrowDown"
+  - verify: focus menuitem "Undo"
+  - keyboard: "ArrowDown"
+  - verify: focus menuitem "Redo"

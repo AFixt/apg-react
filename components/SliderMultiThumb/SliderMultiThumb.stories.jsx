@@ -44,3 +44,17 @@ export const PriceRange = {
     });
   },
 };
+
+// Render-only variant for use case automation. No play function so the story
+// loads in its initial render state.
+export const PriceRangeBare = {
+  args: {
+    min: 0,
+    max: 100,
+    step: 1,
+    initialLow: 20,
+    initialHigh: 80,
+    labelLow: 'Minimum price',
+    labelHigh: 'Maximum price',
+  },
+};

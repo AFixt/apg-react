@@ -1,0 +1,18 @@
+id: listbox-multi-space-toggles
+title: "Listbox — Space toggles selection of the focused option (multi-select)"
+type: positive
+description: "In a multi-select listbox, Space toggles aria-selected on the currently
+  focused option without moving focus."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-listbox--multi-select-bare&viewMode=story"
+
+expected_result: "After Space the focused option is selected."
+
+steps:
+  - locate: role "option" name "Apple"
+  - focus: role "option" name "Apple"
+  - keyboard: "Space"
+  - verify: role "option" name "Apple" attribute "aria-selected" is "true"

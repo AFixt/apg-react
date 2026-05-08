@@ -36,10 +36,17 @@ interface CarouselProps {
   slides: CarouselSlide[];
   /** Accessible name for the carousel region. Required for ARIA compliance. */
   ariaLabel: string;
+  /** Whether auto-rotation is on at first render. Defaults to true. */
+  initiallyRotating?: boolean;
   labels?: CarouselLabels;
 }
 
-const Carousel: React.FC<CarouselProps> = ({ slides, ariaLabel, labels }) => {
+const Carousel: React.FC<CarouselProps> = ({
+  slides,
+  ariaLabel,
+  initiallyRotating = true,
+  labels,
+}) => {
   const defaultLabels: CarouselLabels = {
     previousSlide: 'Previous slide',
     nextSlide: 'Next slide',
@@ -49,7 +56,7 @@ const Carousel: React.FC<CarouselProps> = ({ slides, ariaLabel, labels }) => {
   };
   const l = { ...defaultLabels, ...labels };
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isRotating, setIsRotating] = useState(true);
+  const [isRotating, setIsRotating] = useState(initiallyRotating);
   const carouselRef = useRef<HTMLDivElement>(null);
 
   const nextSlide = () => {

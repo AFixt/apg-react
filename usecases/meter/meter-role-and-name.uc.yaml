@@ -1,0 +1,15 @@
+id: meter-role-and-name
+title: 'Meter — Exposes role="meter" with the configured label'
+type: positive
+description: 'The Meter component is exposed via role="meter" with the supplied label as
+  its accessible name.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-meter--default&viewMode=story"
+
+expected_result: 'A meter named "Disk usage" is present.'
+
+steps:
+  - locate: role "meter" name "Disk usage"

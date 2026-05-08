@@ -1,0 +1,18 @@
+id: combobox-typing-opens-popup
+title: "Combobox — Typing opens the suggestions popup"
+type: positive
+description: 'When the user types into a list-autocomplete combobox, aria-expanded becomes
+  "true" and the listbox of suggestions appears.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-combobox--autocomplete-list-bare&viewMode=story"
+
+expected_result: 'aria-expanded becomes "true" after typing one character.'
+
+steps:
+  - locate: select "Country (filters as you type)"
+  - focus: select "Country (filters as you type)"
+  - enter: select "Country (filters as you type)" value "a"
+  - verify: select "Country (filters as you type)" attribute "aria-expanded" is "true"

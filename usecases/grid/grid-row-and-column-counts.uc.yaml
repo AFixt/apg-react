@@ -1,0 +1,17 @@
+id: grid-row-and-column-counts
+title: "Grid — Reports aria-rowcount and aria-colcount"
+type: positive
+description: "The grid advertises its total row and column counts via aria-rowcount and
+  aria-colcount so AT can announce position correctly."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-grid--default-bare&viewMode=story"
+
+expected_result: 'aria-rowcount is "5" (1 header + 4 data rows) and aria-colcount is "3".'
+
+steps:
+  - locate: role "grid" name "Notable engineers"
+  - verify: role "grid" name "Notable engineers" attribute "aria-rowcount" is "5"
+  - verify: role "grid" name "Notable engineers" attribute "aria-colcount" is "3"

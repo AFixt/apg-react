@@ -1,0 +1,21 @@
+id: menu-button-click-item
+title: "MenuButton — Activating a menuitem closes the menu"
+type: positive
+description: "A user can activate a menuitem by clicking. The menu closes and focus
+  returns to the trigger."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubutton--default&viewMode=story"
+
+expected_result: 'After activating "Save" the menu is closed.'
+
+steps:
+  - locate: button "Actions"
+  - focus: button "Actions"
+  - activate: button "Actions"
+  - locate: menuitem "Save"
+  - focus: menuitem "Save"
+  - activate: menuitem "Save"
+  - verify: button "Actions" attribute "aria-expanded" is "false"

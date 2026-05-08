@@ -1,0 +1,11 @@
+browser: chromium
+headed: false
+slow_mo: 0
+timeout: 5000
+
+continue_on_failure: true
+screenshot_on_failure: false
+
+report_formats:
+  - json
+report_dir: ./reports

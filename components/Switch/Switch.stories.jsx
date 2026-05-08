@@ -54,3 +54,12 @@ export const On = {
     });
   },
 };
+
+// Render-only variants for use case automation. No play function so the story
+// loads in its initial render state.
+export const OffBare = {
+  args: { label: 'Enable dark mode', initialChecked: false },
+};
+export const OnBare = {
+  args: { label: 'Enable notifications', initialChecked: true },
+};

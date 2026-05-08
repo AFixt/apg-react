@@ -1,0 +1,19 @@
+id: carousel-next-slide
+title: "Carousel — Activating Next slide advances to the following slide"
+type: positive
+description: 'Activating the Next slide control hides the current slide and shows the next
+  slide. The current slide selector advertises aria-current="true".'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+  - "Targets the DefaultBare story with auto-rotation paused for stable assertions"
+
+start_location: "http://localhost:6006/iframe.html?id=components-carousel--default-bare&viewMode=story"
+
+expected_result: "Slide 2 is reported as current after activating Next slide."
+
+steps:
+  - locate: button "Next slide"
+  - focus: button "Next slide"
+  - activate: button "Next slide"
+  - verify: button "Select slide 2" attribute "aria-current" is "true"
