@@ -104,7 +104,7 @@
     "@babel/preset-typescript": "^7.28.5",
     "@commitlint/cli": "20.5.3",
     "@commitlint/config-conventional": "20.5.3",
-    "@double-great/stylelint-a11y": "3.4.11",
+    "@double-great/stylelint-a11y": "3.4.12",
     "@eslint/js": "9.39.4",
     "@rollup/plugin-babel": "^7.0.0",
     "@rollup/plugin-commonjs": "^29.0.2",
@@ -140,7 +140,7 @@
     "husky": "9.1.7",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^30.3.0",
-    "jscpd": "4.0.9",
+    "jscpd": "4.2.0",
     "license-checker-rseidelsohn": "4.4.2",
     "lint-staged": "16.4.0",
     "markdownlint-cli2": "0.22.1",
@@ -157,13 +157,13 @@
     "rollup-plugin-postcss": "^4.0.0",
     "size-limit": "12.1.0",
     "storybook": "^8.6.18",
-    "stylelint": "17.11.0",
+    "stylelint": "17.11.1",
     "stylelint-config-standard": "40.0.0",
     "stylelint-declaration-strict-value": "1.11.1",
     "tsc-files": "1.1.4",
     "tslib": "^2.8.1",
     "typescript": "^6.0.2",
-    "typescript-eslint": "8.59.2",
+    "typescript-eslint": "8.59.3",
     "vite": "^5.4.21"
   }
 }
