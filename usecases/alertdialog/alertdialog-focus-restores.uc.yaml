@@ -1,0 +1,21 @@
+id: alertdialog-focus-restores
+title: "AlertDialog — Closing the dialog restores focus to the trigger"
+type: positive
+description: "After dismissing the alertdialog, focus is returned to the element that
+  invoked it."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-alertdialog--default-bare&viewMode=story"
+
+expected_result: "Focus is back on the trigger button after the dialog closes."
+
+steps:
+  - locate: button "Open alert dialog"
+  - focus: button "Open alert dialog"
+  - activate: button "Open alert dialog"
+  - locate: button "Close"
+  - focus: button "Close"
+  - activate: button "Close"
+  - verify: focus button "Open alert dialog"

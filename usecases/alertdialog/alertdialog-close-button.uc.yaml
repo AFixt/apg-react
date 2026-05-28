@@ -1,0 +1,20 @@
+id: alertdialog-close-button
+title: "AlertDialog — Activating Close dismisses the dialog"
+type: positive
+description: "A user can dismiss an open alertdialog by activating its Close button. After
+  activation the dialog is removed from the accessibility tree."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+  - "The OpenByDefault story renders the alertdialog open"
+
+start_location: "http://localhost:6006/iframe.html?id=components-alertdialog--open-by-default-bare&viewMode=story"
+
+expected_result: "After activation the alertdialog is no longer present."
+
+steps:
+  - locate: heading "Session expired"
+  - locate: button "Close"
+  - focus: button "Close"
+  - activate: button "Close"
+  - verify: hidden heading "Session expired"

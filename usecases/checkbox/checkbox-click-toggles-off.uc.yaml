@@ -1,0 +1,18 @@
+id: checkbox-click-toggles-off
+title: "Checkbox — Activating a checked checkbox unchecks it"
+type: positive
+description: "A checkbox that starts checked becomes unchecked after activation."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-checkbox--checked-bare&viewMode=story"
+
+expected_result: 'After activation the checkbox reports aria-checked="false".'
+
+steps:
+  - locate: checkbox "I accept the terms"
+  - verify: checked checkbox "I accept the terms"
+  - focus: checkbox "I accept the terms"
+  - activate: checkbox "I accept the terms"
+  - verify: checkbox "I accept the terms" attribute "aria-checked" is "false"

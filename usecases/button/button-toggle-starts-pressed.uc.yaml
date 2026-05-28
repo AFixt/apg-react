@@ -1,0 +1,16 @@
+id: button-toggle-starts-pressed
+title: "Button — Toggle button can start in the pressed state"
+type: positive
+description: 'When initialized with toggleState=true, a toggle button reports
+  aria-pressed="true" on first render.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-button--toggle-pressed&viewMode=story"
+
+expected_result: 'aria-pressed is "true" on first render.'
+
+steps:
+  - locate: 'button "Notifications: On"'
+  - verify: 'button "Notifications: On" attribute "aria-pressed" is "true"'

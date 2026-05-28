@@ -1,0 +1,19 @@
+id: tree-view-arrow-left-collapses
+title: "TreeView — ArrowLeft collapses an expanded parent treeitem"
+type: positive
+description: 'When focus is on an open parent treeitem, ArrowLeft collapses it
+  (aria-expanded becomes "false") without moving focus.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-treeview--default-bare&viewMode=story"
+
+expected_result: 'After ArrowLeft on the expanded "src" item, aria-expanded becomes "false".'
+
+steps:
+  - locate: role "treeitem" name "src"
+  - focus: role "treeitem" name "src"
+  - verify: role "treeitem" name "src" attribute "aria-expanded" is "true"
+  - keyboard: "ArrowLeft"
+  - verify: role "treeitem" name "src" attribute "aria-expanded" is "false"

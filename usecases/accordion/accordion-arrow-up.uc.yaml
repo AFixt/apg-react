@@ -1,0 +1,18 @@
+id: accordion-arrow-up
+title: "Accordion — ArrowUp moves focus to the previous header"
+type: positive
+description: "When focus is on an accordion header, ArrowUp moves focus to the previous
+  header in the group."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-accordion--default-bare&viewMode=story"
+
+expected_result: "Focus moves from the second header to the first header."
+
+steps:
+  - locate: button "How do I use it?"
+  - focus: button "How do I use it?"
+  - keyboard: "ArrowUp"
+  - verify: focus button "What is APG-React?"

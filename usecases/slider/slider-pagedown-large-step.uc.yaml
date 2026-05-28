@@ -1,0 +1,17 @@
+id: slider-pagedown-large-step
+title: "Slider — PageDown decrements by 10× step"
+type: positive
+description: "PageDown moves the slider value backward by 10 × step."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-slider--horizontal-bare&viewMode=story"
+
+expected_result: 'aria-valuenow becomes "40" after PageDown from "50".'
+
+steps:
+  - locate: role "slider" name "Volume"
+  - focus: role "slider" name "Volume"
+  - keyboard: "PageDown"
+  - verify: role "slider" name "Volume" attribute "aria-valuenow" is "40"

@@ -1,0 +1,19 @@
+id: tabs-arrow-right-selects
+title: "Tabs — ArrowRight moves focus and selection (automatic activation)"
+type: positive
+description: "In automatic activation mode, ArrowRight moves focus to the next tab and
+  also activates it."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-tabs--horizontal-bare&viewMode=story"
+
+expected_result: "After ArrowRight from Overview, Pricing is selected."
+
+steps:
+  - locate: tab "Overview"
+  - focus: tab "Overview"
+  - keyboard: "ArrowRight"
+  - verify: focus tab "Pricing"
+  - verify: tab "Pricing" attribute "aria-selected" is "true"

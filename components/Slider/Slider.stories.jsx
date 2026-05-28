@@ -71,3 +71,32 @@ export const Vertical = {
     });
   },
 };
+
+// Render-only variant for use case automation. No play function so the story
+// loads in its initial render state.
+export const HorizontalBare = {
+  args: {
+    min: 0,
+    max: 100,
+    step: 1,
+    initialValue: 50,
+    ariaLabel: 'Volume',
+  },
+};
+export const VerticalBare = {
+  args: {
+    min: 0,
+    max: 100,
+    step: 5,
+    initialValue: 25,
+    isVertical: true,
+    ariaLabel: 'Volume',
+  },
+  decorators: [
+    (Story) => (
+      <div style={{ height: 200 }}>
+        <Story />
+      </div>
+    ),
+  ],
+};

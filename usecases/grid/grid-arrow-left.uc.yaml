@@ -1,0 +1,18 @@
+id: grid-arrow-left
+title: "Grid — ArrowLeft moves focus to the previous cell in the row"
+type: positive
+description: "When focus is on a grid cell, ArrowLeft moves focus to the cell to its left
+  within the same row."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-grid--default-bare&viewMode=story"
+
+expected_result: 'Focus moves from the "Role" column header to the "Name" column header.'
+
+steps:
+  - locate: role "columnheader" name "Role"
+  - focus: role "columnheader" name "Role"
+  - keyboard: "ArrowLeft"
+  - verify: focus role "columnheader" name "Name"

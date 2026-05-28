@@ -1,0 +1,19 @@
+id: carousel-pause-rotation
+title: "Carousel — Activating the rotation control flips its label"
+type: positive
+description: "A user can toggle auto-rotation. The control advertises the inverse action
+  in its accessible name. Targets a bare story with rotation initially paused."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+  - "The DefaultBare carousel story renders with auto-rotation paused"
+
+start_location: "http://localhost:6006/iframe.html?id=components-carousel--default-bare&viewMode=story"
+
+expected_result: 'After activation the control is renamed to "Pause rotation".'
+
+steps:
+  - locate: button "Start rotation"
+  - focus: button "Start rotation"
+  - activate: button "Start rotation"
+  - verify: visible button "Pause rotation"

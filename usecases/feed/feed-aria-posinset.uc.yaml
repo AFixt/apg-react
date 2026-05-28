@@ -1,0 +1,18 @@
+id: feed-aria-posinset
+title: "Feed — Each article exposes aria-posinset and aria-setsize"
+type: positive
+description: 'Per the APG Feed pattern, every article advertises its position via
+  aria-posinset and the total via aria-setsize so AT can announce e.g. "1 of 3".'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-feed--default&viewMode=story"
+
+expected_result: "The articles report aria-posinset/aria-setsize."
+
+steps:
+  - wait_for: heading "Article 1"
+  - locate: heading "Article 1"
+  - locate: heading "Article 2"
+  - locate: heading "Article 3"

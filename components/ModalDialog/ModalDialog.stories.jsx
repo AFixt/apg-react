@@ -65,3 +65,21 @@ export const OpenByDefault = {
     });
   },
 };
+
+// Render-only variants for use case automation. No play function so the story
+// loads in its initial render state.
+export const DefaultBare = {
+  render: Template,
+  args: {
+    ariaLabelledby: 'modal-title',
+    ariaDescribedby: 'modal-desc',
+  },
+};
+export const OpenByDefaultBare = {
+  render: Template,
+  args: {
+    isOpen: true,
+    ariaLabelledby: 'modal-title',
+    ariaDescribedby: 'modal-desc',
+  },
+};

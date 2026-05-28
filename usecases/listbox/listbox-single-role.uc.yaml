@@ -1,0 +1,15 @@
+id: listbox-single-role
+title: "Listbox — Single-select listbox is exposed with an accessible name"
+type: positive
+description: 'The container advertises role="listbox" with the configured label as its
+  accessible name.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-listbox--single-select-bare&viewMode=story"
+
+expected_result: 'A listbox named "Pick a fruit" is present.'
+
+steps:
+  - locate: role "listbox" name "Pick a fruit"

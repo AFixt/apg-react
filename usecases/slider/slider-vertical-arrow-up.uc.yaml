@@ -1,0 +1,18 @@
+id: slider-vertical-arrow-up
+title: "Slider — ArrowUp increments a vertical slider"
+type: positive
+description: "On a vertical slider, ArrowUp increments aria-valuenow by the configured
+  step (here step=5)."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-slider--vertical-bare&viewMode=story"
+
+expected_result: 'aria-valuenow becomes "30" after ArrowUp from "25" (step=5).'
+
+steps:
+  - locate: role "slider" name "Volume"
+  - focus: role "slider" name "Volume"
+  - keyboard: "ArrowUp"
+  - verify: role "slider" name "Volume" attribute "aria-valuenow" is "30"

@@ -60,3 +60,21 @@ export const OpenByDefault = {
     });
   },
 };
+
+// Render-only variants for use case automation. No play function so the story
+// loads in its initial render state.
+export const DefaultBare = {
+  render: Template,
+  args: {
+    title: 'Confirm action',
+    message: 'Are you sure you want to continue? This action cannot be undone.',
+  },
+};
+export const OpenByDefaultBare = {
+  render: Template,
+  args: {
+    isOpen: true,
+    title: 'Session expired',
+    message: 'Your session has expired. Please sign in again.',
+  },
+};

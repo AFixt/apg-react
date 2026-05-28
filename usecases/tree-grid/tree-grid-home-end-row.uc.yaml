@@ -1,0 +1,21 @@
+id: tree-grid-home-end-row
+title: "TreeGrid — Home and End move focus within the current row"
+type: positive
+description: "Home moves focus to the first cell of the row; End moves focus to the last
+  cell."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-treegrid--default-bare&viewMode=story"
+
+expected_result: "End focuses the Modified cell of the src row; Home returns focus to the
+  src cell."
+
+steps:
+  - locate: role "gridcell" name "src"
+  - focus: role "gridcell" name "src"
+  - keyboard: "End"
+  - verify: focus role "gridcell" name "2026-04-10"
+  - keyboard: "Home"
+  - verify: focus role "gridcell" name "src"

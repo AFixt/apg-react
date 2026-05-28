@@ -1,0 +1,20 @@
+id: tabs-tabpanel-controlled
+title: "Tabs — Each tab references its panel via aria-controls"
+type: positive
+description: "Every tab advertises aria-controls pointing at the id of its associated
+  tabpanel."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-tabs--horizontal-bare&viewMode=story"
+
+expected_result: "Each tab has aria-controls referencing its panel."
+
+steps:
+  - locate: tab "Overview"
+  - verify: tab "Overview" attribute "aria-controls" is "h-panel-overview"
+  - locate: tab "Pricing"
+  - verify: tab "Pricing" attribute "aria-controls" is "h-panel-pricing"
+  - locate: tab "FAQ"
+  - verify: tab "FAQ" attribute "aria-controls" is "h-panel-faq"

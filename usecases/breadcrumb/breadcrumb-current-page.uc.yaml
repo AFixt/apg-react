@@ -1,0 +1,17 @@
+id: breadcrumb-current-page
+title: "Breadcrumb — The current page is exposed via aria-current"
+type: positive
+description: 'The last breadcrumb is rendered as static text (not a link) carrying
+  aria-current="page" so AT can identify the current location.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-breadcrumb--default&viewMode=story"
+
+expected_result: 'The last crumb "Reports" is visible text and is not a link; it carries
+  aria-current="page".'
+
+steps:
+  - locate: text "Reports"
+  - verify: count link "Reports" is 0

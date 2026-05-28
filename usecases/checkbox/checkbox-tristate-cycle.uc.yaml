@@ -1,0 +1,23 @@
+id: checkbox-tristate-cycle
+title: "Checkbox — Tri-state checkbox advances through mixed → true → false"
+type: positive
+description: "Activating a tri-state checkbox cycles its value: mixed (null) → true →
+  false → mixed."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-checkbox--tri-state-bare&viewMode=story"
+
+expected_result: 'aria-checked transitions from "mixed" to "true" to "false" on successive
+  activations.'
+
+steps:
+  - locate: checkbox "Select all"
+  - verify: checkbox "Select all" attribute "aria-checked" is "mixed"
+  - focus: checkbox "Select all"
+  - activate: checkbox "Select all"
+  - verify: checkbox "Select all" attribute "aria-checked" is "true"
+  - focus: checkbox "Select all"
+  - activate: checkbox "Select all"
+  - verify: checkbox "Select all" attribute "aria-checked" is "false"

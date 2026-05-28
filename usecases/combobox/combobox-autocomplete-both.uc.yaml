@@ -1,0 +1,16 @@
+id: combobox-autocomplete-both
+title: 'Combobox — autocomplete="both" exposes both list and inline completion'
+type: positive
+description: 'A combobox configured with aria-autocomplete="both" advertises that
+  affordance to AT.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-combobox--autocomplete-both-bare&viewMode=story"
+
+expected_result: 'aria-autocomplete is "both".'
+
+steps:
+  - locate: select "Country (inline completion)"
+  - verify: select "Country (inline completion)" attribute "aria-autocomplete" is "both"

@@ -1,0 +1,19 @@
+id: toolbar-home-end
+title: "Toolbar — Home and End jump to first and last items"
+type: positive
+description: "Home moves focus to the first toolbar item; End moves focus to the last."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-toolbar--default&viewMode=story"
+
+expected_result: 'End focuses "Link"; Home returns focus to "Bold".'
+
+steps:
+  - locate: button "Bold"
+  - focus: button "Bold"
+  - keyboard: "End"
+  - verify: focus button "Link"
+  - keyboard: "Home"
+  - verify: focus button "Bold"

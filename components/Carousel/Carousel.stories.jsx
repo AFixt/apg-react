@@ -73,3 +73,13 @@ export const Default = {
     ariaLabel: 'Featured content',
   },
 };
+
+// Render-only variant for use case automation. Auto-rotation is off so the
+// initial render is stable across the test run.
+export const DefaultBare = {
+  args: {
+    slides,
+    ariaLabel: 'Featured content',
+    initiallyRotating: false,
+  },
+};

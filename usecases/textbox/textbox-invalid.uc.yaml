@@ -1,0 +1,18 @@
+id: textbox-invalid
+title: "Textbox — Invalid state surfaces aria-invalid and an error message"
+type: positive
+description: 'When invalid is set, the textbox advertises aria-invalid="true" and
+  references its error message via aria-errormessage. The error renders as a
+  live region (role="alert").'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-textbox--invalid&viewMode=story"
+
+expected_result: 'aria-invalid is "true" and the error message is announced via role="alert".'
+
+steps:
+  - locate: field "Email"
+  - verify: field "Email" attribute "aria-invalid" is "true"
+  - verify: alert "Enter a valid email address."

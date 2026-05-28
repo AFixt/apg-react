@@ -1,0 +1,22 @@
+id: checkbox-group-parent-unchecks-all
+title: "CheckboxGroup — Activating the parent when all are checked unchecks every child"
+type: positive
+description: "When every child is checked, activating the parent unchecks all of them."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-checkboxgroup--default-bare&viewMode=story"
+
+expected_result: "Every child checkbox is unchecked after the parent is activated twice."
+
+steps:
+  - locate: checkbox "All"
+  - focus: checkbox "All"
+  - activate: checkbox "All"
+  - verify: checked checkbox "Email notifications"
+  - focus: checkbox "All"
+  - activate: checkbox "All"
+  - verify: checkbox "Email notifications" attribute "aria-checked" is "false"
+  - verify: checkbox "SMS notifications" attribute "aria-checked" is "false"
+  - verify: checkbox "Push notifications" attribute "aria-checked" is "false"

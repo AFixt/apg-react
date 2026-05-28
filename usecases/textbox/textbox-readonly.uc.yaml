@@ -1,0 +1,17 @@
+id: textbox-readonly
+title: 'Textbox — ReadOnly textbox advertises aria-readonly="true"'
+type: positive
+description: 'A read-only textbox exposes aria-readonly="true" and retains its value as
+  the displayed text.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-textbox--read-only&viewMode=story"
+
+expected_result: 'aria-readonly is "true" and the value is "ACCT-12345".'
+
+steps:
+  - locate: field "Account ID"
+  - verify: field "Account ID" attribute "aria-readonly" is "true"
+  - verify: field "Account ID" has_value "ACCT-12345"

@@ -1,0 +1,18 @@
+id: switch-click-toggles
+title: "Switch — Activating the switch flips aria-checked"
+type: positive
+description: 'Clicking or activating the switch toggles aria-checked between "true" and
+  "false".'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-switch--off-bare&viewMode=story"
+
+expected_result: 'aria-checked becomes "true" after activation.'
+
+steps:
+  - locate: role "switch" name "Enable dark mode"
+  - focus: role "switch" name "Enable dark mode"
+  - activate: role "switch" name "Enable dark mode"
+  - verify: role "switch" name "Enable dark mode" attribute "aria-checked" is "true"

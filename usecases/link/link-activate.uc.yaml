@@ -1,0 +1,17 @@
+id: link-activate
+title: "Link — Activating the link triggers the onClick handler"
+type: positive
+description: "A link with an onClick handler is activated by mouse click and by Enter
+  while focused."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-link--with-on-click&viewMode=story"
+
+expected_result: "The link locates, focuses, and activates without error."
+
+steps:
+  - locate: link "View profile"
+  - focus: link "View profile"
+  - activate: link "View profile"

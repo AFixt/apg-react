@@ -1,0 +1,15 @@
+id: breadcrumb-nav-landmark
+title: "Breadcrumb — Wraps the trail in a nav landmark"
+type: positive
+description: 'The breadcrumb is exposed as a navigation landmark with an accessible name
+  ("Breadcrumb" by default).'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-breadcrumb--default&viewMode=story"
+
+expected_result: 'A navigation landmark named "Breadcrumb" is present.'
+
+steps:
+  - locate: navigation "Breadcrumb"

@@ -1,0 +1,18 @@
+id: slider-arrow-left-decrements
+title: "Slider — ArrowLeft decrements the value by step"
+type: positive
+description: "Pressing ArrowLeft while the slider thumb has focus decrements
+  aria-valuenow by the configured step."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-slider--horizontal-bare&viewMode=story"
+
+expected_result: 'aria-valuenow becomes "49" after one ArrowLeft from "50".'
+
+steps:
+  - locate: role "slider" name "Volume"
+  - focus: role "slider" name "Volume"
+  - keyboard: "ArrowLeft"
+  - verify: role "slider" name "Volume" attribute "aria-valuenow" is "49"

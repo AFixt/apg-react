@@ -1,0 +1,17 @@
+id: modal-dialog-aria-modal
+title: 'ModalDialog — Reports aria-modal="true" and aria-labelledby on the dialog'
+type: positive
+description: 'The open dialog advertises aria-modal="true" so AT can convey its modal
+  nature, and aria-labelledby references the modal title heading.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-modaldialog--open-by-default-bare&viewMode=story"
+
+expected_result: 'The dialog has aria-modal="true" and aria-labelledby="modal-title".'
+
+steps:
+  - locate: dialog "Modal title"
+  - verify: dialog "Modal title" attribute "aria-modal" is "true"
+  - verify: dialog "Modal title" attribute "aria-labelledby" is "modal-title"

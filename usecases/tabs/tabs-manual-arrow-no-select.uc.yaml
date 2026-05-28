@@ -1,0 +1,20 @@
+id: tabs-manual-arrow-no-select
+title: "Tabs — In manual mode, ArrowRight moves focus but does not select"
+type: positive
+description: 'When activation="manual", ArrowRight moves focus to the next tab but the
+  selection stays on the previously activated tab until Enter or Space.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-tabs--manual-activation-bare&viewMode=story"
+
+expected_result: "Focus moves to Pricing but Overview remains selected."
+
+steps:
+  - locate: tab "Overview"
+  - focus: tab "Overview"
+  - keyboard: "ArrowRight"
+  - verify: focus tab "Pricing"
+  - verify: tab "Overview" attribute "aria-selected" is "true"
+  - verify: tab "Pricing" attribute "aria-selected" is "false"

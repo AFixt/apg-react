@@ -1,0 +1,15 @@
+id: checkbox-group-role
+title: "CheckboxGroup — Wraps the children in a labelled group"
+type: positive
+description: 'A CheckboxGroup renders role="group" with an accessible name supplied by the
+  group label.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-checkboxgroup--default-bare&viewMode=story"
+
+expected_result: 'A group named "Notification preferences" is present.'
+
+steps:
+  - locate: heading "Notification preferences"

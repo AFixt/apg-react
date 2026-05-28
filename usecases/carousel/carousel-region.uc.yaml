@@ -1,0 +1,15 @@
+id: carousel-region
+title: 'Carousel — Exposes a labelled region with role="region"'
+type: positive
+description: "The carousel is exposed as a region landmark with the accessible name
+  supplied via the ariaLabel prop."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-carousel--default-bare&viewMode=story"
+
+expected_result: 'A region named "Featured content" is present.'
+
+steps:
+  - locate: region "Featured content"

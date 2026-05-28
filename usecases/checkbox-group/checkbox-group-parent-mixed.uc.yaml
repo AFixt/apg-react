@@ -1,0 +1,19 @@
+id: checkbox-group-parent-mixed
+title: "CheckboxGroup — Parent enters mixed state when some children are checked"
+type: positive
+description: 'When a subset of child checkboxes are checked, the parent "All" checkbox
+  reports aria-checked="mixed".'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-checkboxgroup--default-bare&viewMode=story"
+
+expected_result: 'After checking one child the parent advertises aria-checked="mixed".'
+
+steps:
+  - locate: checkbox "Email notifications"
+  - focus: checkbox "Email notifications"
+  - activate: checkbox "Email notifications"
+  - wait: 100
+  - verify: checkbox "All" attribute "aria-checked" is "mixed"

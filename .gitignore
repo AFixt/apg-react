@@ -8,12 +8,17 @@
 # testing
 /coverage
 
+# usecase-runner output
+/reports
+/screenshots
+
 # production
 /build
 /dist
 /storybook-static
 
 # misc
+.lycheecache
 .DS_Store
 .env.local
 .env.development.local

@@ -1,0 +1,20 @@
+id: checkbox-group-parent-checks-all
+title: "CheckboxGroup — Activating the parent (mixed/unchecked) checks every child"
+type: positive
+description: 'Activating the parent "All" checkbox while it is mixed or unchecked checks
+  every child checkbox.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-checkboxgroup--default-bare&viewMode=story"
+
+expected_result: "Every child checkbox is checked."
+
+steps:
+  - locate: checkbox "All"
+  - focus: checkbox "All"
+  - activate: checkbox "All"
+  - verify: checked checkbox "Email notifications"
+  - verify: checked checkbox "SMS notifications"
+  - verify: checked checkbox "Push notifications"

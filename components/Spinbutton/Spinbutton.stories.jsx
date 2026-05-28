@@ -63,3 +63,12 @@ export const LargeRange = {
     });
   },
 };
+
+// Render-only variants for use case automation. No play function so the story
+// loads in its initial render state.
+export const DefaultBare = {
+  args: { min: 0, max: 10, step: 1, initialValue: 5, ariaLabel: 'Quantity' },
+};
+export const LargeRangeBare = {
+  args: { min: 0, max: 1000, step: 10, initialValue: 100, ariaLabel: 'Amount' },
+};

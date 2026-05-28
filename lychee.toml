@@ -1,0 +1,24 @@
+max_concurrency = 8
+max_redirects = 5
+timeout = 20
+max_retries = 2
+retry_wait_time = 2
+cache = true
+max_cache_age = "1d"
+
+accept = [200, 206, 429]
+
+exclude_path = [
+  "node_modules",
+  "dist",
+  "storybook-static",
+  "coverage",
+  "docs/templates",
+]
+
+exclude = [
+  "^https?://runkit\\.com",
+  "^https?://(www\\.)?npmjs\\.com/",
+  "^https?://localhost",
+  "^https?://127\\.0\\.0\\.1",
+]

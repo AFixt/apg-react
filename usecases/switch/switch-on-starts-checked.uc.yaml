@@ -1,0 +1,16 @@
+id: switch-on-starts-checked
+title: 'Switch — A switch initialized on reports aria-checked="true"'
+type: positive
+description: 'When initialChecked is true, the switch advertises aria-checked="true" on
+  first render.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-switch--on-bare&viewMode=story"
+
+expected_result: 'aria-checked is "true".'
+
+steps:
+  - locate: role "switch" name "Enable notifications"
+  - verify: role "switch" name "Enable notifications" attribute "aria-checked" is "true"

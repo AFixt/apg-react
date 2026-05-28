@@ -12,6 +12,7 @@
  * @returns {JSX.Element|null} The rendered ModalDialog component.
  */
 import React, { useEffect, useRef, useState } from 'react';
+import { cycleFocusInDialog } from '../_internal/dialog-focus';
 import './ModalDialog.css'; // Assume appropriate CSS for styling
 
 /** Translatable labels for the ModalDialog component. English defaults are used when a key is omitted. */
@@ -48,10 +49,15 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
   const l = { ...defaultLabels, ...labels };
   const dialogRef = useRef<HTMLDivElement>(null);
   const invokingElementRef = useRef<Element | null>(null);
+  // Tracks whether the dialog is in the process of closing so the focus trap
+  // doesn't yank focus back to the dialog while we're restoring it to the
+  // invoking element.
+  const closingRef = useRef(false);
   const [isAnimatingIn, setIsAnimatingIn] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
+      closingRef.current = false;
       invokingElementRef.current = document.activeElement;
       (initialFocusRef?.current || dialogRef.current)?.focus();
       const id = requestAnimationFrame(() => setIsAnimatingIn(true));
@@ -64,6 +70,7 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
   // Restore focus to the element that opened the dialog, then call onClose.
   // If onClose moves focus somewhere else, that naturally takes precedence.
   const closeAndRestoreFocus = () => {
+    closingRef.current = true;
     const invoker = invokingElementRef.current as HTMLElement | null;
     if (invoker && typeof invoker.focus === 'function') {
       invoker.focus();
@@ -83,6 +90,8 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
       if (e.key === 'Escape') {
         e.stopPropagation();
         closeAndRestoreFocus();
+      } else if (e.key === 'Tab' && dialogRef.current) {
+        cycleFocusInDialog(dialogRef.current, e);
       }
     };
     document.addEventListener('keydown', onDocKeyDown);
@@ -90,6 +99,7 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
   }, [isOpen, onClose]);
 
   const handleFocusTrap = (e: FocusEvent) => {
+    if (closingRef.current) return;
     if (dialogRef.current && !dialogRef.current.contains(e.target as Node)) {
       e.stopPropagation();
       (initialFocusRef?.current || dialogRef.current)?.focus();

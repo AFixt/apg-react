@@ -1,0 +1,21 @@
+id: accordion-aria-controls
+title: "Accordion — Each header references its panel via aria-controls"
+type: positive
+description: "Verify the ARIA relationship between header and panel: every accordion header
+  exposes an aria-controls attribute that points to its associated region."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-accordion--default-bare&viewMode=story"
+
+expected_result: "Each header button has aria-controls pointing at the id of the region it
+  toggles."
+
+steps:
+  - locate: button "What is APG-React?"
+  - verify: button "What is APG-React?" attribute "aria-controls" is "panel-0"
+  - locate: button "How do I use it?"
+  - verify: button "How do I use it?" attribute "aria-controls" is "panel-1"
+  - locate: button "Is it accessible?"
+  - verify: button "Is it accessible?" attribute "aria-controls" is "panel-2"

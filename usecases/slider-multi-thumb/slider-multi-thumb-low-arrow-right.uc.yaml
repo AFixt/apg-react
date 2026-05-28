@@ -1,0 +1,18 @@
+id: slider-multi-thumb-low-arrow-right
+title: "SliderMultiThumb — ArrowRight on the low thumb increments it"
+type: positive
+description: "When focus is on the low thumb, ArrowRight increments aria-valuenow by the
+  configured step."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-slidermultithumb--price-range-bare&viewMode=story"
+
+expected_result: 'Low aria-valuenow becomes "21" after one ArrowRight.'
+
+steps:
+  - locate: role "slider" name "Minimum price"
+  - focus: role "slider" name "Minimum price"
+  - keyboard: "ArrowRight"
+  - verify: role "slider" name "Minimum price" attribute "aria-valuenow" is "21"

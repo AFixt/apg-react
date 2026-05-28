@@ -1,0 +1,18 @@
+id: radio-group-click-selects
+title: "RadioGroup — Activating a radio selects it"
+type: positive
+description: "Clicking on a radio selects it and clears the previous selection."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-radiogroup--default-bare&viewMode=story"
+
+expected_result: "After activation SMS is selected and Email is no longer selected."
+
+steps:
+  - locate: radio "SMS"
+  - focus: radio "SMS"
+  - activate: radio "SMS"
+  - verify: radio "SMS" attribute "aria-checked" is "true"
+  - verify: radio "Email" attribute "aria-checked" is "false"

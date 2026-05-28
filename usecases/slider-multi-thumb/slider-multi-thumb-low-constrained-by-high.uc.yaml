@@ -1,0 +1,18 @@
+id: slider-multi-thumb-low-constrained-by-high
+title: "SliderMultiThumb — The low thumb is bounded above by the high thumb"
+type: positive
+description: "The low thumb advertises aria-valuemax equal to the current high value, and
+  the high thumb advertises aria-valuemin equal to the current low value."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-slidermultithumb--price-range-bare&viewMode=story"
+
+expected_result: 'Low aria-valuemax is "80" and high aria-valuemin is "20".'
+
+steps:
+  - locate: role "slider" name "Minimum price"
+  - verify: role "slider" name "Minimum price" attribute "aria-valuemax" is "80"
+  - locate: role "slider" name "Maximum price"
+  - verify: role "slider" name "Maximum price" attribute "aria-valuemin" is "20"

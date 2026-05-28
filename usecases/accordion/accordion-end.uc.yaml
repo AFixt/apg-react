@@ -1,0 +1,18 @@
+id: accordion-end
+title: "Accordion — End moves focus to the last header"
+type: positive
+description: "When focus is on any accordion header, End moves focus to the last header in
+  the group."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-accordion--default-bare&viewMode=story"
+
+expected_result: "Focus moves from a non-last header to the last header."
+
+steps:
+  - locate: button "What is APG-React?"
+  - focus: button "What is APG-React?"
+  - keyboard: "End"
+  - verify: focus button "Is it accessible?"

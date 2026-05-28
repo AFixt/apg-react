@@ -1,0 +1,19 @@
+id: tooltip-on-focus
+title: "Tooltip — Focusing the trigger reveals the tooltip"
+type: positive
+description: 'Per the APG, a tooltip is shown when its trigger receives keyboard focus,
+  not just on hover. The tooltip is exposed via role="tooltip".'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-tooltip--top&viewMode=story"
+
+expected_result: 'A tooltip with text "Tooltip on top" is visible after the trigger receives
+  focus.'
+
+steps:
+  - locate: button "Hover or focus me"
+  - focus: button "Hover or focus me"
+  - wait_for: text "Tooltip on top"
+  - verify: visible text "Tooltip on top"
