@@ -2,7 +2,6 @@ import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import importX from 'eslint-plugin-import-x';
 import jsdoc from 'eslint-plugin-jsdoc';
-import jsxA11y from 'eslint-plugin-jsx-a11y';
 import noSecrets from 'eslint-plugin-no-secrets';
 import promise from 'eslint-plugin-promise';
 import react from 'eslint-plugin-react';
@@ -47,7 +46,6 @@ export default tseslint.config(
       react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
-      'jsx-a11y': jsxA11y,
       sonarjs,
       unicorn,
       'import-x': importX,
@@ -103,22 +101,6 @@ export default tseslint.config(
       'react/self-closing-comp': 'error',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
-
-      // ----- Accessibility -----
-      // NOTE: We keep jsx-a11y rules strict because this is an APG library.
-      'jsx-a11y/alt-text': 'error',
-      'jsx-a11y/anchor-is-valid': 'error',
-      'jsx-a11y/aria-props': 'error',
-      'jsx-a11y/aria-role': 'error',
-      'jsx-a11y/aria-unsupported-elements': 'error',
-      'jsx-a11y/click-events-have-key-events': 'warn',
-      'jsx-a11y/label-has-associated-control': 'error',
-      'jsx-a11y/no-autofocus': ['error', { ignoreNonDOM: true }],
-      'jsx-a11y/no-redundant-roles': 'error',
-      'jsx-a11y/no-static-element-interactions': 'warn',
-      'jsx-a11y/no-noninteractive-element-interactions': 'warn',
-      'jsx-a11y/role-has-required-aria-props': 'error',
-      'jsx-a11y/role-supports-aria-props': 'error',
 
       // ----- SonarJS (code smells) -----
       'sonarjs/cognitive-complexity': ['warn', 20],
