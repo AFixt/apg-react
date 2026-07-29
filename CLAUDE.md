@@ -141,3 +141,17 @@ GitHub Actions workflow at `.github/workflows/ci.yml`:
 - Before adding any new dependency, verify with `npm ls axe-core` that it does
   not introduce axe-core into the tree. If it does, do not add it.
 - Use `@afixt/a11y-assert` for accessibility checks instead.
+
+As a backstop, `package.json` declares an override that redirects `axe-core` to
+an empty package:
+
+```json
+"overrides": {
+  "axe-core": "npm:empty-npm-package@1.0.0"
+}
+```
+
+Never remove this override. It means that even if a future transitive dependency
+requests `axe-core`, no axe-core code is installed — `npm ls axe-core` will show
+`axe-core@npm:empty-npm-package`. The override is a safety net, not a licence to
+add axe-dependent tooling: the rules above still apply.
