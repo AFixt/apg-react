@@ -1,3 +1,10 @@
+export { LinkComponentProvider } from './components/_internal/link-component';
+export type {
+  LinkComponent,
+  LinkComponentProps,
+  LinkComponentProviderProps,
+  LinkTo,
+} from './components/_internal/link-component';
 export { default as Accordion } from './components/Accordion/Accordion';
 export { default as Alert } from './components/Alert/Alert';
 export { default as AlertDialog } from './components/AlertDialog/AlertDialog';
@@ -11,13 +18,6 @@ export { default as Combobox } from './components/Combobox/Combobox';
 export { default as Disclosure } from './components/Disclosure/Disclosure';
 export { default as Feed } from './components/Feed/Feed';
 export { default as Grid } from './components/Grid/Grid';
-export { LinkComponentProvider } from './components/internal/link-component';
-export type {
-  LinkComponent,
-  LinkComponentProps,
-  LinkComponentProviderProps,
-  LinkTo,
-} from './components/internal/link-component';
 export { default as Link } from './components/Link/Link';
 export { default as Listbox } from './components/Listbox/Listbox';
 export { default as Menubar } from './components/Menubar/Menubar';

@@ -3,7 +3,7 @@ import { render, screen, within } from '@testing-library/react';
 import React from 'react';
 import { BrowserRouter as Router, Link as RouterLink } from 'react-router-dom';
 import Breadcrumb from '../components/Breadcrumb/Breadcrumb';
-import { LinkComponentProvider } from '../components/internal/link-component';
+import { LinkComponentProvider } from '../components/_internal/link-component';
 
 /**
  * APG pattern: Breadcrumb
@@ -119,5 +119,19 @@ describe('Breadcrumb Component (optional router integration)', () => {
     const links = screen.getAllByRole('link');
     expect(links).toHaveLength(items.length - 1);
     links.forEach((link, i) => expect(link).toHaveAttribute('href', items[i].path));
+  });
+
+  test('linkComponent={null} forces plain anchors inside a provider', () => {
+    render(
+      <Router>
+        <LinkComponentProvider value={RouterLink}>
+          <Breadcrumb items={items} linkComponent={null} />
+        </LinkComponentProvider>
+      </Router>,
+    );
+    // react-router stamps data-discover on the anchors it renders.
+    screen
+      .getAllByRole('link')
+      .forEach((link) => expect(link).not.toHaveAttribute('data-discover'));
   });
 });

@@ -22,6 +22,19 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   `linkComponent` and the plain-anchor fallback. The Enter special case was removed at the same
   time: native anchors already synthesise a click from Enter, so keeping both paths would have
   fired the callback twice in a real browser.
+- **`Link` no longer intercepts Shift+F10.** The component cancelled the keydown without
+  implementing anything, so the only possible effect was suppressing the browser's native context
+  menu — the keyboard equivalent of right-click. `Link` now adds no keyboard handling at all;
+  focus, Enter activation, and the context menu all come from the underlying anchor.
+- **`Link` no longer discards a consumer's `onKeyDown`.** It was overwritten by the component's
+  own handler, despite the documented contract that extra props are forwarded verbatim. With the
+  internal handler gone, `onKeyDown` reaches the anchor like any other prop.
+- **`linkComponent={null}` now forces a plain anchor.** The prop was typed to accept `null`, but
+  the resolution used `??`, so an explicit `null` fell through to the provider and there was no way
+  to opt a single link out of a router. Omitting the prop still defers to the provider.
+- **`Link` and `Breadcrumb` no longer render `href=""`.** A `to` that flattens to an empty string
+  now falls back to `'#'`; `href=""` resolves to the current page, which is a silently wrong link
+  rather than an obviously inert one.
 
 ### Added
 
@@ -44,6 +57,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - `Link`'s `onClick` is typed `(e: React.MouseEvent) => void` instead of
   `(e: React.MouseEvent | React.KeyboardEvent) => void`. It now always receives a click event,
   including when activation came from Enter.
+- The shared link-resolution module moved from `components/internal/` to `components/_internal/`,
+  matching the directory the project already used for internal helpers. Import paths in the public
+  API are unchanged — `LinkComponentProvider` and its types are still exported from the package
+  root.
 
 ## [1.2.0] — 2026-04-16
 

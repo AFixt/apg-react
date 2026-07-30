@@ -167,8 +167,23 @@ You can also override it per instance, which takes precedence over the provider:
 <Breadcrumb items={items} linkComponent={RouterLink} />
 ```
 
+To send a single link back to a plain anchor inside a provider — an external
+URL, a download, a full page load — pass `null`:
+
+```tsx
+<Link to="https://example.com/report.pdf" linkComponent={null}>
+  Download the report
+</Link>
+```
+
+Omitting the prop and passing `null` are different: omitting defers to the
+provider, `null` opts out of it.
+
 Any component accepting a `to` prop works — React Router, TanStack Router, or
-your own wrapper around a framework's link. Extra props are forwarded verbatim.
+your own wrapper around a framework's link. Extra props are forwarded verbatim,
+which makes the injected component responsible for the other half of the
+contract: it must pass `onClick`, `onKeyDown`, and the rest through to the
+anchor it renders, or the consumer's handlers will never fire.
 
 Without a provider or prop, a `to` given as a location object is flattened to
 `pathname + search + hash` for the anchor's `href`.

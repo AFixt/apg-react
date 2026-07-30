@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Link as RouterLink } from 'react-router-dom';
-import { LinkComponentProvider } from '../components/internal/link-component';
+import { LinkComponentProvider } from '../components/_internal/link-component';
 import '../components/styles.css';
 
 /** @type { import('@storybook/react').Preview } */

@@ -13,12 +13,12 @@
  * @param {Object[]} items - An array of breadcrumb items.
  * @param {string} items[].path - The path of the breadcrumb item.
  * @param {string} items[].label - The label of the breadcrumb item.
- * @param {React.ComponentType} [linkComponent] - Link component to render with; defaults to the provider value, then to a plain anchor.
+ * @param {React.ComponentType|null} [linkComponent] - Link component to render with; omit to use the provider value, or pass null to force plain anchors.
  * @returns {JSX.Element} The rendered Breadcrumb component.
  */
 import React from 'react';
-import type { LinkComponent } from '../internal/link-component';
-import { toHref, useLinkComponent } from '../internal/link-component';
+import type { LinkComponent } from '../_internal/link-component';
+import { toHref, useLinkComponent } from '../_internal/link-component';
 import './Breadcrumb.css';
 
 /** A single item in a Breadcrumb. */

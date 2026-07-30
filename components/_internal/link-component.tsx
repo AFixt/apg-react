@@ -16,14 +16,26 @@
  *
  *   <LinkComponentProvider value={RouterLink}>...</LinkComponentProvider>
  *
- * @module internal/link-component
+ * Passing `linkComponent={null}` opts a single instance back out to a plain
+ * anchor, even inside a provider. This is distinct from omitting the prop,
+ * which defers to the provider.
+ *
+ * @module _internal/link-component
  */
 import React, { createContext, useContext } from 'react';
 
 /** A location descriptor: either a path string or a router location-like object. */
 export type LinkTo = string | { pathname?: string; search?: string; hash?: string };
 
-/** Props any injected link component must accept. Extra props are forwarded verbatim. */
+/**
+ * Props any injected link component must accept.
+ *
+ * The rendering components forward every extra prop verbatim, which makes the
+ * injected component responsible for the other half of the contract: it must
+ * pass `onClick`, `onKeyDown`, and any remaining props through to the anchor it
+ * renders. A component that drops them silently disables the consumer's
+ * handlers. React Router's `Link` and TanStack Router's `Link` both comply.
+ */
 export interface LinkComponentProps {
   to: LinkTo;
   children?: React.ReactNode;
@@ -61,24 +73,30 @@ export const LinkComponentProvider: React.FC<LinkComponentProviderProps> = ({
  * over the surrounding provider. Returns null when neither is present, meaning
  * the caller should fall back to a plain anchor.
  *
+ * `undefined` and `null` are deliberately not equivalent: omitting the prop
+ * defers to the provider, while an explicit `null` opts this instance out of
+ * the provider and forces the plain anchor.
+ *
  * @param {LinkComponent | null} [override] - An explicit `linkComponent` prop, if given.
  * @returns {LinkComponent | null} The component to render, or null for a plain anchor.
  */
 export const useLinkComponent = (override?: LinkComponent | null): LinkComponent | null => {
   const fromContext = useContext(LinkComponentContext);
-  return override ?? fromContext;
+  return override === undefined ? fromContext : override;
 };
 
 /**
  * Converts a `to` location into an `href` for the plain-anchor fallback.
- * Location objects are flattened to `pathname + search + hash`.
+ * Location objects are flattened to `pathname + search + hash`. Anything that
+ * flattens to an empty string falls back to `'#'`, so the anchor never renders
+ * `href=""` (which resolves to the current page rather than nowhere).
  *
  * @param {LinkTo} to - The target location.
  * @returns {string} A URL usable as an anchor `href`.
  */
 export const toHref = (to: LinkTo): string => {
   if (typeof to === 'string') {
-    return to;
+    return to || '#';
   }
 
   if (to && typeof to === 'object') {
