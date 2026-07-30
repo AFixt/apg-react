@@ -4,6 +4,38 @@ All notable changes to this project are documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] — 2026-07-30
+
+### Fixed
+
+- **Package no longer requires `react-router-dom`.** `Link` and `Breadcrumb` imported it at the
+  top level, so the built bundle did `require('react-router-dom')` unconditionally and importing
+  `@afixt/apg-react` threw `Cannot find module 'react-router-dom'` for anyone who had not
+  installed a router — despite the package declaring the dependency as optional. Both components
+  now render a plain `<a href>` by default and the library has no router dependency at all.
+  Affected 1.2.0 and 1.3.0.
+- **`package.json` is now reachable via the `exports` map** (`"./package.json"`), which some
+  tooling reads directly.
+
+### Added
+
+- **`LinkComponentProvider`** — supplies the component `Link` and `Breadcrumb` render links with,
+  for client-side navigation. Both components also accept a `linkComponent` prop, which takes
+  precedence over the provider. See the README's "Router integration" section.
+- Regression test that packs the tarball and loads it in an isolated directory containing only
+  `react` and `react-dom`, so the router dependency cannot creep back in unnoticed.
+
+### Changed
+
+- **Breaking for router users**: `Link` and `Breadcrumb` no longer use React Router automatically.
+  Wrap your app in `<LinkComponentProvider value={RouterLink}>` (or pass `linkComponent`) to keep
+  client-side navigation; otherwise these components now trigger full page loads.
+- Removed the `peerDependenciesMeta` entry for `react-router-dom`. It is no longer a peer
+  dependency in any form.
+- `Link`'s `to` prop is typed as `string | { pathname?, search?, hash? }` instead of
+  `string | object`. This matches React Router's `Partial<Path>`; arbitrary objects are now a
+  type error.
+
 ## [1.2.0] — 2026-04-16
 
 ### Fixed

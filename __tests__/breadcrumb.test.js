@@ -1,8 +1,9 @@
 import '@testing-library/jest-dom';
 import { render, screen, within } from '@testing-library/react';
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Link as RouterLink } from 'react-router-dom';
 import Breadcrumb from '../components/Breadcrumb/Breadcrumb';
+import { LinkComponentProvider } from '../components/internal/link-component';
 
 /**
  * APG pattern: Breadcrumb
@@ -21,12 +22,7 @@ const items = [
   { path: '/library/data/reports', label: 'Reports' },
 ];
 
-const renderBreadcrumb = (bcItems = items) =>
-  render(
-    <Router>
-      <Breadcrumb items={bcItems} />
-    </Router>,
-  );
+const renderBreadcrumb = (bcItems = items) => render(<Breadcrumb items={bcItems} />);
 
 describe('Breadcrumb Component (APG breadcrumb pattern)', () => {
   test("container is a navigation landmark labelled 'Breadcrumb'", () => {
@@ -85,5 +81,43 @@ describe('Breadcrumb Component (APG breadcrumb pattern)', () => {
   test('matches the snapshot', () => {
     const { asFragment } = renderBreadcrumb();
     expect(asFragment()).toMatchSnapshot();
+  });
+});
+
+/**
+ * The library must not depend on a router. Breadcrumb renders plain anchors by
+ * default and only defers to a router when one is explicitly supplied.
+ */
+describe('Breadcrumb Component (optional router integration)', () => {
+  test('trail items are plain anchors with no router present', () => {
+    renderBreadcrumb();
+    screen.getAllByRole('link').forEach((link, i) => {
+      expect(link.tagName).toBe('A');
+      expect(link).toHaveAttribute('href', items[i].path);
+    });
+  });
+
+  test('uses a router Link supplied via the linkComponent prop', () => {
+    render(
+      <Router>
+        <Breadcrumb items={items} linkComponent={RouterLink} />
+      </Router>,
+    );
+    const links = screen.getAllByRole('link');
+    expect(links).toHaveLength(items.length - 1);
+    links.forEach((link, i) => expect(link).toHaveAttribute('href', items[i].path));
+  });
+
+  test('uses a router Link supplied via LinkComponentProvider', () => {
+    render(
+      <Router>
+        <LinkComponentProvider value={RouterLink}>
+          <Breadcrumb items={items} />
+        </LinkComponentProvider>
+      </Router>,
+    );
+    const links = screen.getAllByRole('link');
+    expect(links).toHaveLength(items.length - 1);
+    links.forEach((link, i) => expect(link).toHaveAttribute('href', items[i].path));
   });
 });

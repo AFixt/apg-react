@@ -13,7 +13,6 @@ exports[`Breadcrumb Component (APG breadcrumb pattern) matches the snapshot 1`] 
         class="breadcrumb-item"
       >
         <a
-          data-discover="true"
           href="/"
         >
           Home
@@ -23,7 +22,6 @@ exports[`Breadcrumb Component (APG breadcrumb pattern) matches the snapshot 1`] 
         class="breadcrumb-item"
       >
         <a
-          data-discover="true"
           href="/library"
         >
           Library
@@ -33,7 +31,6 @@ exports[`Breadcrumb Component (APG breadcrumb pattern) matches the snapshot 1`] 
         class="breadcrumb-item"
       >
         <a
-          data-discover="true"
           href="/library/data"
         >
           Data

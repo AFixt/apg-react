@@ -17,7 +17,7 @@ prop.
 
 Most component libraries treat accessibility as a checklist. This library treats
 the APG as the specification. Every component is tested against the APG's
-keyboard model, ARIA contract, and focus-management requirements — with **295
+keyboard model, ARIA contract, and focus-management requirements — with **312
 unit tests**, **37 dedicated accessibility-contract tests**, and **E2E tests
 driving a real browser**. Every assertion is implemented from first principles
 against the DOM.
@@ -32,8 +32,10 @@ Peer dependencies:
 
 - `react` ≥ 18
 - `react-dom` ≥ 18
-- `react-router-dom` ≥ 6 _(optional — only required if you use `<Link>` or
-  `<Breadcrumb>`)_
+
+There are no other runtime dependencies. In particular, this library does
+**not** depend on a router — see [Router integration](#router-integration) if
+you use one.
 
 ## Quick start
 
@@ -57,38 +59,38 @@ the official APG documentation.
 
 ### Widgets
 
-| Component          | APG pattern                                                                                                     |
-| ------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `Accordion`        | [Accordion](https://www.w3.org/WAI/ARIA/apg/patterns/accordion/)                                                |
-| `Alert`            | [Alert](https://www.w3.org/WAI/ARIA/apg/patterns/alert/)                                                        |
-| `AlertDialog`      | [Alert Dialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/)                                           |
-| `Breadcrumb`       | [Breadcrumb](https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/)                                              |
-| `Button`           | [Button](https://www.w3.org/WAI/ARIA/apg/patterns/button/)                                                      |
-| `Carousel`         | [Carousel](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/)                                                  |
-| `Checkbox`         | [Checkbox (dual & tri-state)](https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/)                               |
-| `CheckboxGroup`    | [Checkbox — parent/child mixed state](https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/)                       |
-| `Combobox`         | [Combobox](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) — supports `none`, `list`, `both`                |
-| `Disclosure`       | [Disclosure](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/)                                              |
-| `Feed`             | [Feed](https://www.w3.org/WAI/ARIA/apg/patterns/feed/)                                                          |
-| `Grid`             | [Grid](https://www.w3.org/WAI/ARIA/apg/patterns/grid/)                                                          |
-| `Link`             | [Link pattern](https://www.w3.org/WAI/ARIA/apg/patterns/link/) _(requires `react-router-dom`)_                  |
-| `Listbox`          | [Listbox](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/) — single & multi-select                            |
-| `MenuButton`       | [Menu Button](https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/)                                            |
-| `Menubar`          | [Menu / Menubar](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/)                                             |
-| `Meter`            | [`role=meter`](https://w3c.github.io/aria/#meter)                                                               |
-| `ModalDialog`      | [Dialog (Modal)](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)                                        |
-| `Progressbar`      | [`role=progressbar`](https://w3c.github.io/aria/#progressbar)                                                   |
-| `RadioGroup`       | [Radio Group](https://www.w3.org/WAI/ARIA/apg/patterns/radio/)                                                  |
-| `Slider`           | [Slider](https://www.w3.org/WAI/ARIA/apg/patterns/slider/)                                                      |
-| `SliderMultiThumb` | [Slider (Multi-Thumb)](https://www.w3.org/WAI/ARIA/apg/patterns/slider-multithumb/)                             |
-| `Spinbutton`       | [Spinbutton](https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/)                                              |
-| `Switch`           | [Switch](https://www.w3.org/WAI/ARIA/apg/patterns/switch/)                                                      |
-| `Tabs`             | [Tabs](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) — automatic or manual activation, horizontal or vertical |
-| `Textbox`          | [`role=textbox`](https://w3c.github.io/aria/#textbox) — single- and multi-line                                  |
-| `Toolbar`          | [Toolbar](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/)                                                    |
-| `Tooltip`          | [Tooltip](https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/)                                                    |
-| `TreeGrid`         | [Tree Grid](https://www.w3.org/WAI/ARIA/apg/patterns/treegrid/)                                                 |
-| `TreeView`         | [Tree View](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/)                                                 |
+| Component          | APG pattern                                                                                                      |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `Accordion`        | [Accordion](https://www.w3.org/WAI/ARIA/apg/patterns/accordion/)                                                 |
+| `Alert`            | [Alert](https://www.w3.org/WAI/ARIA/apg/patterns/alert/)                                                         |
+| `AlertDialog`      | [Alert Dialog](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/)                                            |
+| `Breadcrumb`       | [Breadcrumb](https://www.w3.org/WAI/ARIA/apg/patterns/breadcrumb/)                                               |
+| `Button`           | [Button](https://www.w3.org/WAI/ARIA/apg/patterns/button/)                                                       |
+| `Carousel`         | [Carousel](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/)                                                   |
+| `Checkbox`         | [Checkbox (dual & tri-state)](https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/)                                |
+| `CheckboxGroup`    | [Checkbox — parent/child mixed state](https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/)                        |
+| `Combobox`         | [Combobox](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) — supports `none`, `list`, `both`                 |
+| `Disclosure`       | [Disclosure](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/)                                               |
+| `Feed`             | [Feed](https://www.w3.org/WAI/ARIA/apg/patterns/feed/)                                                           |
+| `Grid`             | [Grid](https://www.w3.org/WAI/ARIA/apg/patterns/grid/)                                                           |
+| `Link`             | [Link pattern](https://www.w3.org/WAI/ARIA/apg/patterns/link/) _(see [Router integration](#router-integration))_ |
+| `Listbox`          | [Listbox](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/) — single & multi-select                             |
+| `MenuButton`       | [Menu Button](https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/)                                             |
+| `Menubar`          | [Menu / Menubar](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/)                                              |
+| `Meter`            | [`role=meter`](https://w3c.github.io/aria/#meter)                                                                |
+| `ModalDialog`      | [Dialog (Modal)](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)                                         |
+| `Progressbar`      | [`role=progressbar`](https://w3c.github.io/aria/#progressbar)                                                    |
+| `RadioGroup`       | [Radio Group](https://www.w3.org/WAI/ARIA/apg/patterns/radio/)                                                   |
+| `Slider`           | [Slider](https://www.w3.org/WAI/ARIA/apg/patterns/slider/)                                                       |
+| `SliderMultiThumb` | [Slider (Multi-Thumb)](https://www.w3.org/WAI/ARIA/apg/patterns/slider-multithumb/)                              |
+| `Spinbutton`       | [Spinbutton](https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/)                                               |
+| `Switch`           | [Switch](https://www.w3.org/WAI/ARIA/apg/patterns/switch/)                                                       |
+| `Tabs`             | [Tabs](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) — automatic or manual activation, horizontal or vertical  |
+| `Textbox`          | [`role=textbox`](https://w3c.github.io/aria/#textbox) — single- and multi-line                                   |
+| `Toolbar`          | [Toolbar](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/)                                                     |
+| `Tooltip`          | [Tooltip](https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/)                                                     |
+| `TreeGrid`         | [Tree Grid](https://www.w3.org/WAI/ARIA/apg/patterns/treegrid/)                                                  |
+| `TreeView`         | [Tree View](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/)                                                  |
 
 ### Structural
 
@@ -135,6 +137,47 @@ All visual choices are driven by CSS custom properties defined in
 Key token groups: colors (`--apg-color-*`), spacing (`--apg-space-*`), radii
 (`--apg-radius-*`), typography (`--apg-font-*`), focus ring
 (`--apg-focus-ring-*`), shadows (`--apg-shadow-*`), z-index (`--apg-z-*`).
+
+## Router integration
+
+`Link` and `Breadcrumb` render navigable links. By default they emit a plain
+`<a href>`, so the library never forces a router on you and importing
+`@afixt/apg-react` works with no router installed.
+
+If your app uses a router, supply its link component once at the root and every
+descendant `Link` and `Breadcrumb` will use it for client-side navigation:
+
+```tsx
+import { Link as RouterLink } from 'react-router-dom';
+import { LinkComponentProvider } from '@afixt/apg-react';
+
+<BrowserRouter>
+  <LinkComponentProvider value={RouterLink}>
+    <App />
+  </LinkComponentProvider>
+</BrowserRouter>;
+```
+
+You can also override it per instance, which takes precedence over the provider:
+
+```tsx
+<Link to="/profile" linkComponent={RouterLink}>
+  View profile
+</Link>
+<Breadcrumb items={items} linkComponent={RouterLink} />
+```
+
+Any component accepting a `to` prop works — React Router, TanStack Router, or
+your own wrapper around a framework's link. Extra props are forwarded verbatim.
+
+Without a provider or prop, a `to` given as a location object is flattened to
+`pathname + search + hash` for the anchor's `href`.
+
+> **Upgrading from ≤ 1.3.0:** these components used to import React Router
+> directly, which made the router a hard requirement for _every_ consumer. If
+> you relied on client-side navigation through them, wrap your app in
+> `LinkComponentProvider` as shown above; otherwise navigation will fall back to
+> full page loads.
 
 ## Internationalization (i18n)
 
