@@ -37,9 +37,38 @@ let tmpRoot;
 const run = (cmd, args, opts = {}) =>
   execFileSync(cmd, args, { encoding: 'utf8', stdio: 'pipe', ...opts }).trim();
 
+/**
+ * Newest mtime under a directory tree, ignoring nothing — cheap enough for the
+ * component sources and far more reliable than trusting that `dist/` is fresh.
+ *
+ * @param {string} dir - Directory to walk.
+ * @returns {number} The highest mtime in milliseconds, or 0 for a missing tree.
+ */
+const newestMtime = (dir) => {
+  if (!fs.existsSync(dir)) {
+    return 0;
+  }
+
+  return fs.readdirSync(dir, { withFileTypes: true }).reduce((newest, entry) => {
+    const full = path.join(dir, entry.name);
+    const mtime = entry.isDirectory() ? newestMtime(full) : fs.statSync(full).mtimeMs;
+    return Math.max(newest, mtime);
+  }, 0);
+};
+
 beforeAll(() => {
-  // `npm test` runs before `npm run build` in CI, so build on demand.
-  if (!fs.existsSync(distCjs)) {
+  // `npm test` runs before `npm run build` in CI, so build on demand. Existence
+  // alone is not enough: a stale dist/ left by another branch would let this
+  // suite pass against artifacts that no longer match the source, which is the
+  // one failure mode a regression guard must not have.
+  const distMtime = fs.existsSync(distCjs) ? fs.statSync(distCjs).mtimeMs : 0;
+  const sourceMtime = Math.max(
+    newestMtime(path.join(repoRoot, 'components')),
+    fs.statSync(path.join(repoRoot, 'index.ts')).mtimeMs,
+    fs.statSync(path.join(repoRoot, 'package.json')).mtimeMs,
+  );
+
+  if (distMtime < sourceMtime) {
     run('npm', ['run', 'build'], { cwd: repoRoot });
   }
 
@@ -55,9 +84,18 @@ beforeAll(() => {
   );
 
   // Pack the real tarball so the `files` and `exports` fields are exercised.
-  const tarball = run('npm', ['pack', '--pack-destination', tmpRoot, '--silent'], {
-    cwd: repoRoot,
-  })
+  //
+  // `--ignore-scripts` is load-bearing, not tidiness: packing a local directory
+  // that declares a `prepare` script makes npm reify the project's own
+  // node_modules, which can empty it out from under a concurrent test run.
+  // dist/ is already built above, so no lifecycle script is needed here.
+  const tarball = run(
+    'npm',
+    ['pack', '--pack-destination', tmpRoot, '--ignore-scripts', '--silent'],
+    {
+      cwd: repoRoot,
+    },
+  )
     .split('\n')
     .pop();
 

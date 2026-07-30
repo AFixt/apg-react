@@ -17,7 +17,7 @@ prop.
 
 Most component libraries treat accessibility as a checklist. This library treats
 the APG as the specification. Every component is tested against the APG's
-keyboard model, ARIA contract, and focus-management requirements — with **312
+keyboard model, ARIA contract, and focus-management requirements — with **289
 unit tests**, **37 dedicated accessibility-contract tests**, and **E2E tests
 driving a real browser**. Every assertion is implemented from first principles
 against the DOM.
@@ -237,7 +237,7 @@ npm run test:e2e:build # builds Storybook, runs Puppeteer E2E tests
 npm run test:all       # both
 ```
 
-- **295 unit tests** across 32 suites; 92%+ statement coverage.
+- **289 unit tests** across 32 suites; 92%+ statement coverage.
 - **37 accessibility-contract tests** built on a hand-rolled ARIA-aware DOM
   assertion library — no external a11y libraries of any kind.
 - **E2E tests** drive a real Chromium against a built Storybook: accessible-name
