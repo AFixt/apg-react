@@ -29,8 +29,9 @@ export const WithOnClick = {
  *
  * The handler deliberately does not call preventDefault: cancelling a keydown
  * suppresses the click a browser synthesises from Enter, which would hide a
- * double invocation rather than expose it. The link targets '#' so the default
- * action is a harmless hash change.
+ * double invocation rather than expose it. Activation instead stays harmless
+ * because the link points at a fragment on this same page, so following it
+ * neither unloads the story nor resets the counter.
  */
 const ActivationCounter = (args) => {
   const [count, setCount] = useState(0);
@@ -41,16 +42,34 @@ const ActivationCounter = (args) => {
       <p>
         Activations: <output data-testid="activation-count">{count}</output>
       </p>
+      <p id="activation-target">Fragment target for the link above.</p>
     </>
   );
 };
 
-// No play function: the E2E tests assert on this story's count, so it has to
-// start at zero on load.
+const activationArgs = {
+  to: '#activation-target',
+  children: 'Activate me',
+};
+
+// No play function on either story: the E2E tests assert on the counter, so it
+// has to start at zero on load.
+
+/**
+ * Activation through an injected router link — the path Storybook's global
+ * decorator supplies via LinkComponentProvider.
+ */
 export const ActivationCount = {
   render: ActivationCounter,
-  args: {
-    to: '#',
-    children: 'Activate me',
-  },
+  args: activationArgs,
+};
+
+/**
+ * Activation through the dependency-free default. `linkComponent={null}` opts
+ * this instance out of the surrounding provider, so the E2E suite can exercise
+ * the plain `<a href>` branch that consumers get when they supply no router.
+ */
+export const ActivationCountPlainAnchor = {
+  render: ActivationCounter,
+  args: { ...activationArgs, linkComponent: null },
 };
