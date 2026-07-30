@@ -13,6 +13,7 @@ import Link from '../components/Link/Link';
  *   - Element has role="link".
  *   - Element is keyboard focusable (tabindex="0" when non-native).
  *   - Enter key activates the link (invoking onClick when provided).
+ *   - Pointer activation invokes onClick identically to Enter.
  *   - Visible label / accessible name is the link's content.
  */
 describe('Link Component (APG link pattern)', () => {
@@ -22,6 +23,20 @@ describe('Link Component (APG link pattern)', () => {
         {children}
       </Link>,
     );
+
+  // A spy that swallows the default action, so jsdom does not attempt to
+  // navigate when a click reaches the anchor.
+  const clickSpy = () => jest.fn((event) => event.preventDefault());
+
+  /**
+   * Reproduces what a browser does when Enter is pressed on a focused anchor:
+   * a keydown, followed by the anchor's synthesised click. jsdom does not
+   * derive the click from the keydown, so the test issues both.
+   */
+  const pressEnter = (element) => {
+    fireEvent.keyDown(element, { key: 'Enter' });
+    fireEvent.click(element);
+  };
 
   test('has role=link', () => {
     renderLink();
@@ -35,12 +50,48 @@ describe('Link Component (APG link pattern)', () => {
     expect(link.tagName).toBe('A');
   });
 
-  test('Enter key triggers the onClick handler', () => {
-    const onClick = jest.fn();
+  test('Enter key triggers the onClick handler exactly once', () => {
+    const onClick = clickSpy();
+    renderLink({ onClick });
+    pressEnter(screen.getByRole('link', { name: 'Go home' }));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  test('mouse click triggers the onClick handler exactly once', () => {
+    const onClick = clickSpy();
+    renderLink({ onClick });
+    fireEvent.click(screen.getByRole('link', { name: 'Go home' }));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  test('onClick receives the activation event for both modalities', () => {
+    const onClick = clickSpy();
     renderLink({ onClick });
     const link = screen.getByRole('link', { name: 'Go home' });
+
+    fireEvent.click(link);
+    expect(onClick.mock.calls[0][0].type).toBe('click');
+    expect(onClick.mock.calls[0][0].target).toBe(link);
+
+    pressEnter(link);
+    expect(onClick).toHaveBeenCalledTimes(2);
+    expect(onClick.mock.calls[1][0].type).toBe('click');
+  });
+
+  test('keydown alone does not invoke onClick, so Enter cannot double-fire', () => {
+    // The component relies on native anchor activation for Enter. Handling
+    // Enter in the keydown handler as well would invoke onClick twice in a
+    // real browser; this asserts that the keydown path stays inert.
+    const onClick = clickSpy();
+    renderLink({ onClick });
+    const link = screen.getByRole('link', { name: 'Go home' });
+
     fireEvent.keyDown(link, { key: 'Enter' });
-    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onClick).not.toHaveBeenCalled();
+
+    fireEvent.keyDown(link, { key: ' ' });
+    fireEvent.keyDown(link, { key: 'F10', shiftKey: true });
+    expect(onClick).not.toHaveBeenCalled();
   });
 
   test('accessible name comes from link text content', () => {
@@ -118,18 +169,39 @@ describe('Link Component (optional router integration)', () => {
     expect(screen.getByRole('link', { name: 'Go home' })).toHaveAttribute('data-custom', 'yes');
   });
 
-  test('Enter still triggers onClick when a router Link is injected', () => {
-    const onClick = jest.fn();
-    render(
-      <MemoryRouter>
-        <LinkComponentProvider value={RouterLink}>
-          <Link to="/home" onClick={onClick}>
-            Go home
-          </Link>
-        </LinkComponentProvider>
-      </MemoryRouter>,
-    );
-    fireEvent.keyDown(screen.getByRole('link', { name: 'Go home' }), { key: 'Enter' });
-    expect(onClick).toHaveBeenCalledTimes(1);
+  describe('activation with an injected router Link', () => {
+    const renderRouterLink = (onClick) =>
+      render(
+        <MemoryRouter>
+          <LinkComponentProvider value={RouterLink}>
+            <Link to="/home" onClick={onClick}>
+              Go home
+            </Link>
+          </LinkComponentProvider>
+        </MemoryRouter>,
+      );
+
+    test('Enter triggers onClick exactly once', () => {
+      const onClick = jest.fn();
+      renderRouterLink(onClick);
+      const link = screen.getByRole('link', { name: 'Go home' });
+      fireEvent.keyDown(link, { key: 'Enter' });
+      fireEvent.click(link);
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
+
+    test('mouse click triggers onClick exactly once', () => {
+      const onClick = jest.fn();
+      renderRouterLink(onClick);
+      fireEvent.click(screen.getByRole('link', { name: 'Go home' }));
+      expect(onClick).toHaveBeenCalledTimes(1);
+    });
+
+    test('keydown alone does not invoke onClick', () => {
+      const onClick = jest.fn();
+      renderRouterLink(onClick);
+      fireEvent.keyDown(screen.getByRole('link', { name: 'Go home' }), { key: 'Enter' });
+      expect(onClick).not.toHaveBeenCalled();
+    });
   });
 });

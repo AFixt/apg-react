@@ -16,6 +16,12 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   Affected 1.2.0 and 1.3.0.
 - **`package.json` is now reachable via the `exports` map** (`"./package.json"`), which some
   tooling reads directly.
+- **`Link` now invokes `onClick` for pointer activation.** The handler was only called from the
+  keydown handler on Enter and was never attached to the rendered element, so keyboard users got
+  the callback and mouse users did not. `onClick` is now attached to both the injected
+  `linkComponent` and the plain-anchor fallback. The Enter special case was removed at the same
+  time: native anchors already synthesise a click from Enter, so keeping both paths would have
+  fired the callback twice in a real browser.
 
 ### Added
 
@@ -35,6 +41,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - `Link`'s `to` prop is typed as `string | { pathname?, search?, hash? }` instead of
   `string | object`. This matches React Router's `Partial<Path>`; arbitrary objects are now a
   type error.
+- `Link`'s `onClick` is typed `(e: React.MouseEvent) => void` instead of
+  `(e: React.MouseEvent | React.KeyboardEvent) => void`. It now always receives a click event,
+  including when activation came from Enter.
 
 ## [1.2.0] — 2026-04-16
 
