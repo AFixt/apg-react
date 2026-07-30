@@ -130,10 +130,41 @@ GitHub Actions workflow at `.github/workflows/ci.yml`:
   expose an optional `labels` prop so consumers can provide translations.
   English defaults are always provided.
 
+## axe-core is banned
+
+**`axe-core` must never be used in this project — directly or transitively.**
+
+- Do not add `axe-core` or any `@axe-core/*` package.
+- Do not add any dependency that pulls in `axe-core` transitively — this
+  includes `eslint-plugin-jsx-a11y`, `lighthouse` / `@lhci/cli`, `pa11y`,
+  `@storybook/addon-a11y`, `jest-axe`, `cypress-axe`, and similar.
+- Before adding any new dependency, verify with `npm ls axe-core` that it does
+  not introduce axe-core into the tree. If it does, do not add it.
+- Use `@afixt/a11y-assert` for accessibility checks instead.
+
+As a backstop, `package.json` declares an override that redirects `axe-core` to
+an empty package:
+
+```json
+"overrides": {
+  "axe-core": "npm:empty-npm-package@1.0.0"
+}
+```
+
+Never remove this override. It means that even if a future transitive dependency
+requests `axe-core`, no axe-core code is installed — `npm ls axe-core` will show
+`axe-core@npm:empty-npm-package`. The override is a safety net, not a licence to
+add axe-dependent tooling: the rules above still apply.
+
 ## @afixt scoped packages & NPM_TOKEN
 
-If this project installs any `@afixt/*` scoped packages, npm authentication is handled by an **organization-level GitHub Actions secret** named `NPM_TOKEN`. The org-level secret is **always** the one to use.
+If this project installs any `@afixt/*` scoped packages, npm authentication is
+handled by an **organization-level GitHub Actions secret** named `NPM_TOKEN`.
+The org-level secret is **always** the one to use.
 
-- Installing `@afixt/*` scoped packages should **not** return `404`. A `404` here is an authentication/token problem, not a missing package.
-- If you do hit a `404`, remove any **repo-level** `NPM_TOKEN` secret — a repo-level token is likely stale and conflicts with the org-level secret.
-- Do not override `NPM_TOKEN` per repository; always rely on the org-level secret.
+- Installing `@afixt/*` scoped packages should **not** return `404`. A `404`
+  here is an authentication/token problem, not a missing package.
+- If you do hit a `404`, remove any **repo-level** `NPM_TOKEN` secret — a
+  repo-level token is likely stale and conflicts with the org-level secret.
+- Do not override `NPM_TOKEN` per repository; always rely on the org-level
+  secret.
