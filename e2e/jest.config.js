@@ -14,7 +14,6 @@ module.exports = {
   testMatch: ['<rootDir>/**/*.e2e.js'],
   globalSetup: '<rootDir>/globalSetup.js',
   globalTeardown: '<rootDir>/globalTeardown.js',
-  setupFilesAfterEach: [],
   testTimeout: 30000,
   verbose: false,
   transform: {
