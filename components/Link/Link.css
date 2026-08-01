@@ -30,6 +30,25 @@
   border-radius: var(--apg-radius-sm);
 }
 
+/*
+ * Forced colors (Windows High Contrast Mode) suppresses box-shadow, so the
+ * ring above renders nothing there — and the `outline: none` in the same rule
+ * removes the UA outline that would otherwise have covered for it, leaving no
+ * focus indicator at all. An outline is the only indicator forced colors keeps,
+ * and CanvasText is guaranteed to contrast with the forced background.
+ *
+ * This rule is why `outline: none` above is safe. Note that stylelint's
+ * a11y/no-outline-none accepts the box-shadow as a sufficient alternative and
+ * so never flagged the gap.
+ */
+@media (forced-colors: active) {
+  .link:focus,
+  .link:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
+}
+
 .link:active {
   color: var(--apg-color-primary-active);
 }

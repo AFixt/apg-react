@@ -1,4 +1,4 @@
-const { openStory, injectA11yHelpers } = require('./helpers');
+const { openStory, injectA11yHelpers, emulateForcedColors, tabTo } = require('./helpers');
 
 const LINK = '#storybook-root a';
 const COUNT = '#storybook-root [data-testid="activation-count"]';
@@ -139,6 +139,37 @@ describe('Link (E2E)', () => {
       // box-shadow assertion is what pins the component's own ring.
       expect(hasRing).toBe(true);
       expect(boxShadow).not.toBe('none');
+      await close();
+    });
+
+    test('the focus indicator survives forced-colors mode', async () => {
+      const { page, close } = await openStory(story);
+      await emulateForcedColors(page);
+      await injectA11yHelpers(page);
+      // Real Tab presses, not page.focus(): the indicator asserted on here is
+      // :focus-visible, which programmatic focus deliberately does not match.
+      await tabTo(page, LINK);
+
+      const { hasRing, outlineStyle, outlineWidth, boxShadow } = await page.$eval(LINK, (el) => {
+        const cs = getComputedStyle(el);
+        return {
+          hasRing: window.__a11y.isVisibleFocusRing(el),
+          outlineStyle: cs.outlineStyle,
+          outlineWidth: cs.outlineWidth,
+          boxShadow: cs.boxShadow,
+        };
+      });
+
+      // Forced colors suppresses box-shadow, so the ring the previous test
+      // asserts on is gone here by definition — and `outline: none` in the same
+      // rule means nothing replaces it unless the forced-colors block applies.
+      // Asserting the shadow is absent keeps this test honest: without it, the
+      // whole thing would pass on the normal-mode ring if emulation silently
+      // stopped working.
+      expect(boxShadow).toBe('none');
+      expect(outlineStyle).not.toBe('none');
+      expect(parseFloat(outlineWidth)).toBeGreaterThan(0);
+      expect(hasRing).toBe(true);
       await close();
     });
   });
