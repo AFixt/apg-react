@@ -1,3 +1,5 @@
+// Router integration. Not a component, so it sits above the alphabetical
+// component list rather than inside it.
 export { LinkComponentProvider } from './components/_internal/link-component';
 export type {
   LinkComponent,
