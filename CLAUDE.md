@@ -74,7 +74,7 @@ Three layers, all runnable locally:
 
 1. **Unit tests** (`__tests__/<name>.test.js`) — Jest + React Testing Library +
    jest-dom matchers. Cover ARIA attributes, keyboard interaction, and snapshot
-   matching. 289 tests across 32 suites (326 including the accessibility suite).
+   matching. 291 tests across 32 suites (328 including the accessibility suite).
 2. **Accessibility contract tests** (`__tests__/accessibility.test.js`) — 37
    tests using a custom assertion helper (`__tests__/helpers/a11y.js`) that
    validates accessible names, ARIA id references, boolean state grammar, roving

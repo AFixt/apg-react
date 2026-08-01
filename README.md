@@ -17,7 +17,7 @@ prop.
 
 Most component libraries treat accessibility as a checklist. This library treats
 the APG as the specification. Every component is tested against the APG's
-keyboard model, ARIA contract, and focus-management requirements — with **289
+keyboard model, ARIA contract, and focus-management requirements — with **291
 unit tests**, **37 dedicated accessibility-contract tests**, and **E2E tests
 driving a real browser**. Every assertion is implemented from first principles
 against the DOM.
@@ -188,6 +188,11 @@ anchor it renders, or the consumer's handlers will never fire.
 Without a provider or prop, a `to` given as a location object is flattened to
 `pathname + search + hash` for the anchor's `href`.
 
+The fallback puts that value straight into `href` — the library does not rewrite
+or sanitize it, exactly as a hand-written `<a href>` would not. Up to and
+including 1.3.0 every `to` was resolved by React Router first, so if you
+interpolate untrusted input into `to`, validate it yourself before rendering.
+
 > **Upgrading from ≤ 1.3.0:** these components used to import React Router
 > directly, which made the router a hard requirement for _every_ consumer. If
 > you relied on client-side navigation through them, wrap your app in
@@ -237,7 +242,7 @@ npm run test:e2e:build # builds Storybook, runs Puppeteer E2E tests
 npm run test:all       # both
 ```
 
-- **289 unit tests** across 32 suites; 92%+ statement coverage.
+- **291 unit tests** across 32 suites; 92%+ statement coverage.
 - **37 accessibility-contract tests** built on a hand-rolled ARIA-aware DOM
   assertion library — no external a11y libraries of any kind.
 - **E2E tests** drive a real Chromium against a built Storybook: accessible-name

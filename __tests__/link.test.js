@@ -11,7 +11,8 @@ import Link from '../components/Link/Link';
  *
  * Key requirements:
  *   - Element has role="link".
- *   - Element is keyboard focusable (tabindex="0" when non-native).
+ *   - Element is keyboard focusable without an explicit tabindex, because the
+ *     rendered element is a real anchor with an href.
  *   - Enter key activates the link (invoking onClick when provided).
  *   - Pointer activation invokes onClick identically to Enter.
  *   - Visible label / accessible name is the link's content.
@@ -161,6 +162,10 @@ describe('Link Component (optional router integration)', () => {
   test.each([
     ['an empty string', ''],
     ['an empty location object', {}],
+    // `to` is required and typed, so these two only reach the component from
+    // JavaScript consumers — which is exactly why the fallback must hold.
+    ['a null location', null],
+    ['an omitted location', undefined],
   ])('falls back to # rather than href="" for %s', (_label, to) => {
     // href="" resolves to the current page, which is a silently wrong link
     // rather than an obviously inert one.

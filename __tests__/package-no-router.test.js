@@ -61,11 +61,16 @@ beforeAll(() => {
   // alone is not enough: a stale dist/ left by another branch would let this
   // suite pass against artifacts that no longer match the source, which is the
   // one failure mode a regression guard must not have.
+  //
+  // The build inputs include the build configuration, not just the sources: a
+  // change to rollup.config.mjs or tsconfig.json alone would otherwise leave a
+  // stale dist/ looking fresh.
   const distMtime = fs.existsSync(distCjs) ? fs.statSync(distCjs).mtimeMs : 0;
   const sourceMtime = Math.max(
     newestMtime(path.join(repoRoot, 'components')),
-    fs.statSync(path.join(repoRoot, 'index.ts')).mtimeMs,
-    fs.statSync(path.join(repoRoot, 'package.json')).mtimeMs,
+    ...['index.ts', 'package.json', 'rollup.config.mjs', 'tsconfig.json'].map(
+      (file) => fs.statSync(path.join(repoRoot, file)).mtimeMs,
+    ),
   );
 
   if (distMtime < sourceMtime) {
