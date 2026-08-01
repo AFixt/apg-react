@@ -25,6 +25,7 @@
  * @param {ReactNode} props.children - The content of the link.
  * @param {function} [props.onClick] - The function to be executed when the link is activated, by pointer or by Enter.
  * @param {React.ComponentType|null} [props.linkComponent] - Link component to render with; omit to use the provider value, or pass null to force a plain anchor.
+ * @param {string} [props.className] - Extra classes, appended to the component's own `link` class rather than replacing it.
  * @returns {ReactElement} The rendered AccessibleLink component.
  */
 import React from 'react';
@@ -38,6 +39,7 @@ interface LinkProps {
   children: React.ReactNode;
   onClick?: (e: React.MouseEvent) => void;
   linkComponent?: LinkComponent | null;
+  className?: string;
   [extra: string]: unknown;
 }
 
@@ -46,23 +48,31 @@ const AccessibleLink: React.FC<LinkProps> = ({
   children,
   onClick,
   linkComponent,
+  className,
   ...props
 }) => {
   const RouterLink = useLinkComponent(linkComponent);
+
+  // The stylesheet targets `.link`, so the class has to come from here: the
+  // rendered element is a native anchor whose `link` role is implicit, and a
+  // role selector never matches it. `className` is destructured out of `props`
+  // and appended rather than spread over, so a consumer passing one adds to the
+  // component's styles instead of silently stripping them.
+  const classes = className ? `link ${className}` : 'link';
 
   // No keydown handler: Enter activation and the Shift+F10 context menu are
   // native anchor behaviour, and a consumer's own onKeyDown rides through
   // `props` untouched.
   if (RouterLink) {
     return (
-      <RouterLink to={to} {...props} onClick={onClick}>
+      <RouterLink to={to} className={classes} {...props} onClick={onClick}>
         {children}
       </RouterLink>
     );
   }
 
   return (
-    <a href={toHref(to)} {...props} onClick={onClick}>
+    <a href={toHref(to)} className={classes} {...props} onClick={onClick}>
       {children}
     </a>
   );

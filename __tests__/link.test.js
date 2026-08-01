@@ -125,6 +125,21 @@ describe('Link Component (APG link pattern)', () => {
     expect(link).toHaveAttribute('target', '_blank');
   });
 
+  test('carries the link class the stylesheet targets', () => {
+    // The stylesheet cannot select the rendered element by role: the anchor's
+    // `link` role is implicit, so `a[role="link"]` matches nothing. The class
+    // is what makes the component's styles — including its focus ring — apply.
+    renderLink();
+    expect(screen.getByRole('link', { name: 'Go home' })).toHaveClass('link');
+  });
+
+  test('a consumer className is added to the link class, not swapped for it', () => {
+    // Spreading `className` from props over the component's own would silently
+    // drop every style the component ships, focus ring included.
+    renderLink({ className: 'custom' });
+    expect(screen.getByRole('link', { name: 'Go home' })).toHaveClass('link', 'custom');
+  });
+
   test('accessible name comes from link text content', () => {
     renderLink({}, 'Read the docs');
     expect(screen.getByRole('link', { name: 'Read the docs' })).toBeInTheDocument();
@@ -171,6 +186,19 @@ describe('Link Component (optional router integration)', () => {
     // rather than an obviously inert one.
     render(<Link to={to}>Nowhere</Link>);
     expect(screen.getByRole('link', { name: 'Nowhere' })).toHaveAttribute('href', '#');
+  });
+
+  test('the injected-router branch carries the link class too', () => {
+    // Both render branches ship the same styles, so both need the class the
+    // stylesheet targets — a router link is still a native anchor underneath.
+    render(
+      <MemoryRouter>
+        <Link to="/home" linkComponent={RouterLink} className="custom">
+          Go home
+        </Link>
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('link', { name: 'Go home' })).toHaveClass('link', 'custom');
   });
 
   test('uses a router Link supplied via the linkComponent prop', () => {

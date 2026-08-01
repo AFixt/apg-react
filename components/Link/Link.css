@@ -1,27 +1,35 @@
+/*
+ * Styles hang off the `.link` class the component adds, not off a role
+ * selector. The rendered element is a native `<a href>`, whose `link` role is
+ * implicit, so `a[role='link']` never matched it — and adding an explicit role
+ * back to earn the match would be the redundant ARIA that was deliberately
+ * removed from the component.
+ */
+
 @media screen and (prefers-reduced-motion: reduce) {
-  a[role='link'] {
+  .link {
     transition: none;
   }
 }
 
-a[role='link'] {
+.link {
   color: var(--apg-color-primary);
   text-decoration: underline;
   cursor: pointer;
   transition: color var(--apg-transition-fast);
 }
 
-a[role='link']:hover {
+.link:hover {
   color: var(--apg-color-primary-hover);
 }
 
-a[role='link']:focus,
-a[role='link']:focus-visible {
+.link:focus,
+.link:focus-visible {
   outline: none;
   box-shadow: var(--apg-focus-ring);
   border-radius: var(--apg-radius-sm);
 }
 
-a[role='link']:active {
+.link:active {
   color: var(--apg-color-primary-active);
 }

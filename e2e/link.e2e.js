@@ -1,4 +1,4 @@
-const { openStory } = require('./helpers');
+const { openStory, injectA11yHelpers } = require('./helpers');
 
 const LINK = '#storybook-root a';
 const COUNT = '#storybook-root [data-testid="activation-count"]';
@@ -87,6 +87,58 @@ describe('Link (E2E)', () => {
       await activate(page, 'mouse');
       await activate(page, 'keyboard');
       expect(await activate(page, 'mouse')).toBe('3');
+      await close();
+    });
+  });
+
+  /**
+   * The component's stylesheet only lands if its selector matches the element
+   * actually rendered. It previously keyed off `a[role='link']`, which never
+   * matched the native anchor the component emits — the `link` role on an
+   * anchor is implicit, and an attribute selector cannot see it. Every rule in
+   * the file was inert as a result, in both render branches.
+   *
+   * Only a real browser catches this: jsdom does not resolve stylesheets, so
+   * the unit suite can assert the class is present but never that a rule
+   * applied. These assertions read computed style, so a selector that stops
+   * matching fails here rather than shipping silently.
+   */
+  describe.each(BRANCHES)('$name styling', ({ story }) => {
+    test('the component stylesheet applies to the rendered anchor', async () => {
+      const { page, close } = await openStory(story);
+      const { color, expected } = await page.$eval(LINK, (el) => ({
+        color: getComputedStyle(el).color,
+        // Resolve the token the rule is written against, so the assertion
+        // tracks the theme instead of hardcoding a colour.
+        expected: getComputedStyle(document.documentElement)
+          .getPropertyValue('--apg-color-primary')
+          .trim(),
+      }));
+
+      // Computed colour is rgb(); the token is a hex literal. Compare on the
+      // channel values so the two notations meet.
+      const toRgb = (hex) =>
+        `rgb(${[1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(', ')})`;
+      expect(color).toBe(toRgb(expected));
+      await close();
+    });
+
+    test('focusing the link renders the intended focus ring', async () => {
+      const { page, close } = await openStory(story);
+      await injectA11yHelpers(page);
+      await page.focus(LINK);
+
+      const { hasRing, boxShadow } = await page.$eval(LINK, (el) => ({
+        hasRing: window.__a11y.isVisibleFocusRing(el),
+        boxShadow: getComputedStyle(el).boxShadow,
+      }));
+
+      // The focus indicator must be visible at all — but that alone would have
+      // passed while the stylesheet was inert, because the `outline: none` in
+      // the same unmatched rule left the browser default outline standing. The
+      // box-shadow assertion is what pins the component's own ring.
+      expect(hasRing).toBe(true);
+      expect(boxShadow).not.toBe('none');
       await close();
     });
   });

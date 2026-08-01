@@ -163,7 +163,9 @@ describe('published package without react-router-dom', () => {
       ],
       { cwd: consumerDir },
     );
-    expect(output).toContain('<a href="/home">Home</a>');
+    // `class="link"` is what the component's stylesheet selects on — the
+    // anchor's `link` role is implicit, so a role selector cannot match it.
+    expect(output).toContain('<a href="/home" class="link">Home</a>');
     expect(output).toContain('<a href="/">Home</a>');
     expect(output).toContain('aria-current="page"');
   });
