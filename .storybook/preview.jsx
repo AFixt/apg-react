@@ -1,5 +1,6 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Link as RouterLink } from 'react-router-dom';
+import { LinkComponentProvider } from '../components/_internal/link-component';
 import '../components/styles.css';
 
 /** @type { import('@storybook/react').Preview } */
@@ -20,9 +21,13 @@ const preview = {
   decorators: [
     (Story) => (
       <MemoryRouter initialEntries={['/']}>
-        <div style={{ padding: '1.5rem', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-          <Story />
-        </div>
+        {/* Demonstrates the opt-in router integration; without this provider
+            Link and Breadcrumb render plain anchors. */}
+        <LinkComponentProvider value={RouterLink}>
+          <div style={{ padding: '1.5rem', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+            <Story />
+          </div>
+        </LinkComponentProvider>
       </MemoryRouter>
     ),
   ],

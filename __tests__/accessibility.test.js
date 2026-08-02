@@ -17,7 +17,6 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
 
 import {
   assertAriaBooleanState,
@@ -122,15 +121,13 @@ describe('Accessibility contracts (no external a11y libs)', () => {
   describe('Breadcrumb', () => {
     test('nav landmark with aria-label, links with names, current page non-link', () => {
       render(
-        <Router>
-          <Breadcrumb
-            items={[
-              { path: '/', label: 'Home' },
-              { path: '/a', label: 'Section' },
-              { path: '/a/b', label: 'Page' },
-            ]}
-          />
-        </Router>,
+        <Breadcrumb
+          items={[
+            { path: '/', label: 'Home' },
+            { path: '/a', label: 'Section' },
+            { path: '/a/b', label: 'Page' },
+          ]}
+        />,
       );
       const nav = screen.getByRole('navigation');
       expect(nav).toHaveAttribute('aria-label', 'Breadcrumb');

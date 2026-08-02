@@ -1,45 +1,80 @@
 /**
  * A custom accessible link component.
- * It ensures that the link is keyboard accessible and supports additional
- * functionality like executing an onClick event on 'Enter' key press
- * and opening a context menu on 'Shift + F10' key press.
+ *
+ * The component adds no keyboard handling of its own, because a link needs
+ * none: the rendered element is a real anchor, so focus, Enter activation, and
+ * the Shift+F10 context menu all come from the platform. Anything this
+ * component intercepted would only take behaviour away from keyboard users.
+ *
+ * Activation is modality-independent: `onClick` is attached to the rendered
+ * element, so pointer activation and Enter (which native anchors translate
+ * into a click) both invoke it exactly once. `onClick` is deliberately not
+ * called from a keydown handler — doing so would fire the callback twice in a
+ * real browser, once from the keydown branch and again from the anchor's
+ * synthesised click.
+ *
+ * Rendering is router-agnostic: by default a plain `<a href>` is emitted, so
+ * the library carries no router dependency. Supply React Router's `Link` (or
+ * any equivalent) via the `linkComponent` prop or a surrounding
+ * `LinkComponentProvider` to get client-side navigation, or pass
+ * `linkComponent={null}` to force a plain anchor inside a provider.
  *
  * @component
  * @param {object} props - The component props.
- * @param {string|object} props.to - The target URL or location object to navigate to.
+ * @param {string|{pathname?: string, search?: string, hash?: string}} props.to - The target URL or location object to navigate to.
  * @param {ReactNode} props.children - The content of the link.
- * @param {function} [props.onClick] - The function to be executed on link click.
+ * @param {function} [props.onClick] - The function to be executed when the link is activated, by pointer or by Enter.
+ * @param {React.ComponentType|null} [props.linkComponent] - Link component to render with; omit to use the provider value, or pass null to force a plain anchor.
+ * @param {string} [props.className] - Extra classes, appended to the component's own `link` class rather than replacing it.
  * @returns {ReactElement} The rendered AccessibleLink component.
  */
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import type { LinkComponent, LinkTo } from '../_internal/link-component';
+import { toHref, useLinkComponent } from '../_internal/link-component';
 import './Link.css';
 
 /** Props for the Link component. */
 interface LinkProps {
-  to: string | object;
+  to: LinkTo;
   children: React.ReactNode;
-  onClick?: (e: React.MouseEvent | React.KeyboardEvent) => void;
+  onClick?: (e: React.MouseEvent) => void;
+  linkComponent?: LinkComponent | null;
+  className?: string;
   [extra: string]: unknown;
 }
 
-const AccessibleLink: React.FC<LinkProps> = ({ to, children, onClick, ...props }) => {
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    const { key, shiftKey } = event;
+const AccessibleLink: React.FC<LinkProps> = ({
+  to,
+  children,
+  onClick,
+  linkComponent,
+  className,
+  ...props
+}) => {
+  const RouterLink = useLinkComponent(linkComponent);
 
-    if (key === 'Enter' && onClick) {
-      onClick(event);
-    }
+  // The stylesheet targets `.link`, so the class has to come from here: the
+  // rendered element is a native anchor whose `link` role is implicit, and a
+  // role selector never matches it. `className` is destructured out of `props`
+  // and appended rather than spread over, so a consumer passing one adds to the
+  // component's styles instead of silently stripping them.
+  const classes = className ? `link ${className}` : 'link';
 
-    if (key === 'F10' && shiftKey) {
-      event.preventDefault();
-    }
-  };
+  // No keydown handler: Enter activation and the Shift+F10 context menu are
+  // native anchor behaviour, and a consumer's own onKeyDown rides through
+  // `props` untouched.
+  if (RouterLink) {
+    return (
+      <RouterLink to={to} className={classes} {...props} onClick={onClick}>
+        {children}
+      </RouterLink>
+    );
+  }
 
   return (
-    <RouterLink to={to as string} {...props} onKeyDown={handleKeyDown}>
+    <a href={toHref(to)} className={classes} {...props} onClick={onClick}>
       {children}
-    </RouterLink>
+    </a>
   );
 };
 

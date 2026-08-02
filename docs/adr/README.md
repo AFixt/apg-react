@@ -24,3 +24,4 @@ files sequentially: `NNNN-short-slug.md`.
 - [0006 — ESLint rule calibration](0006-eslint-rule-calibration.md)
 - [0007 — Security scan placement (pre-push vs CI vs scheduled)](0007-security-scan-placement.md)
 - [0008 — Defer automated release.yml workflow](0008-release-workflow-deferred.md)
+- [0009 — Optional router support via link-component injection](0009-optional-router-via-link-injection.md)
