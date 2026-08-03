@@ -22,6 +22,21 @@
   outline: none;
 }
 
+/*
+ * The `outline: none` above is unconditional and the listbox is programmatically
+ * focusable (tabindex="-1"), so it needs a guard of its own. Inset, so the
+ * outline is not clipped by the `overflow-y: auto` on the same rule.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .listbox:focus,
+  .listbox:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
+}
+
 .listbox-option {
   padding: var(--apg-space-sm) var(--apg-space-md);
   border-radius: var(--apg-radius-sm);
@@ -39,6 +54,21 @@
 .listbox-option.is-focused:focus,
 .listbox-option.is-focused:focus-visible {
   box-shadow: var(--apg-focus-ring);
+}
+
+/*
+ * Written against the bare option, not `.is-focused`: the background-color
+ * change that unfocused options fall back to is overridden by forced colors
+ * just as the shadow is. Inset, so the scroll container cannot clip it.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .listbox-option:focus,
+  .listbox-option:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 
 .listbox-option.is-selected {

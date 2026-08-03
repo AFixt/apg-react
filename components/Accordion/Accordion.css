@@ -24,12 +24,6 @@
   border-top: 0;
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .accordion-header {
-    transition: none;
-  }
-}
-
 .accordion-header {
   display: flex;
   align-items: center;
@@ -50,6 +44,16 @@
     color var(--apg-transition-fast);
 }
 
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .accordion-header {
+    transition: none;
+  }
+}
+
 .accordion-header:hover {
   background-color: var(--apg-color-gray-100);
 }
@@ -68,6 +72,20 @@
     var(--apg-focus-ring);
   z-index: 3;
   position: relative;
+}
+
+/*
+ * Both shadows above — the inset ring and the outer glow — are dropped by
+ * forced colors, and the `outline: none` beside them leaves nothing behind.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .accordion-header:focus,
+  .accordion-header:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 
 .accordion-title {

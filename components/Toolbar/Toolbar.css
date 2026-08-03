@@ -13,13 +13,18 @@
   align-items: stretch;
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .toolbar > button,
-  .toolbar > [role='button'] {
-    transition: none;
-  }
-}
-
+/*
+ * a11y/media-prefers-reduced-motion does not recognise the reduced-motion block
+ * below as belonging to this rule — alone among the component stylesheets,
+ * which all pair the two the same way. Left to fix it, the rule duplicates this
+ * entire rule with `transition: none` and inserts the copy *above* it, where a
+ * media query adds no specificity and so loses on source order. That inert
+ * duplicate is how this bug entered the codebase, and lint-staged runs
+ * `stylelint --fix` on every commit, so without this the fix would not survive
+ * being committed. __tests__/reducedMotion.test.js enforces the pairing that
+ * this suppression opts out of.
+ */
+/* stylelint-disable-next-line a11y/media-prefers-reduced-motion */
 .toolbar > button,
 .toolbar > [role='button'] {
   padding: var(--apg-space-xs) var(--apg-space-md);
@@ -36,6 +41,17 @@
     box-shadow var(--apg-transition-fast);
 }
 
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .toolbar > button,
+  .toolbar > [role='button'] {
+    transition: none;
+  }
+}
+
 .toolbar > button:hover,
 .toolbar > [role='button']:hover {
   background-color: var(--apg-color-white);
@@ -47,6 +63,22 @@
 .toolbar > [role='button']:focus-visible {
   outline: none;
   box-shadow: var(--apg-focus-ring);
+}
+
+/*
+ * Forced colors suppresses box-shadow, so the ring above renders nothing there,
+ * and the `outline: none` it pairs with removed the UA outline that would
+ * otherwise have covered for it.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .toolbar > button:focus,
+  .toolbar > button:focus-visible,
+  .toolbar > [role='button']:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
 }
 
 .toolbar > button:disabled,

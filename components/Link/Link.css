@@ -6,17 +6,21 @@
  * removed from the component.
  */
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .link {
-    transition: none;
-  }
-}
-
 .link {
   color: var(--apg-color-primary);
   text-decoration: underline;
   cursor: pointer;
   transition: color var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .link {
+    transition: none;
+  }
 }
 
 .link:hover {

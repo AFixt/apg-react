@@ -11,7 +11,7 @@ Each component faithfully reproduces the keyboard interaction, ARIA attributes,
 and roles specified by the APG.
 
 The library ships **31 components** with full TypeScript declarations, Storybook
-demos, and three test layers (unit, accessibility, E2E).
+demos, and four test layers (unit, accessibility, stylesheet, E2E).
 
 ## Commands
 
@@ -70,18 +70,25 @@ No external state libraries are used. CSS is imported directly into TSX files.
 
 ### Testing
 
-Three layers, all runnable locally:
+Four layers run under Jest, plus a use-case suite driven by an external runner:
 
 1. **Unit tests** (`__tests__/<name>.test.js`) — Jest + React Testing Library +
    jest-dom matchers. Cover ARIA attributes, keyboard interaction, and snapshot
-   matching. 291 tests across 32 suites (328 including the accessibility suite).
+   matching. 295 tests across 32 suites.
 2. **Accessibility contract tests** (`__tests__/accessibility.test.js`) — 37
    tests using a custom assertion helper (`__tests__/helpers/a11y.js`) that
    validates accessible names, ARIA id references, boolean state grammar, roving
    tabindex, and label association. Zero external a11y libraries.
-3. **E2E tests** (`e2e/*.e2e.js`) — Puppeteer drives a real Chromium against a
-   built Storybook. Separate Jest config at `e2e/jest.config.js`.
-4. **Use cases** (`usecases/<component>/*.uc.yaml`) — one discrete user
+3. **Stylesheet contract tests** (`__tests__/forcedColors.test.js`,
+   `__tests__/reducedMotion.test.js`) — 35 tests that read the component CSS as
+   text via `__tests__/helpers/css.js` and enforce cascade relationships neither
+   jsdom nor stylelint can see: a removed focus outline must have a
+   `forced-colors` replacement, and a `prefers-reduced-motion` block must sit
+   after the rule it overrides or it loses on source order.
+4. **E2E tests** (`e2e/*.e2e.js`) — Puppeteer drives a real Chromium against a
+   built Storybook. 165 tests across 10 suites. Separate Jest config at
+   `e2e/jest.config.js`.
+5. **Use cases** (`usecases/<component>/*.uc.yaml`) — one discrete user
    interaction per file in the DSL of `@afixt/usecase-runner`. Targets each
    component's Storybook story and is meant to be run via the runner (which
    generates Playwright specs) rather than Jest. Validate without running:
@@ -102,7 +109,7 @@ Configuration:
 GitHub Actions workflow at `.github/workflows/ci.yml`:
 
 - Runs on push/PR to `main` and `develop`.
-- Matrix: Node 18 + 20.
+- Matrix: Node 22 + 24.
 - Steps: install, lint markdown, unit + a11y tests, build library, build
   Storybook, E2E tests.
 - Auto-deploys Storybook to GitHub Pages on merges to `main`.

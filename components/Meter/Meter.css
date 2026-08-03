@@ -17,15 +17,21 @@
   position: relative;
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .meter-fill {
-    transition: none;
-  }
-}
-
 .meter-fill {
   height: 100%;
   background-color: var(--apg-color-primary);
   border-radius: var(--apg-radius-md) 0 0 var(--apg-radius-md);
   transition: width 0.3s ease;
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ *
+ * The value change lands immediately rather than sweeping across.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .meter-fill {
+    transition: none;
+  }
 }
