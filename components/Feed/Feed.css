@@ -7,18 +7,19 @@
   margin: auto;
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .feed .article {
-    transition: none;
-  }
-}
-
 .feed .article {
   border: var(--apg-border-width) solid var(--apg-border-color);
   padding: var(--apg-space-xl);
   border-radius: var(--apg-radius-lg);
   background-color: var(--apg-color-white);
   box-shadow: var(--apg-shadow-sm);
+
+  /*
+   * The feed owns the spacing between its items, via `gap` on `.feed`. Article
+   * carries a `margin-bottom` of its own for standalone use, which would stack
+   * on top of that gap and leave a trailing gap below the last item.
+   */
+  margin-bottom: 0;
   transition:
     box-shadow var(--apg-transition-normal),
     transform var(--apg-transition-normal);
@@ -28,6 +29,22 @@
 .feed .article:focus {
   box-shadow: var(--apg-shadow-md);
   transform: translateY(-2px);
+}
+
+/*
+ * After the rules it overrides, not before. A media query adds no specificity,
+ * so a `transition: none` written above `.feed .article` loses to it on source
+ * order and the opt-out never applies.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .feed .article {
+    transition: none;
+  }
+
+  .feed .article:hover,
+  .feed .article:focus {
+    transform: none;
+  }
 }
 
 .feed .article h2 {

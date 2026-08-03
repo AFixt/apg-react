@@ -16,6 +16,19 @@ describe('Article Component (APG-compliant structure)', () => {
     expect(articleEl).toBeInTheDocument();
   });
 
+  /*
+   * Article.css and the `.feed .article` half of Feed.css are both written
+   * against this class, and neither had anything to match: the component
+   * rendered a bare <article>, so every rule in both files was inert. jsdom
+   * does not resolve stylesheets, so nothing in this suite could have noticed —
+   * the class itself is the contract that has to be asserted here, with
+   * e2e/article.e2e.js covering the computed style a real engine produces.
+   */
+  test('carries the class its stylesheet is keyed off', () => {
+    const { container } = render(<Article article={article} ariaPosinset={1} ariaSetsize={5} />);
+    expect(container.querySelector('article')).toHaveClass('article');
+  });
+
   test('has an accessible heading derived from title', () => {
     render(<Article article={article} ariaPosinset={1} ariaSetsize={5} />);
     const heading = screen.getByRole('heading', { level: 2 });

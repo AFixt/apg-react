@@ -24,11 +24,6 @@ const { openStory, injectA11yHelpers, emulateForcedColors, tabTo } = require('./
  * - `.listbox` (the container) and `.spinbutton-arrow` both carry
  *   `tabindex="-1"`, so no keyboard can reach them; they take focus only
  *   programmatically, if at all.
- * - `Article` renders a bare `<article>` and nothing in the library emits
- *   `class="article"`, so every rule in `Article.css` — the forced-colors guard
- *   included — is inert. That is a separate, pre-existing defect of the same
- *   kind as the one `Link` had before 89427e1, and it is not fixed here: the
- *   guard is written so it is correct once the stylesheet is live.
  *
  * `Link` has its own forced-colors test in `link.e2e.js`, covering both of its
  * render branches.
@@ -78,6 +73,15 @@ const CASES = [
     element: 'action button',
     story: 'components-alertdialog--open-by-default-bare',
     selector: '.dialog-content button',
+    shadowInNormalMode: true,
+  },
+  {
+    component: 'Article',
+    element: 'content link',
+    // The only story whose content contains a link, which is what `.article a`
+    // needs in order to match at all.
+    story: 'components-article--with-link',
+    selector: '.article a',
     shadowInNormalMode: true,
   },
   {
