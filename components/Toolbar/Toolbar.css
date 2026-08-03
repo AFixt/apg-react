@@ -20,6 +20,21 @@
   }
 }
 
+@media screen and (prefers-reduced-motion: reduce) {
+  .toolbar > button,
+  .toolbar > [role='button'] {
+    padding: var(--apg-space-xs) var(--apg-space-md);
+    background-color: transparent;
+    color: var(--apg-color-gray-800);
+    border: var(--apg-border-width) solid transparent;
+    border-radius: var(--apg-radius-sm);
+    cursor: pointer;
+    font-size: var(--apg-font-size-sm);
+    font-family: var(--apg-font-family);
+    transition: none;
+  }
+}
+
 .toolbar > button,
 .toolbar > [role='button'] {
   padding: var(--apg-space-xs) var(--apg-space-md);
@@ -47,6 +62,22 @@
 .toolbar > [role='button']:focus-visible {
   outline: none;
   box-shadow: var(--apg-focus-ring);
+}
+
+/*
+ * Forced colors suppresses box-shadow, so the ring above renders nothing there,
+ * and the `outline: none` it pairs with removed the UA outline that would
+ * otherwise have covered for it.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .toolbar > button:focus,
+  .toolbar > button:focus-visible,
+  .toolbar > [role='button']:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
 }
 
 .toolbar > button:disabled,

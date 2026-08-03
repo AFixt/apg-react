@@ -49,6 +49,20 @@
   border-radius: var(--apg-radius-sm);
 }
 
+/*
+ * Forced colors suppresses box-shadow, so the ring above renders nothing there,
+ * and the `outline: none` it pairs with removed the UA outline that would
+ * otherwise have covered for it.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .breadcrumb-item a:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
+}
+
 .breadcrumb-item span[aria-current='page'] {
   color: var(--apg-color-gray-600);
   font-weight: var(--apg-font-weight-normal);

@@ -72,6 +72,18 @@
   position: relative;
 }
 
+/*
+ * Inset, so the outline is not overlapped by the adjacent tabs in the strip.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .tab:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
+}
+
 /* ---- Vertical orientation ---- */
 
 .tabs-vertical .tablist {
@@ -123,4 +135,16 @@
 .tabpanel:focus-visible {
   outline: none;
   box-shadow: var(--apg-focus-ring);
+}
+
+/*
+ * Inset, so the outline stays inside the panel rather than over the tab strip.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .tabpanel:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }

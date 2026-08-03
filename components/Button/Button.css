@@ -41,6 +41,20 @@
   box-shadow: var(--apg-focus-ring);
 }
 
+/*
+ * Here the `outline: none` sits on the base `.button` rule, so it applies in
+ * forced colors too and this guard is what puts an indicator back.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .button:focus,
+  .button:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
+}
+
 .button:active {
   background-color: var(--apg-color-primary-active);
   border-color: var(--apg-color-primary-active);

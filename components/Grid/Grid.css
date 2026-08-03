@@ -64,6 +64,21 @@
   box-shadow: inset 0 0 0 2px var(--apg-color-primary);
 }
 
+/*
+ * Forced colors drops the inset ring *and* overrides the background-color
+ * change beside it, so the cell would otherwise be indistinguishable. Inset,
+ * because an outward outline on a table-cell overlaps its neighbours.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .grid-cell:focus,
+  .grid-cell:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
+}
+
 .grid-row:hover .grid-cell,
 .grid-row:focus .grid-cell {
   background-color: var(--apg-color-gray-50);

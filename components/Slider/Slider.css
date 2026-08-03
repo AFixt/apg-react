@@ -50,6 +50,21 @@
   box-shadow: var(--apg-focus-ring);
 }
 
+/*
+ * Forced colors suppresses box-shadow, so the ring above renders nothing there,
+ * and the `outline: none` it pairs with removed the UA outline that would
+ * otherwise have covered for it.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .slider-container [role='slider']:focus,
+  .slider-container [role='slider']:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
+}
+
 .slider-container.vertical {
   width: 2rem;
   height: 100%;
