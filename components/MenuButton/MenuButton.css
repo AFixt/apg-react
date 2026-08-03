@@ -3,12 +3,6 @@
   display: inline-block;
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .menu-button {
-    transition: none;
-  }
-}
-
 .menu-button {
   display: inline-flex;
   align-items: center;
@@ -27,6 +21,16 @@
     box-shadow var(--apg-transition-fast);
 }
 
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .menu-button {
+    transition: none;
+  }
+}
+
 .menu-button:hover {
   background-color: var(--apg-color-gray-50);
 }
@@ -36,6 +40,21 @@
   outline: none;
   border-color: var(--apg-color-primary);
   box-shadow: var(--apg-focus-ring);
+}
+
+/*
+ * Forced colors suppresses box-shadow, so the ring above renders nothing there,
+ * and the `outline: none` it pairs with removed the UA outline that would
+ * otherwise have covered for it.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .menu-button:focus,
+  .menu-button:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
 }
 
 .menu-button[aria-expanded='true'] {
@@ -91,4 +110,19 @@
   outline: none;
   background-color: var(--apg-color-primary);
   color: var(--apg-color-white);
+}
+
+/*
+ * This item has no focus shadow at all — it signals focus purely by swapping
+ * background and text colour, which forced colors overrides outright. Inset,
+ * so the outline stays inside the menu popup.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .menuitem:focus,
+  .menuitem:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }

@@ -23,12 +23,6 @@
 
 /* ---- Individual tab button ---- */
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .tab {
-    transition: none;
-  }
-}
-
 .tab {
   display: block;
   padding: 0.5rem 1rem;
@@ -48,6 +42,16 @@
     color var(--apg-transition-fast),
     background-color var(--apg-transition-fast),
     border-color var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .tab {
+    transition: none;
+  }
 }
 
 .tab:hover,
@@ -70,6 +74,18 @@
   box-shadow: var(--apg-focus-ring);
   z-index: 2;
   position: relative;
+}
+
+/*
+ * Inset, so the outline is not overlapped by the adjacent tabs in the strip.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .tab:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 
 /* ---- Vertical orientation ---- */
@@ -123,4 +139,16 @@
 .tabpanel:focus-visible {
   outline: none;
   box-shadow: var(--apg-focus-ring);
+}
+
+/*
+ * Inset, so the outline stays inside the panel rather than over the tab strip.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .tabpanel:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }

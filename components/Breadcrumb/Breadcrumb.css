@@ -25,16 +25,20 @@
   color: var(--apg-color-gray-500);
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .breadcrumb-item a {
-    transition: none;
-  }
-}
-
 .breadcrumb-item a {
   color: var(--apg-color-primary);
   text-decoration: none;
   transition: color var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .breadcrumb-item a {
+    transition: none;
+  }
 }
 
 .breadcrumb-item a:hover,
@@ -47,6 +51,20 @@
   outline: none;
   box-shadow: var(--apg-focus-ring);
   border-radius: var(--apg-radius-sm);
+}
+
+/*
+ * Forced colors suppresses box-shadow, so the ring above renders nothing there,
+ * and the `outline: none` it pairs with removed the UA outline that would
+ * otherwise have covered for it.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .breadcrumb-item a:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
 }
 
 .breadcrumb-item span[aria-current='page'] {

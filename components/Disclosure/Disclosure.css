@@ -43,15 +43,37 @@
   box-shadow: var(--apg-focus-ring);
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .disclosure-control .indicator {
-    transition: none;
+/*
+ * Forced colors suppresses box-shadow, so the ring above renders nothing there,
+ * and the `outline: none` it pairs with removed the UA outline that would
+ * otherwise have covered for it.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .disclosure-control:focus,
+  .disclosure-control:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
   }
 }
 
 .disclosure-control .indicator {
   display: inline-block;
   transition: transform var(--apg-transition-normal);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ *
+ * Only the transition goes: the rotation encodes expanded/collapsed state,
+ * so it still has to happen, just without the sweep.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .disclosure-control .indicator {
+    transition: none;
+  }
 }
 
 .disclosure-control[aria-expanded='true'] .indicator {

@@ -36,12 +36,6 @@
   margin-bottom: var(--apg-space-lg);
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .dialog-content button {
-    transition: none;
-  }
-}
-
 .dialog-content button {
   display: inline-block;
   padding: 0.375rem 0.75rem;
@@ -61,6 +55,16 @@
     box-shadow var(--apg-transition-fast);
 }
 
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .dialog-content button {
+    transition: none;
+  }
+}
+
 .dialog-content button:hover {
   background-color: var(--apg-color-primary-hover);
   border-color: var(--apg-color-primary-hover);
@@ -70,4 +74,19 @@
 .dialog-content button:focus-visible {
   outline: none;
   box-shadow: var(--apg-focus-ring);
+}
+
+/*
+ * Forced colors suppresses box-shadow, so the ring above renders nothing there,
+ * and the `outline: none` it pairs with removed the UA outline that would
+ * otherwise have covered for it.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .dialog-content button:focus,
+  .dialog-content button:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
 }

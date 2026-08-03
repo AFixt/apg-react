@@ -28,8 +28,18 @@ interface ArticleProps {
 
 const Article = forwardRef<HTMLElement, ArticleProps>(
   ({ article, ariaPosinset, ariaSetsize }, ref) => {
+    // Styles hang off the `article` class, not the element name, so the
+    // stylesheet has to be given something to match. Without this class every
+    // rule in Article.css was inert — as was every `.feed .article` rule in
+    // Feed.css, which has always been written against it.
     return (
-      <article ref={ref} tabIndex={-1} aria-posinset={ariaPosinset} aria-setsize={ariaSetsize}>
+      <article
+        ref={ref}
+        className="article"
+        tabIndex={-1}
+        aria-posinset={ariaPosinset}
+        aria-setsize={ariaSetsize}
+      >
         <h2 id={`article-title-${article.id}`}>{article.title}</h2>
         <div>{article.content}</div>
       </article>

@@ -101,4 +101,51 @@ const injectA11yHelpers = async (page) => {
   });
 };
 
-module.exports = { getBrowser, openStory, storyUrl, injectA11yHelpers };
+/**
+ * Emulate forced colors (Windows High Contrast Mode) for the given page.
+ *
+ * Puppeteer's own `emulateMediaFeatures` rejects `forced-colors` as an
+ * unsupported feature, so this drives the CDP command it wraps directly.
+ *
+ * @param {import('puppeteer').Page} page - The page to emulate on.
+ * @param {'active'|'none'} [value] - Forced-colors state to emulate.
+ * @returns {Promise<void>}
+ */
+const emulateForcedColors = async (page, value = 'active') => {
+  const cdp = await page.createCDPSession();
+  await cdp.send('Emulation.setEmulatedMedia', {
+    features: [{ name: 'forced-colors', value }],
+  });
+};
+
+/**
+ * Move focus to the element matching `selector` using real Tab presses.
+ *
+ * Focus assertions that read `:focus-visible` — which is every UA focus ring —
+ * cannot use `page.focus()`: programmatic focus deliberately does not match
+ * `:focus-visible`, so the ring under test would be absent for a reason that
+ * has nothing to do with the stylesheet.
+ *
+ * @param {import('puppeteer').Page} page - The page to tab through.
+ * @param {string} selector - Selector for the element that should end up focused.
+ * @param {number} [maxTabs] - Give up after this many presses.
+ * @returns {Promise<void>}
+ * @throws {Error} If the element never receives focus.
+ */
+const tabTo = async (page, selector, maxTabs = 10) => {
+  for (let i = 0; i < maxTabs; i += 1) {
+    await page.keyboard.press('Tab');
+    const arrived = await page.$eval(selector, (el) => el === document.activeElement);
+    if (arrived) return;
+  }
+  throw new Error(`Tab never reached ${selector} within ${maxTabs} presses`);
+};
+
+module.exports = {
+  getBrowser,
+  openStory,
+  storyUrl,
+  injectA11yHelpers,
+  emulateForcedColors,
+  tabTo,
+};

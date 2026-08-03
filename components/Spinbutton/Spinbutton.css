@@ -4,12 +4,6 @@
   height: 2.375rem;
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .spinbutton-container input[type='text'] {
-    transition: none;
-  }
-}
-
 .spinbutton-container input[type='text'] {
   width: 6rem;
   height: 100%;
@@ -28,11 +22,36 @@
     box-shadow var(--apg-transition-fast);
 }
 
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .spinbutton-container input[type='text'] {
+    transition: none;
+  }
+}
+
 .spinbutton-container input[type='text']:focus,
 .spinbutton-container input[type='text']:focus-visible {
   outline: none;
   border-color: var(--apg-color-primary);
   box-shadow: var(--apg-focus-ring);
+}
+
+/*
+ * Forced colors suppresses box-shadow, so the ring above renders nothing there,
+ * and the `outline: none` it pairs with removed the UA outline that would
+ * otherwise have covered for it.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .spinbutton-container input[type='text']:focus,
+  .spinbutton-container input[type='text']:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
 }
 
 .spinbutton-container input[type='text'].is-invalid {
@@ -41,12 +60,6 @@
 
 .spinbutton-container input[type='text'].is-invalid:focus {
   box-shadow: 0 0 0 var(--apg-focus-ring-width) rgb(220 53 69 / 25%);
-}
-
-@media screen and (prefers-reduced-motion: reduce) {
-  .spinbutton-container .spinbutton-arrow {
-    transition: none;
-  }
 }
 
 .spinbutton-container .spinbutton-arrow {
@@ -70,6 +83,16 @@
     color var(--apg-transition-fast);
 }
 
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .spinbutton-container .spinbutton-arrow {
+    transition: none;
+  }
+}
+
 .spinbutton-container .spinbutton-arrow:hover,
 .spinbutton-container .spinbutton-arrow:focus {
   background-color: var(--apg-color-primary);
@@ -80,6 +103,19 @@
   outline: none;
   box-shadow: var(--apg-focus-ring);
   z-index: 1;
+}
+
+/*
+ * Inset, because the arrows are stacked flush against the input and each
+ * other; an outward outline would be overlapped by whichever sits above it.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .spinbutton-container .spinbutton-arrow:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
 }
 
 .spinbutton-container .spinbutton-arrow-up {

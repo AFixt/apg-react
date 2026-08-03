@@ -1,3 +1,12 @@
+// Router integration. Not a component, so it sits above the alphabetical
+// component list rather than inside it.
+export { LinkComponentProvider } from './components/_internal/link-component';
+export type {
+  LinkComponent,
+  LinkComponentProps,
+  LinkComponentProviderProps,
+  LinkTo,
+} from './components/_internal/link-component';
 export { default as Accordion } from './components/Accordion/Accordion';
 export { default as Alert } from './components/Alert/Alert';
 export { default as AlertDialog } from './components/AlertDialog/AlertDialog';
