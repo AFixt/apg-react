@@ -6,26 +6,28 @@
   background-color: var(--apg-color-black);
 }
 
+.carousel .slides {
+  display: flex;
+  transition: transform var(--apg-transition-slow);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ *
+ * Only the transition goes. The transform is what positions the active
+ * slide, so neutralising it would collapse the carousel rather than calm it —
+ * the slide change simply becomes instant.
+ */
 @media screen and (prefers-reduced-motion: reduce) {
   .carousel .slides {
     transition: none;
   }
 }
 
-.carousel .slides {
-  display: flex;
-  transition: transform var(--apg-transition-slow);
-}
-
 .carousel .slides > div {
   flex: 0 0 100%;
   overflow: hidden;
-}
-
-@media screen and (prefers-reduced-motion: reduce) {
-  .carousel-control {
-    transition: none;
-  }
 }
 
 .carousel-control {
@@ -42,6 +44,16 @@
   transition:
     background-color var(--apg-transition-fast),
     box-shadow var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .carousel-control {
+    transition: none;
+  }
 }
 
 .carousel-control:hover {
@@ -123,12 +135,6 @@
   z-index: calc(var(--apg-z-dropdown) + 1);
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .carousel .slide-selectors button {
-    transition: none;
-  }
-}
-
 .carousel .slide-selectors button {
   position: static;
   transform: none;
@@ -147,6 +153,16 @@
   transition:
     opacity var(--apg-transition-fast),
     background-color var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .carousel .slide-selectors button {
+    transition: none;
+  }
 }
 
 .carousel .slide-selectors button:hover,

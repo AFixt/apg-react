@@ -17,12 +17,6 @@
   position: relative;
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .progressbar-fill {
-    transition: none;
-  }
-}
-
 .progressbar-fill {
   height: 100%;
   background-color: var(--apg-color-primary);
@@ -30,11 +24,15 @@
   transition: width 0.3s ease;
 }
 
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ *
+ * The value change lands immediately rather than sweeping across.
+ */
 @media screen and (prefers-reduced-motion: reduce) {
-  .progressbar.is-indeterminate .progressbar-fill {
-    width: 40%;
-    border-radius: var(--apg-radius-md);
-    animation: none;
+  .progressbar-fill {
+    transition: none;
   }
 }
 
@@ -42,6 +40,20 @@
   width: 40%;
   border-radius: var(--apg-radius-md);
   animation: progressbar-indeterminate 1.2s ease-in-out infinite;
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ *
+ * An indeterminate bar loops forever, which is exactly what reduced motion is
+ * asking to stop, so the animation is dropped outright and the bar rests at
+ * the static width the rule above gives it.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .progressbar.is-indeterminate .progressbar-fill {
+    animation: none;
+  }
 }
 
 @keyframes progressbar-indeterminate {

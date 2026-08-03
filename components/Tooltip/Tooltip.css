@@ -3,12 +3,6 @@
   display: inline-block;
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .tooltip-text {
-    transition: none;
-  }
-}
-
 .tooltip-text {
   position: absolute;
   background-color: var(--apg-color-black);
@@ -23,6 +17,16 @@
   font-size: var(--apg-font-size-sm);
   line-height: var(--apg-line-height-normal);
   box-shadow: var(--apg-shadow-sm);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .tooltip-text {
+    transition: none;
+  }
 }
 
 .tooltip-container:hover .tooltip-text,

@@ -1,9 +1,3 @@
-@media screen and (prefers-reduced-motion: reduce) {
-  .button {
-    transition: none;
-  }
-}
-
 .button {
   display: inline-block;
   font-family: var(--apg-font-family);
@@ -26,6 +20,16 @@
     background-color var(--apg-transition-fast),
     border-color var(--apg-transition-fast),
     box-shadow var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
 }
 
 .button:hover {

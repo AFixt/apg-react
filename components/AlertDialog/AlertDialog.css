@@ -36,12 +36,6 @@
   margin-bottom: var(--apg-space-lg);
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .dialog-content button {
-    transition: none;
-  }
-}
-
 .dialog-content button {
   display: inline-block;
   padding: 0.375rem 0.75rem;
@@ -59,6 +53,16 @@
     background-color var(--apg-transition-fast),
     border-color var(--apg-transition-fast),
     box-shadow var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .dialog-content button {
+    transition: none;
+  }
 }
 
 .dialog-content button:hover {

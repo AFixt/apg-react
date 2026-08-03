@@ -16,12 +16,6 @@
   align-items: stretch;
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .combobox-input {
-    transition: none;
-  }
-}
-
 .combobox-input {
   flex: 1 1 auto;
   padding: 0.375rem 2.25rem 0.375rem 0.75rem;
@@ -36,6 +30,16 @@
   transition:
     border-color var(--apg-transition-fast),
     box-shadow var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .combobox-input {
+    transition: none;
+  }
 }
 
 .combobox-input:focus,

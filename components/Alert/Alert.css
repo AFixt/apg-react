@@ -32,12 +32,6 @@
   color: var(--apg-color-error-text);
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .alert-close {
-    transition: none;
-  }
-}
-
 .alert-close {
   flex: 0 0 auto;
   display: inline-flex;
@@ -57,6 +51,16 @@
   transition:
     opacity var(--apg-transition-fast),
     box-shadow var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .alert-close {
+    transition: none;
+  }
 }
 
 .alert-close:hover,

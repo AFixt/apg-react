@@ -26,12 +26,6 @@
   border-radius: var(--apg-radius-sm);
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .radio-indicator {
-    transition: none;
-  }
-}
-
 .radio-indicator {
   display: inline-block;
   width: 1rem;
@@ -48,8 +42,12 @@
     box-shadow var(--apg-transition-fast);
 }
 
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
 @media screen and (prefers-reduced-motion: reduce) {
-  .radio-indicator::after {
+  .radio-indicator {
     transition: none;
   }
 }
@@ -65,6 +63,19 @@
   background-color: var(--apg-color-white);
   transform: translate(-50%, -50%) scale(0);
   transition: transform var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ *
+ * Only the transition goes: the scale is what shows the radio as checked,
+ * so it still has to apply, just without growing into place.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .radio-indicator::after {
+    transition: none;
+  }
 }
 
 .radio:hover .radio-indicator,

@@ -58,15 +58,22 @@
   }
 }
 
+.disclosure-control .indicator {
+  display: inline-block;
+  transition: transform var(--apg-transition-normal);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ *
+ * Only the transition goes: the rotation encodes expanded/collapsed state,
+ * so it still has to happen, just without the sweep.
+ */
 @media screen and (prefers-reduced-motion: reduce) {
   .disclosure-control .indicator {
     transition: none;
   }
-}
-
-.disclosure-control .indicator {
-  display: inline-block;
-  transition: transform var(--apg-transition-normal);
 }
 
 .disclosure-control[aria-expanded='true'] .indicator {

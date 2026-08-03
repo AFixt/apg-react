@@ -1,9 +1,3 @@
-@media screen and (prefers-reduced-motion: reduce) {
-  .modal-dialog-backdrop {
-    transition: none;
-  }
-}
-
 .modal-dialog-backdrop {
   position: fixed;
   top: 0;
@@ -19,14 +13,18 @@
   transition: opacity var(--apg-transition-slow);
 }
 
-.modal-dialog-backdrop.open {
-  opacity: 100%;
-}
-
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
 @media screen and (prefers-reduced-motion: reduce) {
-  .modal-dialog {
+  .modal-dialog-backdrop {
     transition: none;
   }
+}
+
+.modal-dialog-backdrop.open {
+  opacity: 100%;
 }
 
 .modal-dialog {
@@ -43,14 +41,22 @@
   transition: transform var(--apg-transition-slow);
 }
 
-.modal-dialog.open {
-  transform: translateY(0);
-}
-
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ *
+ * Only the transition goes. The transform is the entry offset that `.open`
+ * cancels, so the dialog still lands in place — it just arrives there
+ * immediately instead of sliding down.
+ */
 @media screen and (prefers-reduced-motion: reduce) {
-  .modal-dialog-close {
+  .modal-dialog {
     transition: none;
   }
+}
+
+.modal-dialog.open {
+  transform: translateY(0);
 }
 
 .modal-dialog-close {
@@ -73,6 +79,16 @@
   transition:
     opacity var(--apg-transition-fast),
     box-shadow var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .modal-dialog-close {
+    transition: none;
+  }
 }
 
 .modal-dialog-close:hover {

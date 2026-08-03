@@ -28,12 +28,6 @@
   z-index: 1;
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .multi-slider-thumb {
-    transition: none;
-  }
-}
-
 .multi-slider-thumb {
   position: absolute;
   top: 50%;
@@ -49,6 +43,16 @@
   transition:
     box-shadow var(--apg-transition-fast),
     background-color var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .multi-slider-thumb {
+    transition: none;
+  }
 }
 
 .multi-slider-thumb:hover {

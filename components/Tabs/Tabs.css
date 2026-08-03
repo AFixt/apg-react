@@ -23,12 +23,6 @@
 
 /* ---- Individual tab button ---- */
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .tab {
-    transition: none;
-  }
-}
-
 .tab {
   display: block;
   padding: 0.5rem 1rem;
@@ -48,6 +42,16 @@
     color var(--apg-transition-fast),
     background-color var(--apg-transition-fast),
     border-color var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .tab {
+    transition: none;
+  }
 }
 
 .tab:hover,

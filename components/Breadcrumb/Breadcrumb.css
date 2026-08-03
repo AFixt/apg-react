@@ -25,16 +25,20 @@
   color: var(--apg-color-gray-500);
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .breadcrumb-item a {
-    transition: none;
-  }
-}
-
 .breadcrumb-item a {
   color: var(--apg-color-primary);
   text-decoration: none;
   transition: color var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .breadcrumb-item a {
+    transition: none;
+  }
 }
 
 .breadcrumb-item a:hover,

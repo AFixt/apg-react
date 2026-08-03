@@ -32,12 +32,6 @@
   background-color: var(--apg-color-gray-100);
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .grid-cell {
-    transition: none;
-  }
-}
-
 .grid-cell {
   display: table-cell;
   padding: var(--apg-space-sm) var(--apg-space-lg);
@@ -46,6 +40,16 @@
   transition:
     background-color var(--apg-transition-fast),
     box-shadow var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .grid-cell {
+    transition: none;
+  }
 }
 
 .grid-header-row .grid-cell {

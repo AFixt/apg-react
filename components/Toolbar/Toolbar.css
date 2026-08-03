@@ -13,28 +13,18 @@
   align-items: stretch;
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .toolbar > button,
-  .toolbar > [role='button'] {
-    transition: none;
-  }
-}
-
-@media screen and (prefers-reduced-motion: reduce) {
-  .toolbar > button,
-  .toolbar > [role='button'] {
-    padding: var(--apg-space-xs) var(--apg-space-md);
-    background-color: transparent;
-    color: var(--apg-color-gray-800);
-    border: var(--apg-border-width) solid transparent;
-    border-radius: var(--apg-radius-sm);
-    cursor: pointer;
-    font-size: var(--apg-font-size-sm);
-    font-family: var(--apg-font-family);
-    transition: none;
-  }
-}
-
+/*
+ * a11y/media-prefers-reduced-motion does not recognise the reduced-motion block
+ * below as belonging to this rule — alone among the component stylesheets,
+ * which all pair the two the same way. Left to fix it, the rule duplicates this
+ * entire rule with `transition: none` and inserts the copy *above* it, where a
+ * media query adds no specificity and so loses on source order. That inert
+ * duplicate is how this bug entered the codebase, and lint-staged runs
+ * `stylelint --fix` on every commit, so without this the fix would not survive
+ * being committed. __tests__/reducedMotion.test.js enforces the pairing that
+ * this suppression opts out of.
+ */
+/* stylelint-disable-next-line a11y/media-prefers-reduced-motion */
 .toolbar > button,
 .toolbar > [role='button'] {
   padding: var(--apg-space-xs) var(--apg-space-md);
@@ -49,6 +39,17 @@
     background-color var(--apg-transition-fast),
     color var(--apg-transition-fast),
     box-shadow var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .toolbar > button,
+  .toolbar > [role='button'] {
+    transition: none;
+  }
 }
 
 .toolbar > button:hover,

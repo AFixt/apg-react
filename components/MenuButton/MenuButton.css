@@ -3,12 +3,6 @@
   display: inline-block;
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .menu-button {
-    transition: none;
-  }
-}
-
 .menu-button {
   display: inline-flex;
   align-items: center;
@@ -25,6 +19,16 @@
     background-color var(--apg-transition-fast),
     border-color var(--apg-transition-fast),
     box-shadow var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .menu-button {
+    transition: none;
+  }
 }
 
 .menu-button:hover {

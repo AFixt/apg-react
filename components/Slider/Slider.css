@@ -17,12 +17,6 @@
   box-shadow: var(--apg-shadow-inset);
 }
 
-@media screen and (prefers-reduced-motion: reduce) {
-  .slider-container [role='slider'] {
-    transition: none;
-  }
-}
-
 .slider-container [role='slider'] {
   position: absolute;
   top: 50%;
@@ -38,6 +32,16 @@
   transition:
     background-color var(--apg-transition-fast),
     box-shadow var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .slider-container [role='slider'] {
+    transition: none;
+  }
 }
 
 .slider-container [role='slider']:hover {
