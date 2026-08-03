@@ -5,7 +5,7 @@ All notable changes to this project are documented in this file.
 This project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0] — 2026-07-30
+## [2.0.0] — 2026-08-03
 
 ### Fixed
 
@@ -51,6 +51,34 @@ This project adheres to
   intended `--apg-focus-ring` never rendered. Restoring the match required a
   class rather than an explicit `role="link"`, which was removed as redundant
   ARIA in 1.2.0 and stays removed.
+- **Focus indicators are visible again in forced-colors mode.** 25 of the 26
+  component stylesheets removed the focus outline and drew a `box-shadow` ring
+  instead. Forced colors (Windows High Contrast Mode) suppresses `box-shadow`
+  outright, and the `outline: none` beside it had already removed the UA ring
+  that would have covered for it — so focusing any of these components in WHCM
+  showed no indicator at all. A WCAG 2.2 2.4.7 Focus Visible (A) failure.
+  `MenuButton`'s menu items and `Menubar`'s were worse still: they carry no
+  focus shadow at all and signalled focus purely by swapping background and text
+  colour, which forced colors also overrides. Every one of the 33 outline
+  removals now has a `@media (forced-colors: active)` rule restoring a real
+  outline.
+- **`Article`'s styles now actually apply.** Every rule in `Article.css` targets
+  a `.article` class and the component rendered a bare `<article>` with no
+  className, so the whole stylesheet was inert — as was the `.feed .article`
+  half of `Feed.css`, meaning articles inside a `Feed` rendered with no border,
+  padding, background or shadow. Same defect `Link` had, above. The component
+  now renders the class.
+- **Reduced-motion preferences are now honoured.** Every
+  `@media (prefers-reduced-motion: reduce)` block in the library was written
+  immediately above the rule it was meant to override. A media query adds no
+  specificity, so at equal specificity the later rule won on source order and
+  the opt-out did nothing: users who asked for reduced motion still got every
+  transition, and the indeterminate `Progressbar` kept looping. All 33 blocks
+  now follow the rules they override. Transitions on transforms that encode
+  state — the `Carousel`'s slide position, the `Disclosure` chevron, the
+  `ModalDialog` entry offset, the `RadioGroup` dot, the `Switch` knob — are
+  suppressed without removing the transform itself, so those state changes
+  become instant rather than breaking.
 
 ### Added
 
@@ -70,6 +98,13 @@ This project adheres to
   so passing one no longer needs to restate the component's own styles. Anyone
   whose stylesheet targets `a[role='link']` to override `Link` was overriding
   nothing — those rules never matched either — and should move to `.link`.
+- **`Article` renders with an `article` class**, for the same reason and with
+  the same consequence: `.article` is the supported hook for overriding its
+  styles. Note that this makes `Article.css` and the `.feed .article` rules in
+  `Feed.css` take effect for the first time, so articles will look different —
+  they gain the border, padding, background and shadow those rules always
+  intended. Anyone who styled `Article` by element selector to compensate for
+  the missing styling should re-check their overrides.
 - **Breaking for router users**: `Link` and `Breadcrumb` no longer use React
   Router automatically. Wrap your app in
   `<LinkComponentProvider value={RouterLink}>` (or pass `linkComponent`) to keep
