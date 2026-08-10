@@ -9,6 +9,10 @@ concurrency:
   group: security-${{ github.ref }}
   cancel-in-progress: true
 
+# Least privilege by default. The codeql job declares its own wider block.
+permissions:
+  contents: read
+
 jobs:
   codeql:
     name: CodeQL

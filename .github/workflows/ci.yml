@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main, develop]
 
+# Least privilege by default. Jobs needing more (publish-storybook) declare it
+# themselves; a job-level block replaces this one entirely.
+permissions:
+  contents: read
+
 jobs:
   secrets:
     name: TruffleHog (verified secrets)
