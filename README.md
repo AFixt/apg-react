@@ -261,9 +261,18 @@ bash scripts/bootstrap.sh
 
 npm install
 npm run storybook     # http://localhost:6006
+npm run serve         # http://localhost:8080/demos/index.html
 npm test
 npm run build         # produces dist/
 ```
+
+### Demo server
+
+`npm run serve` starts the static demo pages in [`demos/`](demos/README.md) —
+one page per APG pattern, each rendering this library's own component. They are
+the target that the `AFixt/apg-qa` use-case suite and the APG test-runner
+repositories assert against, so a demo page never reimplements the pattern it
+demonstrates.
 
 ### Quality gates
 

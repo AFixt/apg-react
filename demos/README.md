@@ -7,14 +7,9 @@ own components.
 npm run serve   # http://localhost:8080/demos/index.html
 ```
 
-These pages are the target that the [`apg-qa`](https://github.com/AFixt/apg-qa)
-use-case suite and the six APG test-runner repositories
-([apg-nightwatch](https://github.com/AFixt/apg-nightwatch),
-[apg-jasmine](https://github.com/AFixt/apg-jasmine),
-[apg-jest](https://github.com/AFixt/apg-jest),
-[apg-cypress](https://github.com/AFixt/apg-cypress),
-[apg-mocha](https://github.com/AFixt/apg-mocha),
-[apg-playwright](https://github.com/AFixt/apg-playwright)) assert against.
+These pages are the target that the `AFixt/apg-qa` use-case suite and the six
+APG test-runner repositories (`apg-nightwatch`, `apg-jasmine`, `apg-jest`,
+`apg-cypress`, `apg-mocha`, `apg-playwright`) assert against.
 `apg-qa/data/urls.yaml` addresses them as
 `http://localhost:8080/demos/<pattern>.html`.
 
@@ -37,12 +32,11 @@ invoking element when the consumer's own button closes a dialog.
 
 ## Page naming
 
-Slugs follow [`apg-gherkin`](https://github.com/AFixt/apg-gherkin), the
-canonical pattern list, which `apg-qa` already matches: `radiogroup`,
-`treeview`, `treegrid`, `multithumb-slider`, `menu-button`, `modal-dialog`,
-`alertdialog`. Note these differ from this repo's `usecases/` directory names
-(`radio-group`, `tree-view`, `tree-grid`, `slider-multi-thumb`), which address
-Storybook stories rather than these pages.
+Slugs follow `AFixt/apg-gherkin`, the canonical pattern list, which `apg-qa`
+already matches: `radiogroup`, `treeview`, `treegrid`, `multithumb-slider`,
+`menu-button`, `modal-dialog`, `alertdialog`. Note these differ from this repo's
+`usecases/` directory names (`radio-group`, `tree-view`, `tree-grid`,
+`slider-multi-thumb`), which address Storybook stories rather than these pages.
 
 ## Adding a demo
 
