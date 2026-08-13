@@ -41,6 +41,19 @@ describe('Article Component (APG-compliant structure)', () => {
     expect(heading).toHaveAttribute('id', `article-title-${article.id}`);
   });
 
+  /*
+   * role="article" does not take its name from contents, so the heading id
+   * above is only useful if the <article> actually references it. The APG
+   * Feed pattern requires each article to be labelled by a distinguishing
+   * element — without this, every feed stop announces as an unnamed article.
+   */
+  test('article is labelled by its title (accessible name)', () => {
+    render(<Article article={article} ariaPosinset={1} ariaSetsize={5} />);
+    const articleEl = screen.getByRole('article');
+    expect(articleEl).toHaveAttribute('aria-labelledby', `article-title-${article.id}`);
+    expect(articleEl).toHaveAccessibleName(article.title);
+  });
+
   test('exposes aria-posinset and aria-setsize for Feed pattern consumption', () => {
     const { container } = render(<Article article={article} ariaPosinset={3} ariaSetsize={10} />);
     const articleEl = container.querySelector('article');

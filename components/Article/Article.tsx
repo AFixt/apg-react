@@ -37,6 +37,7 @@ const Article = forwardRef<HTMLElement, ArticleProps>(
         ref={ref}
         className="article"
         tabIndex={-1}
+        aria-labelledby={`article-title-${article.id}`}
         aria-posinset={ariaPosinset}
         aria-setsize={ariaSetsize}
       >
