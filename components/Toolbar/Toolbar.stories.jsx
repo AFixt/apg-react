@@ -8,15 +8,17 @@ export default {
   tags: ['autodocs'],
 };
 
+const formattingButtons = () => [
+  <button key="b">Bold</button>,
+  <button key="i">Italic</button>,
+  <button key="u">Underline</button>,
+  <button key="l">Link</button>,
+];
+
 export const Default = {
   args: {
     label: 'Formatting',
-    children: [
-      <button key="b">Bold</button>,
-      <button key="i">Italic</button>,
-      <button key="u">Underline</button>,
-      <button key="l">Link</button>,
-    ],
+    children: formattingButtons(),
   },
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
@@ -37,5 +39,15 @@ export const Default = {
       await userEvent.keyboard('{End}');
       await expect(buttons[buttons.length - 1]).toHaveFocus();
     });
+  },
+};
+
+// Render-only vertical variant for use case automation. No play function so
+// the story loads in its initial render state.
+export const VerticalBare = {
+  args: {
+    label: 'Formatting',
+    orientation: 'vertical',
+    children: formattingButtons(),
   },
 };

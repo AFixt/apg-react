@@ -1,0 +1,20 @@
+id: slider-multi-thumb-page-keys
+title: "SliderMultiThumb — PageUp and PageDown move the focused thumb by 10× step"
+type: positive
+description: "PageUp increments the focused thumb by ten times the configured step and
+  PageDown decrements it by the same amount."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-slidermultithumb--price-range-bare&viewMode=story"
+
+expected_result: "Low aria-valuenow goes 20 → 30 on PageUp and back to 20 on PageDown."
+
+steps:
+  - locate: role "slider" name "Minimum price"
+  - focus: role "slider" name "Minimum price"
+  - keyboard: "PageUp"
+  - verify: role "slider" name "Minimum price" attribute "aria-valuenow" is "30"
+  - keyboard: "PageDown"
+  - verify: role "slider" name "Minimum price" attribute "aria-valuenow" is "20"

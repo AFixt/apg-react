@@ -1,0 +1,20 @@
+id: feed-pagedown-next-article
+title: "Feed — PageDown moves focus to the next article"
+type: positive
+description: "Per the APG Feed pattern, PageDown moves focus from the article that
+  contains focus to the next article in the feed."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+  - "The fetchArticles fixture resolves with three articles"
+
+start_location: "http://localhost:6006/iframe.html?id=components-feed--default&viewMode=story"
+
+expected_result: 'Focus moves from "Article 1" to "Article 2".'
+
+steps:
+  - wait_for: heading "Article 1"
+  - locate: role "article" name "Article 1"
+  - focus: role "article" name "Article 1"
+  - keyboard: "PageDown"
+  - verify: focus role "article" name "Article 2"

@@ -1,0 +1,24 @@
+id: toolbar-vertical-arrow-keys
+title: "Toolbar — In vertical orientation, ArrowDown and ArrowUp move between items"
+type: positive
+description: 'When configured with orientation="vertical", the toolbar advertises
+  aria-orientation="vertical" and ArrowDown / ArrowUp take the place of ArrowRight /
+  ArrowLeft for moving focus between items.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-toolbar--vertical-bare&viewMode=story"
+
+expected_result: 'The toolbar is vertical; ArrowDown moves focus from "Bold" to "Italic"
+  and ArrowUp returns it to "Bold".'
+
+steps:
+  - locate: role "toolbar" name "Formatting"
+  - verify: role "toolbar" name "Formatting" attribute "aria-orientation" is "vertical"
+  - locate: button "Bold"
+  - focus: button "Bold"
+  - keyboard: "ArrowDown"
+  - verify: focus button "Italic"
+  - keyboard: "ArrowUp"
+  - verify: focus button "Bold"

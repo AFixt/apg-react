@@ -1,0 +1,20 @@
+id: menubar-home-end
+title: "Menubar — End and Home jump to the last and first menubar item"
+type: positive
+description: "With focus on a menubar item, End moves focus to the last item in the
+  menubar and Home returns it to the first."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubar--default&viewMode=story"
+
+expected_result: 'End lands on "View" (last item), Home returns to "File" (first item).'
+
+steps:
+  - locate: menuitem "File"
+  - focus: menuitem "File"
+  - keyboard: "End"
+  - verify: focus menuitem "View"
+  - keyboard: "Home"
+  - verify: focus menuitem "File"

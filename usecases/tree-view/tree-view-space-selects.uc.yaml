@@ -1,0 +1,18 @@
+id: tree-view-space-selects
+title: "TreeView — Space selects the focused treeitem"
+type: positive
+description: 'Pressing Space on a focused treeitem sets aria-selected="true" on it,
+  exactly like Enter.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-treeview--default-bare&viewMode=story"
+
+expected_result: 'The README.md treeitem reports aria-selected="true" after Space.'
+
+steps:
+  - locate: role "treeitem" name "README.md"
+  - focus: role "treeitem" name "README.md"
+  - keyboard: "Space"
+  - verify: role "treeitem" name "README.md" attribute "aria-selected" is "true"
