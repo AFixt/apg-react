@@ -1,13 +1,40 @@
 # OSV-Scanner configuration for the PR-time security workflow (#127).
 #
-# devDependencies never ship to consumers of this library, and the repo's
-# vulnerability gate for the published surface is `npm audit --omit=dev
-# --audit-level=high` (ci.yml). Scanning the dev group produced 60+ findings
-# with no path into the published package, which kept the job permanently red
-# and therefore signal-free. Excluding the dev group makes the job gate on
-# what matters: any advisory against a production dependency fails the PR
-# that introduces it.
+# READ THIS BEFORE TRUSTING A GREEN OSV-SCANNER CHECK.
+#
+# This exclusion currently silences the ENTIRE dependency tree, not merely a
+# dev-only subset of it. `package.json` declares no `dependencies` at all —
+# react/react-dom are peers — so all 1668 entries in package-lock.json are
+# marked `dev`, and excluding the dev group leaves nothing for the scanner to
+# look at:
+#
+#   $ osv-scanner --lockfile=package-lock.json
+#   Filtered 1378 ignored package/s from the scan.
+#   No issues found
+#
+# The job therefore cannot fail today. It is a placeholder that will start
+# gating the moment this package gains a real production dependency, not a
+# check that is protecting anything right now.
+#
+# The usual counter-argument — "npm audit in ci.yml covers the published
+# surface" — does not apply here either, for the same reason:
+#
+#   $ npm audit --omit=dev --audit-level=high   ->  found 0 vulnerabilities
+#   $ npm audit                                 ->  27 vulnerabilities
+#                                                   (1 critical, 17 high)
+#
+# Both production gates are empty because there is no production tree. What
+# the 27 findings actually cover is the build toolchain — vite, svgo, postcss,
+# rollup and friends — which does not ship to consumers but does produce
+# dist/, so a compromise there reaches them anyway. Tracked in #137, where
+# nearly every advisory has a fixed version already available.
+#
+# Why exclude at all, then: scanning the dev group produced 65 findings and
+# kept the job permanently red, and a gate nobody can ever turn green is a
+# gate everybody learns to ignore. Excluding is the lesser evil *while #137 is
+# open* — it is not the end state. When #137 lands, delete this file and let
+# the scanner see the whole tree.
 [[PackageOverrides]]
 group = "dev"
 ignore = true
-reason = "devDependencies are not part of the published package; the production tree is gated separately by npm audit in ci.yml"
+reason = "temporary: see #137. Excludes the entire tree, since this package has no production dependencies"
