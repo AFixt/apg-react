@@ -35,10 +35,14 @@ describe('Article Component (APG-compliant structure)', () => {
     expect(heading).toHaveTextContent(article.title);
   });
 
-  test('heading has a stable id matching article id for labelling', () => {
+  test('heading has an id that traces back to the article id', () => {
     render(<Article article={article} ariaPosinset={1} ariaSetsize={5} />);
     const heading = screen.getByRole('heading', { level: 2 });
-    expect(heading).toHaveAttribute('id', `article-title-${article.id}`);
+    const id = heading.getAttribute('id');
+    expect(id).toBeTruthy();
+    // Instance-scoped via useId, so the exact string is not a contract — but
+    // it stays greppable back to the article it names.
+    expect(id.endsWith(`-${article.id}`)).toBe(true);
   });
 
   /*
@@ -50,8 +54,31 @@ describe('Article Component (APG-compliant structure)', () => {
   test('article is labelled by its title (accessible name)', () => {
     render(<Article article={article} ariaPosinset={1} ariaSetsize={5} />);
     const articleEl = screen.getByRole('article');
-    expect(articleEl).toHaveAttribute('aria-labelledby', `article-title-${article.id}`);
+    const heading = screen.getByRole('heading', { level: 2 });
+    expect(articleEl).toHaveAttribute('aria-labelledby', heading.getAttribute('id'));
     expect(articleEl).toHaveAccessibleName(article.title);
+  });
+
+  /*
+   * `article.id` is unique only within a single feed. Before the id was scoped
+   * to the component instance, two articles sharing an id emitted duplicate
+   * heading ids, and aria-labelledby resolves a duplicate to the first match
+   * in document order — so the second article silently announced the first
+   * one's title. A wrong name is worse than no name.
+   */
+  test('two articles sharing an id still get distinct labels', () => {
+    const other = { id: 'a1', title: 'A Different Title', content: 'Other body.' };
+    render(
+      <>
+        <Article article={article} ariaPosinset={1} ariaSetsize={2} />
+        <Article article={other} ariaPosinset={2} ariaSetsize={2} />
+      </>,
+    );
+
+    const [first, second] = screen.getAllByRole('article');
+    expect(first.getAttribute('aria-labelledby')).not.toBe(second.getAttribute('aria-labelledby'));
+    expect(first).toHaveAccessibleName(article.title);
+    expect(second).toHaveAccessibleName(other.title);
   });
 
   test('exposes aria-posinset and aria-setsize for Feed pattern consumption', () => {
