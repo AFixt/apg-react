@@ -1,16 +1,26 @@
-name: Docs (scheduled link check)
+name: Docs
 
+# Scheduled runs are banned repo-wide (#127): a timer-triggered failure is
+# attributable to nobody and gets ignored. The link check runs on every PR
+# that touches Markdown instead, where a broken link blocks the change that
+# introduced it. workflow_dispatch remains for manual full runs.
 on:
-  schedule:
-    - cron: "0 7 * * 1" # Mondays 07:00 UTC
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "**/*.md"
+      - "docs/**"
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   links:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Lychee link check
-        uses: lycheeverse/lychee-action@v2
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2
         with:
           args: --no-progress --verbose '**/*.md'

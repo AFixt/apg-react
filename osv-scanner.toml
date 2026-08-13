@@ -1,0 +1,13 @@
+# OSV-Scanner configuration for the PR-time security workflow (#127).
+#
+# devDependencies never ship to consumers of this library, and the repo's
+# vulnerability gate for the published surface is `npm audit --omit=dev
+# --audit-level=high` (ci.yml). Scanning the dev group produced 60+ findings
+# with no path into the published package, which kept the job permanently red
+# and therefore signal-free. Excluding the dev group makes the job gate on
+# what matters: any advisory against a production dependency fails the PR
+# that introduces it.
+[[PackageOverrides]]
+group = "dev"
+ignore = true
+reason = "devDependencies are not part of the published package; the production tree is gated separately by npm audit in ci.yml"
