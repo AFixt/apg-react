@@ -114,6 +114,24 @@ describe('NonModalDialog', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
+  it('leaves Escape alone once a child has handled it', () => {
+    const onClose = jest.fn();
+    render(
+      <NonModalDialog isOpen onClose={onClose} ariaLabelledby="prefs-title">
+        <h2 id="prefs-title">Preferences</h2>
+        {/* Stands in for a Combobox closing its listbox on Escape. */}
+        <input aria-label="Filter" onKeyDown={(e) => e.key === 'Escape' && e.preventDefault()} />
+      </NonModalDialog>,
+    );
+
+    fireEvent.keyDown(screen.getByLabelText('Filter'), { key: 'Escape' });
+
+    // Without the defaultPrevented guard the dialog closes too, so one Escape
+    // dismisses both the child's popup and the dialog around it.
+    expect(onClose).not.toHaveBeenCalled();
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
   it('renders no blocking backdrop', () => {
     const { container } = render(<DialogHarness initialOpen ariaLabelledby="prefs-title" />);
     expect(container.querySelector('.modal-dialog-backdrop')).toBeNull();

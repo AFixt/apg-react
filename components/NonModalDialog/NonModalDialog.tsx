@@ -85,8 +85,11 @@ const NonModalDialog: React.FC<NonModalDialogProps> = ({
   // dialog does not own the page's key events — focus may legitimately be
   // elsewhere while it stays open, and a document-level handler would then
   // close it from an unrelated context.
+  // A child that already acted on Escape — a Combobox dismissing its listbox,
+  // say — marks the event handled on its way up. Closing the dialog as well
+  // would collapse two dismissals into one keypress, so defer to the child.
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
+    if (e.key === 'Escape' && !e.defaultPrevented) {
       e.stopPropagation();
       closeAndRestoreFocus();
     }
