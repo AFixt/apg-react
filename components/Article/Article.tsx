@@ -32,11 +32,18 @@ const Article = forwardRef<HTMLElement, ArticleProps>(
     // stylesheet has to be given something to match. Without this class every
     // rule in Article.css was inert — as was every `.feed .article` rule in
     // Feed.css, which has always been written against it.
+    //
+    // aria-labelledby points at the <h2> below. `article` is not a
+    // name-from-content role, so the heading does not name this element on its
+    // own — without the reference every article is announced unlabelled, which
+    // defeats the skim-reading the feed pattern exists to support. The APG's
+    // Feed pattern requires it.
     return (
       <article
         ref={ref}
         className="article"
         tabIndex={-1}
+        aria-labelledby={`article-title-${article.id}`}
         aria-posinset={ariaPosinset}
         aria-setsize={ariaSetsize}
       >
