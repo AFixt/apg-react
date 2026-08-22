@@ -15,6 +15,8 @@
 # production
 /build
 /dist
+# Build output of `npm run demos:build` (vite.demos.config.mjs outDir).
+/demos-dist
 /storybook-static
 
 # misc

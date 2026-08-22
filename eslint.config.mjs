@@ -19,6 +19,9 @@ export default tseslint.config(
   {
     ignores: [
       'dist/**',
+      // Build output of `npm run demos:build`. Minified bundles, so linting it
+      // yields hundreds of meaningless errors and blocks the pre-push gate.
+      'demos-dist/**',
       'build/**',
       'coverage/**',
       'storybook-static/**',
