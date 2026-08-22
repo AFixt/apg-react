@@ -1,8 +1,15 @@
-name: Docs (scheduled link check)
+name: Docs
 
+# Scheduled runs are banned repo-wide (#127): a timer-triggered failure is
+# attributable to nobody and gets ignored. The link check runs on every PR
+# that touches Markdown instead, where a broken link blocks the change that
+# introduced it. workflow_dispatch remains for manual full runs.
 on:
-  schedule:
-    - cron: "0 7 * * 1" # Mondays 07:00 UTC
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "**/*.md"
+      - "docs/**"
   workflow_dispatch:
 
 permissions:

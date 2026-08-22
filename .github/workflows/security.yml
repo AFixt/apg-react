@@ -1,8 +1,18 @@
-name: Security (scheduled)
+name: Security
 
+# Scheduled runs are banned repo-wide (#127): a timer-triggered failure is
+# attributable to nobody and gets ignored. These scans run on every PR (and
+# on push to the integration branches), where a new finding blocks the change
+# that introduced it. workflow_dispatch remains for manual runs.
+#
+# The former npm-audit job is gone from this file: the identical command
+# (`npm audit --omit=dev --audit-level=high`) already gates every PR as the
+# "npm audit (production, high+)" step of ci.yml.
 on:
-  schedule:
-    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
   workflow_dispatch:
 
 concurrency:
@@ -29,7 +39,11 @@ jobs:
       - uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
 
   osv-scanner:
-    name: OSV-Scanner
+    # The name says "not gating yet" on purpose. This package declares no
+    # production dependencies, so osv-scanner.toml's dev exclusion currently
+    # covers the entire tree and the job cannot fail. A green tick here is not
+    # evidence of anything until #137 lands and the exclusion comes off.
+    name: OSV-Scanner (production deps — none yet, see #137)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
@@ -39,7 +53,9 @@ jobs:
             https://github.com/google/osv-scanner/releases/latest/download/osv-scanner_linux_amd64
           chmod +x /tmp/osv-scanner
           sudo mv /tmp/osv-scanner /usr/local/bin/osv-scanner
-      - run: osv-scanner --lockfile=package-lock.json
+      # Dev-only advisories are excluded via osv-scanner.toml; production
+      # advisories gate the PR that introduces them.
+      - run: osv-scanner --config=osv-scanner.toml --lockfile=package-lock.json
 
   semgrep:
     name: Semgrep (OWASP Top 10)
@@ -58,15 +74,3 @@ jobs:
             --config=p/secrets \
             --error \
             --metrics=off
-
-  npm-audit:
-    name: npm audit (production)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-      - run: npm ci
-      - run: npm audit --omit=dev --audit-level=high
