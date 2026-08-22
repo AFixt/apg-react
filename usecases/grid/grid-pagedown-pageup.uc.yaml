@@ -1,0 +1,21 @@
+id: grid-pagedown-pageup
+title: "Grid — PageDown and PageUp jump five rows, clamped at the edges"
+type: positive
+description: "PageDown moves focus five rows down in the same column (clamped to the last
+  row); PageUp moves five rows up (clamped to the first row)."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-grid--default-bare&viewMode=story"
+
+expected_result: 'PageDown from the "Name" header clamps to "Margaret Hamilton" (last
+  row); PageUp clamps back to the "Name" header.'
+
+steps:
+  - locate: role "columnheader" name "Name"
+  - focus: role "columnheader" name "Name"
+  - keyboard: "PageDown"
+  - verify: focus role "gridcell" name "Margaret Hamilton"
+  - keyboard: "PageUp"
+  - verify: focus role "columnheader" name "Name"

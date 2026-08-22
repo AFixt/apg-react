@@ -1,0 +1,21 @@
+id: modal-dialog-tab-focus-trap
+title: "ModalDialog — Tab keeps focus inside the open dialog"
+type: positive
+description: "While the modal is open, Tab cycles focus among the dialog's focusable
+  descendants instead of escaping to the page behind it. With a single focusable element
+  (the Close button), repeated Tab presses keep focus on it."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-modaldialog--open-by-default-bare&viewMode=story"
+
+expected_result: 'Focus lands on "Close dialog" and stays inside the dialog on repeated
+  Tab presses.'
+
+steps:
+  - locate: role "dialog"
+  - keyboard: "Tab"
+  - verify: focus button "Close dialog"
+  - keyboard: "Tab"
+  - verify: focus button "Close dialog"

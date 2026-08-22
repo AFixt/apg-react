@@ -1,0 +1,20 @@
+id: menubar-submenu-tab-closes
+title: "Menubar — Tab closes the open submenu"
+type: positive
+description: "Pressing Tab while a submenu is open closes it and lets focus continue past
+  the menubar rather than leaving an orphaned popup on screen."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubar--default&viewMode=story"
+
+expected_result: 'After Tab the File menubar item reports aria-expanded="false".'
+
+steps:
+  - locate: menuitem "File"
+  - focus: menuitem "File"
+  - keyboard: "ArrowDown"
+  - verify: menuitem "File" attribute "aria-expanded" is "true"
+  - keyboard: "Tab"
+  - verify: menuitem "File" attribute "aria-expanded" is "false"
