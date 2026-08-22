@@ -1,0 +1,18 @@
+id: non-modal-dialog-aria-modal-false
+title: 'NonModalDialog — Reports aria-modal="false" explicitly, and aria-labelledby on the dialog'
+type: positive
+description: 'The open dialog sets aria-modal="false" rather than omitting the attribute,
+  so AT and automated checks can tell "non-modal" from "unspecified"; aria-labelledby
+  references the dialog title heading.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-nonmodaldialog--open-by-default-bare&viewMode=story"
+
+expected_result: 'The dialog has aria-modal="false" and aria-labelledby="prefs-title".'
+
+steps:
+  - locate: dialog "Preferences"
+  - verify: dialog "Preferences" attribute "aria-modal" is "false"
+  - verify: dialog "Preferences" attribute "aria-labelledby" is "prefs-title"

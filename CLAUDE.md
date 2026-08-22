@@ -10,7 +10,7 @@ APG-React is a React component library implementing the
 Each component faithfully reproduces the keyboard interaction, ARIA attributes,
 and roles specified by the APG.
 
-The library ships **31 components** with full TypeScript declarations, Storybook
+The library ships **32 components** with full TypeScript declarations, Storybook
 demos, and four test layers (unit, accessibility, stylesheet, E2E).
 
 ## Commands
@@ -58,7 +58,7 @@ No external state libraries are used. CSS is imported directly into TSX files.
 
 ### Entry point and packaging
 
-- `index.ts` — barrel file that re-exports all 31 components by name.
+- `index.ts` — barrel file that re-exports all 32 components by name.
 - `rollup.config.mjs` — uses `@rollup/plugin-typescript` to compile TSX and
   auto-generate `.d.ts` declarations into `dist/`.
 - Produces `dist/index.cjs.js`, `dist/index.esm.js`, `dist/styles.css`, and

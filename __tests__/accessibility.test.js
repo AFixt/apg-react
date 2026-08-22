@@ -45,6 +45,7 @@ import MenuButton from '../components/MenuButton/MenuButton';
 import Menubar from '../components/Menubar/Menubar';
 import Meter from '../components/Meter/Meter';
 import ModalDialog from '../components/ModalDialog/ModalDialog';
+import NonModalDialog from '../components/NonModalDialog/NonModalDialog';
 import Progressbar from '../components/Progressbar/Progressbar';
 import RadioGroup from '../components/RadioGroup/RadioGroup';
 import Slider from '../components/Slider/Slider';
@@ -334,6 +335,30 @@ describe('Accessibility contracts (no external a11y libs)', () => {
       );
       const dlg = screen.getByRole('dialog');
       expect(dlg).toHaveAttribute('aria-modal', 'true');
+      assertAriaReferencesResolve(dlg, ['aria-labelledby', 'aria-describedby']);
+      assertHasAccessibleName(dlg);
+      const close = screen.getByRole('button', { name: 'Close dialog' });
+      expect(getAccessibleName(close)).toBe('Close dialog');
+    });
+  });
+
+  describe('NonModalDialog', () => {
+    test('role=dialog, aria-modal="false" explicitly, labelledby/describedby all resolve', () => {
+      render(
+        <NonModalDialog
+          isOpen
+          onClose={() => {}}
+          ariaLabelledby="nm-title"
+          ariaDescribedby="nm-desc"
+        >
+          <h2 id="nm-title">Title</h2>
+          <p id="nm-desc">Description</p>
+        </NonModalDialog>,
+      );
+      const dlg = screen.getByRole('dialog');
+      // Explicit, not omitted: "non-modal" has to be distinguishable from
+      // "unspecified" for both AT and automated checks.
+      expect(dlg).toHaveAttribute('aria-modal', 'false');
       assertAriaReferencesResolve(dlg, ['aria-labelledby', 'aria-describedby']);
       assertHasAccessibleName(dlg);
       const close = screen.getByRole('button', { name: 'Close dialog' });

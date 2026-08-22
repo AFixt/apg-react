@@ -1,0 +1,19 @@
+id: non-modal-dialog-trigger-opens
+title: "NonModalDialog — Activating the trigger opens the dialog and moves focus into it"
+type: positive
+description: "Activating the trigger button renders the dialog and moves focus to the
+  dialog container, matching the modal pattern's open behaviour."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-nonmodaldialog--default-bare&viewMode=story"
+
+expected_result: 'The "Preferences" dialog is visible and has focus.'
+
+steps:
+  - locate: button "Open preferences"
+  - focus: button "Open preferences"
+  - activate: button "Open preferences"
+  - verify: visible heading "Preferences"
+  - verify: focus dialog "Preferences"

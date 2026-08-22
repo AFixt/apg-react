@@ -1,0 +1,21 @@
+id: non-modal-dialog-escape-closes-restores-focus
+title: "NonModalDialog — Escape inside the dialog closes it and returns focus to the trigger"
+type: positive
+description: "With focus inside the dialog, Escape dismisses it and focus returns to the
+  element that opened it."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-nonmodaldialog--default-bare&viewMode=story"
+
+expected_result: 'The dialog is gone and focus is back on the "Open preferences" trigger.'
+
+steps:
+  - locate: button "Open preferences"
+  - focus: button "Open preferences"
+  - activate: button "Open preferences"
+  - verify: visible heading "Preferences"
+  - keyboard: "Escape"
+  - verify: hidden heading "Preferences"
+  - verify: focus button "Open preferences"

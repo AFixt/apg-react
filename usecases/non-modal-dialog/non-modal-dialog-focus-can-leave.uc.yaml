@@ -1,0 +1,21 @@
+id: non-modal-dialog-focus-can-leave
+title: "NonModalDialog — Focus can move to the page behind without closing the dialog"
+type: positive
+description: "The defining non-modal behaviour: there is no focus trap, so focus may land
+  on a control outside the dialog while the dialog stays open. A modal dialog would pull
+  focus straight back."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-nonmodaldialog--open-by-default-bare&viewMode=story"
+
+expected_result: 'Focus rests on the page-level "Search" field and the dialog is still present.'
+
+steps:
+  - locate: dialog "Preferences"
+  - focus: button "Reset to defaults"
+  - verify: focus button "Reset to defaults"
+  - focus: field "Search"
+  - verify: focus field "Search"
+  - verify: visible heading "Preferences"

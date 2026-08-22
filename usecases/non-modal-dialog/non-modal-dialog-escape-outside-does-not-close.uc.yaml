@@ -1,0 +1,19 @@
+id: non-modal-dialog-escape-outside-does-not-close
+title: "NonModalDialog — Escape pressed outside the dialog leaves it open"
+type: positive
+description: "A non-modal dialog does not own the page's key events. Escape with focus on
+  a page-level control must not dismiss a dialog the user is not interacting with."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-nonmodaldialog--open-by-default-bare&viewMode=story"
+
+expected_result: "The dialog is still present after Escape on the Search field."
+
+steps:
+  - locate: dialog "Preferences"
+  - focus: field "Search"
+  - verify: focus field "Search"
+  - keyboard: "Escape"
+  - verify: visible heading "Preferences"

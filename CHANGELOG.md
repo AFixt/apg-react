@@ -5,6 +5,23 @@ All notable changes to this project are documented in this file.
 This project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **`NonModalDialog` component.** An accessible non-modal dialog:
+  `role="dialog"` with `aria-modal="false"` set explicitly, no focus trap, and
+  no blocking backdrop, so focus can leave the dialog without closing it and the
+  rest of the page stays interactive. Escape closes it only while focus is
+  inside, and focus returns to the invoking element on close.
+
+  The APG publishes no non-modal dialog example — the normative statements live
+  in the About section of the Dialog (Modal) pattern — so this fills a gap that
+  had no reference implementation to test against. `AFixt/apg-usecases`
+  previously pointed its whole `dialog-non-modal/` directory at the **modal**
+  datepicker fixture, where 3 of its 8 use cases failed by construction
+  (AFixt/apg-usecases#69). The `*Bare` stories here are the intended target.
+
 ## [2.0.0] — 2026-08-03
 
 ### Fixed
