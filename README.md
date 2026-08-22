@@ -79,6 +79,7 @@ the official APG documentation.
 | `Menubar`          | [Menu / Menubar](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/)                                              |
 | `Meter`            | [`role=meter`](https://w3c.github.io/aria/#meter)                                                                |
 | `ModalDialog`      | [Dialog (Modal)](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)                                         |
+| `NonModalDialog`   | [Dialog (Modal)](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) — non-modal: no focus trap, no backdrop |
 | `Progressbar`      | [`role=progressbar`](https://w3c.github.io/aria/#progressbar)                                                    |
 | `RadioGroup`       | [Radio Group](https://www.w3.org/WAI/ARIA/apg/patterns/radio/)                                                   |
 | `Slider`           | [Slider](https://www.w3.org/WAI/ARIA/apg/patterns/slider/)                                                       |
@@ -106,10 +107,10 @@ Highlights:
 - **Roving tabindex** where the pattern calls for it: `RadioGroup`, `Toolbar`,
   `Tabs`, `Grid`, `TreeView`, `TreeGrid`, `Menubar`, `Listbox`.
 - **`aria-activedescendant`** for virtual focus: `Combobox`.
-- **Focus return** on dialog dismiss: `ModalDialog`, `AlertDialog`,
-  `MenuButton`, `Menubar`.
-- **Escape** closes popups: `ModalDialog`, `AlertDialog`, `MenuButton`,
-  `Menubar`, `Combobox`, `Tooltip`.
+- **Focus return** on dialog dismiss: `ModalDialog`, `NonModalDialog`,
+  `AlertDialog`, `MenuButton`, `Menubar`.
+- **Escape** closes popups: `ModalDialog`, `NonModalDialog` (only while focus is
+  inside it), `AlertDialog`, `MenuButton`, `Menubar`, `Combobox`, `Tooltip`.
 
 Explore the [live Storybook demo](https://afixt.github.io/apg-react/) or run
 `npm run storybook` locally to see every keyboard path with step-by-step `play`
