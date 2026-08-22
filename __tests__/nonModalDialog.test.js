@@ -132,6 +132,43 @@ describe('NonModalDialog', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
+  it('moves initial focus to initialFocusRef when one is given', () => {
+    const WithInitialFocus = () => {
+      const ref = React.useRef(null);
+      return (
+        <NonModalDialog
+          isOpen
+          onClose={() => {}}
+          ariaLabelledby="prefs-title"
+          initialFocusRef={ref}
+        >
+          <h2 id="prefs-title">Preferences</h2>
+          <button type="button" ref={ref}>
+            Reset to defaults
+          </button>
+        </NonModalDialog>
+      );
+    };
+    render(<WithInitialFocus />);
+    expect(screen.getByRole('button', { name: 'Reset to defaults' })).toHaveFocus();
+    expect(screen.getByRole('dialog')).not.toHaveFocus();
+  });
+
+  it('lets labels.closeDialog rename the close button', () => {
+    render(
+      <NonModalDialog
+        isOpen
+        onClose={() => {}}
+        ariaLabelledby="prefs-title"
+        labels={{ closeDialog: 'Cerrar' }}
+      >
+        <h2 id="prefs-title">Preferences</h2>
+      </NonModalDialog>,
+    );
+    expect(screen.getByRole('button', { name: 'Cerrar' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Close dialog' })).not.toBeInTheDocument();
+  });
+
   it('renders no blocking backdrop', () => {
     const { container } = render(<DialogHarness initialOpen ariaLabelledby="prefs-title" />);
     expect(container.querySelector('.modal-dialog-backdrop')).toBeNull();
