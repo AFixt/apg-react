@@ -42,12 +42,15 @@ const HOST = true;
 // swallows a typo, and because `strictPort` is on, the fallback then surfaces
 // as EADDRINUSE on 8080 — an error pointing nowhere near the actual mistake.
 // Port 0 is honoured too, since it is the usual way to ask for a free port.
+//
+// Decimal digits only. `Number()` would also accept "0x50" (80) and "1e3"
+// (1000), which are integers but not what anyone means by a port number.
 const DEFAULT_PORT = 8080;
 const rawPort = process.env.APG_DEMO_PORT;
 let PORT = DEFAULT_PORT;
 if (rawPort !== undefined && rawPort !== '') {
-  const parsed = Number(rawPort);
-  if (!Number.isInteger(parsed) || parsed < 0 || parsed > 65535) {
+  const parsed = /^\d{1,5}$/.test(rawPort) ? Number(rawPort) : NaN;
+  if (!Number.isInteger(parsed) || parsed > 65535) {
     throw new Error(`APG_DEMO_PORT must be an integer between 0 and 65535; got "${rawPort}"`);
   }
   PORT = parsed;
