@@ -35,10 +35,64 @@ describe('Article Component (APG-compliant structure)', () => {
     expect(heading).toHaveTextContent(article.title);
   });
 
-  test('heading has a stable id matching article id for labelling', () => {
+  test('heading has an id that traces back to the article id', () => {
     render(<Article article={article} ariaPosinset={1} ariaSetsize={5} />);
     const heading = screen.getByRole('heading', { level: 2 });
-    expect(heading).toHaveAttribute('id', `article-title-${article.id}`);
+    const id = heading.getAttribute('id');
+    expect(id).toBeTruthy();
+    // Instance-scoped via useId, so the exact string is not a contract — but
+    // it stays greppable back to the article it names.
+    expect(id.endsWith(`-${article.id}`)).toBe(true);
+  });
+
+  /*
+   * role="article" does not take its name from contents, so the heading id
+   * above is only useful if the <article> actually references it. The APG
+   * Feed pattern requires each article to be labelled by a distinguishing
+   * element — without this, every feed stop announces as an unnamed article.
+   */
+  test('article is labelled by its title (accessible name)', () => {
+    render(<Article article={article} ariaPosinset={1} ariaSetsize={5} />);
+    const articleEl = screen.getByRole('article');
+    const heading = screen.getByRole('heading', { level: 2 });
+    expect(articleEl).toHaveAttribute('aria-labelledby', heading.getAttribute('id'));
+    expect(articleEl).toHaveAccessibleName(article.title);
+  });
+
+  /*
+   * The APG Feed pattern also has each article point aria-describedby at the
+   * element holding its primary content, so a screen reader can offer the body
+   * as the description of the stop without the user entering it.
+   */
+  test('article is described by its content', () => {
+    render(<Article article={article} ariaPosinset={1} ariaSetsize={5} />);
+    const articleEl = screen.getByRole('article');
+    const body = screen.getByText(article.content);
+    expect(body.getAttribute('id')).toBeTruthy();
+    expect(articleEl).toHaveAttribute('aria-describedby', body.getAttribute('id'));
+    expect(articleEl).toHaveAccessibleDescription(article.content);
+  });
+
+  /*
+   * `article.id` is unique only within a single feed. Before the id was scoped
+   * to the component instance, two articles sharing an id emitted duplicate
+   * heading ids, and aria-labelledby resolves a duplicate to the first match
+   * in document order — so the second article silently announced the first
+   * one's title. A wrong name is worse than no name.
+   */
+  test('two articles sharing an id still get distinct labels', () => {
+    const other = { id: 'a1', title: 'A Different Title', content: 'Other body.' };
+    render(
+      <>
+        <Article article={article} ariaPosinset={1} ariaSetsize={2} />
+        <Article article={other} ariaPosinset={2} ariaSetsize={2} />
+      </>,
+    );
+
+    const [first, second] = screen.getAllByRole('article');
+    expect(first.getAttribute('aria-labelledby')).not.toBe(second.getAttribute('aria-labelledby'));
+    expect(first).toHaveAccessibleName(article.title);
+    expect(second).toHaveAccessibleName(other.title);
   });
 
   test('exposes aria-posinset and aria-setsize for Feed pattern consumption', () => {

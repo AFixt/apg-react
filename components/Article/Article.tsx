@@ -9,7 +9,7 @@
  * @returns {JSX.Element} The rendered article component.
  */
 
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useId } from 'react';
 import './Article.css';
 
 /** Data shape consumed by the Article component. */
@@ -28,6 +28,21 @@ interface ArticleProps {
 
 const Article = forwardRef<HTMLElement, ArticleProps>(
   ({ article, ariaPosinset, ariaSetsize }, ref) => {
+    // `article.id` is only unique within one feed. Two Feed instances on a
+    // page — or a feed whose backend numbers articles from 1 — would emit
+    // duplicate heading ids, and aria-labelledby resolves a duplicate id to
+    // the first match in document order, silently naming this article after
+    // somebody else's. useId() scopes the id to this instance, matching what
+    // Disclosure, Switch, MenuButton, CheckboxGroup and Combobox already do.
+    const uid = useId();
+    const titleId = `article-title-${uid}-${article.id}`;
+    const contentId = `article-content-${uid}-${article.id}`;
+
+    // `article` is not a name-from-content role, so the heading names this
+    // element only if aria-labelledby points at it; without the reference every
+    // article in a feed announces unlabelled. aria-describedby points at the
+    // body, which the APG Feed pattern lists as the (optional) description.
+    //
     // Styles hang off the `article` class, not the element name, so the
     // stylesheet has to be given something to match. Without this class every
     // rule in Article.css was inert — as was every `.feed .article` rule in
@@ -37,11 +52,13 @@ const Article = forwardRef<HTMLElement, ArticleProps>(
         ref={ref}
         className="article"
         tabIndex={-1}
+        aria-labelledby={titleId}
+        aria-describedby={contentId}
         aria-posinset={ariaPosinset}
         aria-setsize={ariaSetsize}
       >
-        <h2 id={`article-title-${article.id}`}>{article.title}</h2>
-        <div>{article.content}</div>
+        <h2 id={titleId}>{article.title}</h2>
+        <div id={contentId}>{article.content}</div>
       </article>
     );
   },
