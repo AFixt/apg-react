@@ -60,6 +60,20 @@ describe('Article Component (APG-compliant structure)', () => {
   });
 
   /*
+   * The APG Feed pattern also has each article point aria-describedby at the
+   * element holding its primary content, so a screen reader can offer the body
+   * as the description of the stop without the user entering it.
+   */
+  test('article is described by its content', () => {
+    render(<Article article={article} ariaPosinset={1} ariaSetsize={5} />);
+    const articleEl = screen.getByRole('article');
+    const body = screen.getByText(article.content);
+    expect(body.getAttribute('id')).toBeTruthy();
+    expect(articleEl).toHaveAttribute('aria-describedby', body.getAttribute('id'));
+    expect(articleEl).toHaveAccessibleDescription(article.content);
+  });
+
+  /*
    * `article.id` is unique only within a single feed. Before the id was scoped
    * to the component instance, two articles sharing an id emitted duplicate
    * heading ids, and aria-labelledby resolves a duplicate to the first match

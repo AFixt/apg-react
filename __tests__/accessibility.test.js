@@ -114,7 +114,16 @@ describe('Accessibility contracts (no external a11y libs)', () => {
       expect(article).toBeInTheDocument();
       const h2 = article.querySelector('h2');
       expect(h2).toBeInTheDocument();
-      assertHasAccessibleName(h2);
+
+      // Assert the name on the *article*, not on the heading. `article` is not
+      // a name-from-content role, so a heading inside it contributes nothing
+      // unless aria-labelledby points at it. Asserting the h2 instead passed
+      // whether or not that reference existed — a heading with text always has
+      // a name — so this test read as authoritative while pinning nothing.
+      assertAriaReferencesResolve(article, ['aria-labelledby', 'aria-describedby']);
+      expect(article).toHaveAttribute('aria-labelledby', h2.id);
+      expect(assertHasAccessibleName(article, 'feed article')).toBe('T');
+      expect(article).toHaveAccessibleDescription('c');
     });
   });
 

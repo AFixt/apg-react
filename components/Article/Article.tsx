@@ -36,7 +36,13 @@ const Article = forwardRef<HTMLElement, ArticleProps>(
     // Disclosure, Switch, MenuButton, CheckboxGroup and Combobox already do.
     const uid = useId();
     const titleId = `article-title-${uid}-${article.id}`;
+    const contentId = `article-content-${uid}-${article.id}`;
 
+    // `article` is not a name-from-content role, so the heading names this
+    // element only if aria-labelledby points at it; without the reference every
+    // article in a feed announces unlabelled. aria-describedby points at the
+    // body, which the APG Feed pattern lists as the (optional) description.
+    //
     // Styles hang off the `article` class, not the element name, so the
     // stylesheet has to be given something to match. Without this class every
     // rule in Article.css was inert — as was every `.feed .article` rule in
@@ -47,11 +53,12 @@ const Article = forwardRef<HTMLElement, ArticleProps>(
         className="article"
         tabIndex={-1}
         aria-labelledby={titleId}
+        aria-describedby={contentId}
         aria-posinset={ariaPosinset}
         aria-setsize={ariaSetsize}
       >
         <h2 id={titleId}>{article.title}</h2>
-        <div>{article.content}</div>
+        <div id={contentId}>{article.content}</div>
       </article>
     );
   },
