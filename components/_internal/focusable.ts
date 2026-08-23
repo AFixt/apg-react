@@ -27,9 +27,19 @@ export type FocusDirection = 'before' | 'after';
  * `contains` filter "the element after the feed" would resolve to an element
  * inside it.
  *
+ * Candidates are tried nearest-first and the result is **verified** against
+ * `document.activeElement` rather than assumed. A selector match is not a
+ * promise of focusability: a `display: none` or `visibility: hidden` element
+ * still matches, and a browser silently declines to focus it. Reporting
+ * success there would let the caller consume the key while focus never moved
+ * — turning the pattern's escape hatch into the trap it exists to prevent.
+ *
+ * Note jsdom does focus hidden elements, so this fallback is only exercised in
+ * a real engine; the unit suite cannot distinguish the two.
+ *
  * @param container - The widget to move focus out of.
  * @param direction - `'before'` for the nearest preceding element, `'after'` for the nearest following one.
- * @returns `true` if focus was moved, `false` if there was nothing to move to.
+ * @returns `true` if focus actually moved, `false` if nothing outside would take it.
  */
 export const focusAdjacentTo = (
   container: HTMLElement | null,
@@ -46,12 +56,13 @@ export const focusAdjacentTo = (
   // compareDocumentPosition returns a bitmask, hence the bitwise test.
   const candidates = outside.filter((el) => (container.compareDocumentPosition(el) & wanted) !== 0);
 
-  // querySelectorAll returns document order, so the nearest element on the
-  // 'before' side is the last of the preceding ones, and on the 'after' side
-  // the first of the following ones.
-  const target = direction === 'before' ? candidates[candidates.length - 1] : candidates[0];
-  if (!target) return false;
+  // querySelectorAll returns document order, so "nearest first" means walking
+  // the preceding candidates backwards and the following ones forwards.
+  const nearestFirst = direction === 'before' ? [...candidates].reverse() : candidates;
 
-  target.focus();
-  return true;
+  for (const candidate of nearestFirst) {
+    candidate.focus();
+    if (document.activeElement === candidate) return true;
+  }
+  return false;
 };
