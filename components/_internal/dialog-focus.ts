@@ -7,8 +7,7 @@
  * fires for that fallback. Handling Tab in `keydown` and explicitly cycling
  * focus inside the dialog covers that case.
  */
-const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+import { FOCUSABLE_SELECTOR } from './focusable';
 
 export const cycleFocusInDialog = (container: HTMLElement, event: KeyboardEvent): void => {
   if (event.key !== 'Tab') return;
