@@ -56,6 +56,16 @@ function FeedDemo(): React.ReactElement {
   return (
     <main className="demo-page">
       <h1>Feed</h1>
+      {/*
+        This link is load-bearing for the pattern, not decoration. Ctrl+Home
+        moves focus to the focusable element *before* the feed, so without one
+        the binding has nowhere to go and cannot be exercised here — the gap
+        called out in #174. Ctrl+End has always had the "Load more" button
+        below as its target.
+      */}
+      <p>
+        <a href="./index.html">← All demos</a>
+      </p>
       <Feed fetchArticles={fetchArticles} ariaLabel="News" />
       <p>
         <button type="button" onClick={requestMoreArticles}>

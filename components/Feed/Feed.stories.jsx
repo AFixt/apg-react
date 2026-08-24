@@ -1,3 +1,4 @@
+import React from 'react';
 import Feed from './Feed';
 
 export default {
@@ -23,5 +24,23 @@ const fetchArticles = () =>
 export const Default = {
   args: {
     fetchArticles,
+  },
+};
+
+// Ctrl+Home and Ctrl+End move focus to the focusable element before and after
+// the feed, so they cannot be exercised against `Default`, which renders the
+// feed on its own. This variant supplies a target on each side. It is the
+// story the feed-ctrl-home / feed-ctrl-end use cases drive.
+export const InPageContext = {
+  render: (args) => (
+    <div>
+      <button type="button">Before the feed</button>
+      <Feed {...args} />
+      <button type="button">After the feed</button>
+    </div>
+  ),
+  args: {
+    fetchArticles,
+    ariaLabel: 'News',
   },
 };

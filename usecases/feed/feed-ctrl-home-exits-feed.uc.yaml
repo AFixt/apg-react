@@ -1,0 +1,23 @@
+id: feed-ctrl-home-exits-feed
+title: "Feed — Control+Home moves focus to the element before the feed"
+type: positive
+description: "Control+Home is the APG Feed pattern's documented way back out of a feed,
+  moving focus to the first focusable element before it. The component previously
+  treated it as a bare Home and moved focus to the first article instead, actively
+  doing the wrong thing rather than declining to act."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+  - "The story renders a button on each side of the feed, so the escape hatch has a target"
+
+start_location: "http://localhost:6006/iframe.html?id=components-feed--in-page-context&viewMode=story"
+
+expected_result: 'Focus leaves the feed and lands on the "Before the feed" button, not on
+  the first article.'
+
+steps:
+  - wait_for: role "article" name "Article 1"
+  - locate: role "article" name "Article 2"
+  - focus: role "article" name "Article 2"
+  - keyboard: "Control+Home"
+  - verify: focus role "button" name "Before the feed"
