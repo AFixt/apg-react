@@ -95,9 +95,9 @@ the official APG documentation.
 
 ### Structural
 
-| Component | Purpose                                                                     |
-| --------- | --------------------------------------------------------------------------- |
-| `Article` | Semantic `<article>` with heading + posinset/setsize for use inside `Feed`. |
+| Component | Purpose                                                                                                                                           |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Article` | Semantic `<article>` with heading + posinset/setsize for use inside `Feed`. Focusable and in the page tab sequence, as the Feed pattern requires. |
 
 ## Keyboard reference
 

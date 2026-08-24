@@ -7,6 +7,32 @@ This project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- **`Feed` and `Article` keyboard conformance.** Two APG Feed gaps that
+  compounded: no keyboard user could get into a feed, and the key that should
+  get them out was not implemented.
+
+  `Article` now renders `tabindex="0"` instead of `tabindex="-1"`, so each
+  article is "focusable and included in the page Tab sequence" as the pattern
+  requires. Previously Tab skipped the feed entirely, which meant `Feed`'s Page
+  Down / Page Up handling — correct in itself — acted on elements no
+  keyboard-only user could reach.
+
+  `Feed` now implements `Ctrl+Home` and `Ctrl+End`, which move focus to the
+  focusable element before and after the feed. These were not merely missing:
+  the handler read `event.key` without `ctrlKey`, so `Ctrl+Home` was treated as
+  a bare `Home` and moved focus to the first article, actively doing the wrong
+  thing rather than declining to act. Bare `Home`/`End` keep their first/last
+  article behaviour as a documented extension, and no longer swallow the Control
+  variants. Combinations that belong to the browser or the OS — `Alt`, `Meta`,
+  and `Ctrl+Shift` — are left alone.
+
+  **Consumers who snapshot rendered DOM will see `tabindex` change on every
+  article,** and a feed's articles now appear in the page tab order. That is the
+  specified behaviour, and `Ctrl+End` is the documented shortcut past a feed a
+  user would otherwise Tab through one article at a time.
+
 ### Added
 
 - **`NonModalDialog` component.** An accessible non-modal dialog:
