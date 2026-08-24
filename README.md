@@ -111,6 +111,9 @@ Highlights:
   `AlertDialog`, `MenuButton`, `Menubar`.
 - **Escape** closes popups: `ModalDialog`, `NonModalDialog` (only while focus is
   inside it), `AlertDialog`, `MenuButton`, `Menubar`, `Combobox`, `Tooltip`.
+- **A way out of a long composite**: `Feed` — `Ctrl+Home` and `Ctrl+End` move
+  focus to the focusable element before and after the feed, so a keyboard user
+  need not Tab through every article to get past it.
 
 Explore the [live Storybook demo](https://afixt.github.io/apg-react/) or run
 `npm run storybook` locally to see every keyboard path with step-by-step `play`
