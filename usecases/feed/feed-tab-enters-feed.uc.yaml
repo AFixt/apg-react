@@ -1,0 +1,23 @@
+id: feed-tab-enters-feed
+title: "Feed — Tab moves focus into the feed's first article"
+type: positive
+description: 'The APG Feed pattern requires each article to be focusable and included
+  in the page Tab sequence. Articles previously rendered with tabindex="-1", so Tab
+  skipped the feed entirely and the Page Down / Page Up keys acted on elements no
+  keyboard-only user could reach.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+  - "The story renders a button on each side of the feed"
+
+start_location: "http://localhost:6006/iframe.html?id=components-feed--in-page-context&viewMode=story"
+
+expected_result: 'Tab from the button before the feed lands on "Article 1", not on the
+  button after the feed.'
+
+steps:
+  - wait_for: role "article" name "Article 1"
+  - locate: role "button" name "Before the feed"
+  - focus: role "button" name "Before the feed"
+  - keyboard: "Tab"
+  - verify: focus role "article" name "Article 1"

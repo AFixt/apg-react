@@ -51,6 +51,62 @@ const pressCtrl = async (page, key) => {
 const focusFirstArticle = (page) =>
   page.evaluate((feedSelector) => document.querySelector(`${feedSelector} article`).focus(), FEED);
 
+/** Where focus is, described well enough to read in a failure message. */
+const activeDescription = (page) =>
+  page.evaluate(() => {
+    const el = document.activeElement;
+    if (!el || el === document.body) return 'BODY';
+    const heading = el.querySelector && el.querySelector('h2');
+    return heading ? `ARTICLE ${heading.textContent}` : `${el.tagName} ${el.id || el.textContent}`;
+  });
+
+describe('Feed keyboard reachability (E2E)', () => {
+  /**
+   * The defect this pins is invisible to jsdom: it has no tab sequence, so a
+   * unit test can assert tabindex="0" but never that Tab actually reaches the
+   * articles. At tabindex="-1" the observed sequence skipped the feed entirely
+   * and the Page Down / Page Up contract was unreachable for keyboard users.
+   */
+  test('Tab enters the feed instead of skipping past it', async () => {
+    const { page, close } = await openStory('components-feed--in-page-context');
+    try {
+      await page.waitForSelector(`${FEED} article`, { timeout: 10000 });
+      await surroundFeed(page);
+      await page.evaluate(() => document.getElementById('before-feed').focus());
+
+      await page.keyboard.press('Tab');
+
+      expect(await activeDescription(page)).toMatch(/^ARTICLE /);
+    } finally {
+      await close();
+    }
+  });
+
+  test('every article is a tab stop, in document order', async () => {
+    const { page, close } = await openStory('components-feed--in-page-context');
+    try {
+      await page.waitForSelector(`${FEED} article`, { timeout: 10000 });
+      const count = await page.evaluate(
+        (s) => document.querySelectorAll(`${s} article`).length,
+        FEED,
+      );
+      await page.evaluate((s) => document.querySelector(`${s} article`).focus(), FEED);
+
+      const seen = [await activeDescription(page)];
+      for (let i = 1; i < count; i += 1) {
+        await page.keyboard.press('Tab');
+        seen.push(await activeDescription(page));
+      }
+
+      expect(seen).toHaveLength(count);
+      expect(seen.every((s) => s.startsWith('ARTICLE '))).toBe(true);
+      expect(new Set(seen).size).toBe(count);
+    } finally {
+      await close();
+    }
+  });
+});
+
 describe('Feed keyboard escape hatch (E2E)', () => {
   test('Ctrl+End skips a hidden element and focuses the next one that will take focus', async () => {
     const { page, close } = await openStory('components-feed--default');
