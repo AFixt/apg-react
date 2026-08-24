@@ -33,8 +33,42 @@ This project adheres to
   specified behaviour, and `Ctrl+End` is the documented shortcut past a feed a
   user would otherwise Tab through one article at a time.
 
+- **`NonModalDialog` no longer swallows a child's Escape.** A nested widget that
+  handles Escape itself — a combobox closing its listbox, say — had the key
+  taken by the dialog first and closed the whole dialog instead.
+- **Toolchain configs load again.** `commitlint.config.js` and
+  `eslint.config.js` used `export default` in a package with no top-level
+  `"type": "module"`. commitlint could not load its config at all: it fell back
+  to an empty ruleset and then rejected **every** commit message, including
+  valid conventional ones, so the `commit-msg` hook had to be bypassed with
+  `--no-verify` on every commit. Both are now `.mjs` (#176).
+- **`npm run check` survives a demo build.** `demos-dist/` — the `demos:build`
+  output — was in neither `.gitignore` nor the ESLint `ignores`, so minified
+  Vite bundles were linted as source and the gate went red with 857 errors as
+  soon as anyone built the demos. It is now ignored by both (#177).
+- **Workflow actions are pinned to commit SHAs**, with the version each SHA
+  represents recorded alongside it. An unpinned branch or floating tag on a
+  third-party action runs whatever that ref points at today with the
+  repository's `GITHUB_TOKEN` — the shape of the `tj-actions/changed-files` and
+  `trivy-action` compromises. `GITHUB_TOKEN` is also now scoped to
+  `contents: read` by default.
+- **Scheduled workflows removed.** The docs and security checks now run on pull
+  requests, where a new finding blocks the change that introduced it, instead of
+  on a timer where a failure is attributable to nobody (#127).
+- **Demo server hardening.** It binds both IP stacks rather than IPv4 only, and
+  `APG_DEMO_PORT` is validated as decimal digits instead of being passed through
+  unchecked.
+- **`.nvmrc` and `.node-version` agree with `engines`.** They pinned Node 20
+  while `engines` required `>=22.13.0`, so `nvm use && npm ci` failed on a fresh
+  checkout.
+
 ### Added
 
+- **Demo server and 23 APG pattern demo pages** (#141). `npm run serve` starts a
+  Vite server over `demos/`, one page per pattern, rendering each component the
+  way a consumer would rather than through Storybook's harness — so a pattern
+  can be exercised without a Storybook build. `npm run demos:build` produces a
+  static bundle; `APG_DEMO_PORT` sets the port.
 - **`NonModalDialog` component.** An accessible non-modal dialog:
   `role="dialog"` with `aria-modal="false"` set explicitly, no focus trap, and
   no blocking backdrop, so focus can leave the dialog without closing it and the
