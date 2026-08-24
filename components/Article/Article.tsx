@@ -47,11 +47,18 @@ const Article = forwardRef<HTMLElement, ArticleProps>(
     // stylesheet has to be given something to match. Without this class every
     // rule in Article.css was inert — as was every `.feed .article` rule in
     // Feed.css, which has always been written against it.
+    //
+    // tabIndex={0}, not -1: the APG Feed pattern requires each article to be
+    // "focusable and included in the page Tab sequence". At -1 an article could
+    // only be reached programmatically or by clicking, so Tab skipped the feed
+    // entirely and the whole Page Down / Page Up contract was dead for
+    // keyboard-only users — the keys worked, but nothing could reach the
+    // elements they act on.
     return (
       <article
         ref={ref}
         className="article"
-        tabIndex={-1}
+        tabIndex={0}
         aria-labelledby={titleId}
         aria-describedby={contentId}
         aria-posinset={ariaPosinset}

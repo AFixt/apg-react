@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import Article from '../components/Article/Article';
+import { isKeyboardFocusable } from './helpers/a11y';
 
 describe('Article Component (APG-compliant structure)', () => {
   const article = {
@@ -93,6 +94,21 @@ describe('Article Component (APG-compliant structure)', () => {
     expect(first.getAttribute('aria-labelledby')).not.toBe(second.getAttribute('aria-labelledby'));
     expect(first).toHaveAccessibleName(article.title);
     expect(second).toHaveAccessibleName(other.title);
+  });
+
+  /*
+   * The APG Feed pattern requires each article to be "focusable and included
+   * in the page Tab sequence". At tabindex="-1" an article was reachable only
+   * programmatically or by clicking, so Tab skipped the whole feed and the
+   * Page Down / Page Up keys — which the Feed component implements correctly —
+   * acted on elements no keyboard user could reach. e2e/feed.e2e.js pins the
+   * traversal itself, which jsdom cannot perform.
+   */
+  test('is in the page Tab sequence', () => {
+    render(<Article article={article} ariaPosinset={1} ariaSetsize={5} />);
+    const articleEl = screen.getByRole('article');
+    expect(articleEl).toHaveAttribute('tabindex', '0');
+    expect(isKeyboardFocusable(articleEl)).toBe(true);
   });
 
   test('exposes aria-posinset and aria-setsize for Feed pattern consumption', () => {
