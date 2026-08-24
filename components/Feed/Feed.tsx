@@ -95,7 +95,11 @@ const Feed: React.FC<FeedProps> = ({ fetchArticles, ariaLabel }) => {
     // switching on `e.key` alone made Ctrl+Home behave as a bare Home, moving
     // focus to the first article and calling preventDefault() — actively doing
     // the wrong thing rather than declining to act.
-    if (e.ctrlKey) {
+    // Control *only*. Ctrl+Shift+Home extends the selection to the start of the
+    // document, and Ctrl+Alt is AltGr on Windows and Linux; the APG binds plain
+    // Ctrl+Home/Ctrl+End. Claiming the richer combinations would be the same
+    // bug as the one this branch exists to fix.
+    if (e.ctrlKey && !e.shiftKey && !e.altKey && !e.metaKey) {
       if (e.key !== 'Home' && e.key !== 'End') return;
       // Only swallow the key if focus actually moved. With nothing focusable
       // outside the feed there is no escape hatch to offer, and suppressing
@@ -106,10 +110,10 @@ const Feed: React.FC<FeedProps> = ({ fetchArticles, ariaLabel }) => {
       return;
     }
 
-    // Alt and Meta combinations belong to the browser and the OS (Alt+Home is
-    // "go to homepage"; Cmd+Home is scroll-to-top on macOS). Claiming them
-    // would be the same bug as swallowing Ctrl+Home.
-    if (e.altKey || e.metaKey) return;
+    // Every other modified key belongs to the browser or the OS (Alt+Home is
+    // "go to homepage"; Cmd+Home is scroll-to-top on macOS; Ctrl+Shift+Home
+    // extends a selection). Only unmodified keys reach the switch below.
+    if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return;
 
     const focusedIndex = articleRefs.current.findIndex((ref) => ref === document.activeElement);
     switch (e.key) {

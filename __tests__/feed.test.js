@@ -189,5 +189,24 @@ describe('Feed Component (APG feed pattern)', () => {
       expect(fireEvent.keyDown(feed, { key: 'End', metaKey: true })).toBe(true);
       expect(document.activeElement).toBe(articles[1]);
     });
+
+    // The APG binds plain Ctrl+Home / Ctrl+End. Richer combinations mean
+    // something else to the browser or the OS — Ctrl+Shift+Home extends the
+    // selection to the start of the document, Ctrl+Alt is AltGr on Windows and
+    // Linux — so claiming them is the same class of bug as a bare Home
+    // swallowing Ctrl+Home.
+    test.each([
+      ['Ctrl+Shift+Home', { key: 'Home', ctrlKey: true, shiftKey: true }],
+      ['Ctrl+Shift+End', { key: 'End', ctrlKey: true, shiftKey: true }],
+      ['Ctrl+Alt+Home', { key: 'Home', ctrlKey: true, altKey: true }],
+      ['Ctrl+Alt+End', { key: 'End', ctrlKey: true, altKey: true }],
+      ['Ctrl+Meta+End', { key: 'End', ctrlKey: true, metaKey: true }],
+    ])('%s is left to the browser', async (_label, init) => {
+      const { feed, articles } = await renderFeedInPage();
+      articles[1].focus();
+
+      expect(fireEvent.keyDown(feed, init)).toBe(true);
+      expect(document.activeElement).toBe(articles[1]);
+    });
   });
 });
