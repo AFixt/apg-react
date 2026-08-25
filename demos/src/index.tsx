@@ -3,8 +3,16 @@ import { mount } from './mount';
 
 // Enumerated from disk rather than hand-listed so the index cannot drift out of
 // step with the pages that actually exist: adding demos/<slug>.html is enough.
+// Anchored patterns rather than bare substrings. Both operations are a prefix
+// and a suffix strip, so they should say so: `replace('../', '')` removes the
+// first `../` wherever it sits, not necessarily the leading one. No key Vite
+// produces here can tell the two forms apart — every one is `../<name>.html`,
+// and the outputs are identical for all 29 — so this is precision of intent,
+// not a bug fix. It also clears CodeQL js/incomplete-sanitization (high), which
+// reads the unanchored form as incomplete path sanitization; that reading is
+// right in general even though this input is a build-time literal.
 const pages = Object.keys(import.meta.glob('../*.html'))
-  .map((path) => path.replace('../', '').replace('.html', ''))
+  .map((path) => path.replace(/^\.\.\//, '').replace(/\.html$/, ''))
   .filter((slug) => slug !== 'index')
   .sort();
 
