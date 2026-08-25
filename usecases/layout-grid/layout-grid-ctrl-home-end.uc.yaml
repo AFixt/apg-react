@@ -1,0 +1,19 @@
+id: layout-grid-ctrl-home-end
+title: "Layout Grid — Control+Home and Control+End span the grid"
+type: positive
+description: "The APG marks Control+Home and Control+End OPTIONAL for a layout grid, where they are required for a data grid. This demo implements them."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-layoutgrid--default&viewMode=story"
+
+expected_result: 'From "Disclosure", Control+End reaches "Slider" and Control+Home returns to "Accordion".'
+
+steps:
+  - locate: role "link" name "Disclosure"
+  - focus: role "link" name "Disclosure"
+  - keyboard: "Control+End"
+  - verify: focus role "link" name "Slider"
+  - keyboard: "Control+Home"
+  - verify: focus role "link" name "Accordion"

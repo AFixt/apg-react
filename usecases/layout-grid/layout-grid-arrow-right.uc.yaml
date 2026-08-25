@@ -1,0 +1,17 @@
+id: layout-grid-arrow-right
+title: "Layout Grid — ArrowRight moves focus one cell to the right"
+type: positive
+description: "When focus is on a cell, ArrowRight moves focus to the next cell in the row."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-layoutgrid--default&viewMode=story"
+
+expected_result: 'Focus moves from "Accordion" to "Breadcrumb".'
+
+steps:
+  - locate: role "link" name "Accordion"
+  - focus: role "link" name "Accordion"
+  - keyboard: "ArrowRight"
+  - verify: focus role "link" name "Breadcrumb"
