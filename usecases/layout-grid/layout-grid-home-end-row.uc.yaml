@@ -1,0 +1,19 @@
+id: layout-grid-home-end-row
+title: "Layout Grid — Home and End move within the row"
+type: positive
+description: "Home moves focus to the first cell in the row that contains focus; End moves it to the last. Both are required for a layout grid."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-layoutgrid--default&viewMode=story"
+
+expected_result: 'From "Disclosure", End reaches "Feed" and Home returns to "Combobox".'
+
+steps:
+  - locate: role "link" name "Disclosure"
+  - focus: role "link" name "Disclosure"
+  - keyboard: "End"
+  - verify: focus role "link" name "Feed"
+  - keyboard: "Home"
+  - verify: focus role "link" name "Combobox"

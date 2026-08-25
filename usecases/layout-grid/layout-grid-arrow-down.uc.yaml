@@ -1,0 +1,17 @@
+id: layout-grid-arrow-down
+title: "Layout Grid — ArrowDown moves focus one cell down"
+type: positive
+description: "When focus is on a cell, ArrowDown moves focus to the cell directly below it."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-layoutgrid--default&viewMode=story"
+
+expected_result: 'Focus moves from "Accordion" to "Combobox".'
+
+steps:
+  - locate: role "link" name "Accordion"
+  - focus: role "link" name "Accordion"
+  - keyboard: "ArrowDown"
+  - verify: focus role "link" name "Combobox"

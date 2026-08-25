@@ -1,0 +1,69 @@
+.layout-grid {
+  display: grid;
+  gap: var(--apg-space-sm);
+  padding: var(--apg-space-sm);
+  border: var(--apg-border-width) solid var(--apg-border-color);
+  border-radius: var(--apg-radius-md);
+  background-color: var(--apg-color-white);
+  color: var(--apg-color-black);
+}
+
+.layout-grid-row {
+  display: flex;
+  gap: var(--apg-space-sm);
+}
+
+.layout-grid-cell {
+  flex: 1 1 0;
+  display: flex;
+}
+
+.layout-grid-link {
+  flex: 1 1 auto;
+  padding: var(--apg-space-sm) var(--apg-space-lg);
+  border: var(--apg-border-width) solid var(--apg-border-color);
+  border-radius: var(--apg-radius-sm);
+  background-color: var(--apg-color-gray-50);
+  color: var(--apg-color-black);
+  text-decoration: underline;
+  outline: none;
+  transition:
+    background-color var(--apg-transition-fast),
+    box-shadow var(--apg-transition-fast);
+}
+
+/*
+ * After the rule it overrides, not before: a media query adds no specificity,
+ * so an earlier block loses to it on source order.
+ */
+@media screen and (prefers-reduced-motion: reduce) {
+  .layout-grid-link {
+    transition: none;
+  }
+}
+
+.layout-grid-link:hover {
+  background-color: var(--apg-color-gray-100);
+}
+
+.layout-grid-link:focus,
+.layout-grid-link:focus-visible {
+  outline: none;
+  background-color: #e7f1ff;
+  box-shadow: inset 0 0 0 2px var(--apg-color-primary);
+}
+
+/*
+ * Forced colors drops the inset ring *and* the background-color change beside
+ * it, so the focused link would otherwise be indistinguishable from its
+ * neighbours. Inset, because an outward outline on a flex child overlaps them.
+ * An outline is all forced colors preserves; see Link.css for the long-form
+ * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ */
+@media (forced-colors: active) {
+  .layout-grid-link:focus,
+  .layout-grid-link:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
+}
