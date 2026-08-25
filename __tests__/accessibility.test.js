@@ -45,6 +45,7 @@ import MenuButton from '../components/MenuButton/MenuButton';
 import Menubar from '../components/Menubar/Menubar';
 import Meter from '../components/Meter/Meter';
 import ModalDialog from '../components/ModalDialog/ModalDialog';
+import NonModalDialog from '../components/NonModalDialog/NonModalDialog';
 import Progressbar from '../components/Progressbar/Progressbar';
 import RadioGroup from '../components/RadioGroup/RadioGroup';
 import Slider from '../components/Slider/Slider';
@@ -114,7 +115,16 @@ describe('Accessibility contracts (no external a11y libs)', () => {
       expect(article).toBeInTheDocument();
       const h2 = article.querySelector('h2');
       expect(h2).toBeInTheDocument();
-      assertHasAccessibleName(h2);
+
+      // Assert the name on the *article*, not on the heading. `article` is not
+      // a name-from-content role, so a heading inside it contributes nothing
+      // unless aria-labelledby points at it. Asserting the h2 instead passed
+      // whether or not that reference existed — a heading with text always has
+      // a name — so this test read as authoritative while pinning nothing.
+      assertAriaReferencesResolve(article, ['aria-labelledby', 'aria-describedby']);
+      expect(article).toHaveAttribute('aria-labelledby', h2.id);
+      expect(assertHasAccessibleName(article, 'feed article')).toBe('T');
+      expect(article).toHaveAccessibleDescription('c');
     });
   });
 
@@ -325,6 +335,30 @@ describe('Accessibility contracts (no external a11y libs)', () => {
       );
       const dlg = screen.getByRole('dialog');
       expect(dlg).toHaveAttribute('aria-modal', 'true');
+      assertAriaReferencesResolve(dlg, ['aria-labelledby', 'aria-describedby']);
+      assertHasAccessibleName(dlg);
+      const close = screen.getByRole('button', { name: 'Close dialog' });
+      expect(getAccessibleName(close)).toBe('Close dialog');
+    });
+  });
+
+  describe('NonModalDialog', () => {
+    test('role=dialog, aria-modal="false" explicitly, labelledby/describedby all resolve', () => {
+      render(
+        <NonModalDialog
+          isOpen
+          onClose={() => {}}
+          ariaLabelledby="nm-title"
+          ariaDescribedby="nm-desc"
+        >
+          <h2 id="nm-title">Title</h2>
+          <p id="nm-desc">Description</p>
+        </NonModalDialog>,
+      );
+      const dlg = screen.getByRole('dialog');
+      // Explicit, not omitted: "non-modal" has to be distinguishable from
+      // "unspecified" for both AT and automated checks.
+      expect(dlg).toHaveAttribute('aria-modal', 'false');
       assertAriaReferencesResolve(dlg, ['aria-labelledby', 'aria-describedby']);
       assertHasAccessibleName(dlg);
       const close = screen.getByRole('button', { name: 'Close dialog' });

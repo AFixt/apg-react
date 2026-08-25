@@ -18,6 +18,7 @@
 @import url('./Menubar/Menubar.css');
 @import url('./Meter/Meter.css');
 @import url('./ModalDialog/ModalDialog.css');
+@import url('./NonModalDialog/NonModalDialog.css');
 @import url('./Progressbar/Progressbar.css');
 @import url('./RadioGroup/RadioGroup.css');
 @import url('./Slider/Slider.css');

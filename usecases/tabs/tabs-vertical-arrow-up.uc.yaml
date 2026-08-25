@@ -1,0 +1,18 @@
+id: tabs-vertical-arrow-up
+title: "Tabs — In vertical orientation, ArrowUp moves to the previous tab (wrapping)"
+type: positive
+description: 'When configured with orientation="vertical", ArrowUp takes the place of
+  ArrowLeft: from the first tab it wraps to the last tab and selects it.'
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-tabs--vertical-bare&viewMode=story"
+
+expected_result: "After ArrowUp from Overview (first tab), FAQ (last tab) is selected."
+
+steps:
+  - locate: tab "Overview"
+  - focus: tab "Overview"
+  - keyboard: "ArrowUp"
+  - verify: tab "FAQ" attribute "aria-selected" is "true"

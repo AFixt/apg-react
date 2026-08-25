@@ -1,0 +1,23 @@
+id: combobox-home-first-option
+title: "Combobox — Home moves the active option back to the first option"
+type: positive
+description: "While the popup is open, Home moves virtual focus to the first option even
+  after End moved it to the last; Enter then commits it."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-combobox--autocomplete-list-bare&viewMode=story"
+
+expected_result: 'After ArrowDown, End, Home, Enter the input value is "Afghanistan" (the
+  first option).'
+
+steps:
+  - locate: select "Country (filters as you type)"
+  - focus: select "Country (filters as you type)"
+  - keyboard: "ArrowDown"
+  - verify: select "Country (filters as you type)" attribute "aria-expanded" is "true"
+  - keyboard: "End"
+  - keyboard: "Home"
+  - keyboard: "Enter"
+  - verify: select "Country (filters as you type)" has_value "Afghanistan"

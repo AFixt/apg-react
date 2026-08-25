@@ -1,0 +1,50 @@
+/*
+ * No backdrop rule here, deliberately. A non-modal dialog must leave the rest
+ * of the page usable, and a full-viewport overlay would swallow pointer events
+ * even at zero opacity. The dialog is positioned in normal flow instead.
+ */
+
+.non-modal-dialog {
+  background-color: var(--apg-color-white);
+  padding: var(--apg-space-xl);
+  border: var(--apg-border-width) solid rgb(0 0 0 / 20%);
+  border-radius: var(--apg-radius-lg);
+  box-shadow: var(--apg-shadow-lg);
+  max-width: var(--apg-dialog-max-width);
+  width: 90%;
+  margin: var(--apg-space-md) 0;
+  position: relative;
+}
+
+.non-modal-dialog:focus-visible {
+  outline: var(--apg-focus-ring-width) solid var(--apg-focus-ring-color);
+  outline-offset: 2px;
+}
+
+.non-modal-dialog-close {
+  position: absolute;
+  top: var(--apg-space-md);
+  right: var(--apg-space-md);
+  width: 1.75rem;
+  height: 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: var(--apg-radius-sm);
+  font-size: var(--apg-font-size-lg);
+  line-height: 1;
+  cursor: pointer;
+  color: var(--apg-body-color);
+}
+
+.non-modal-dialog-close:hover,
+.non-modal-dialog-close:focus {
+  background-color: var(--apg-color-gray-100);
+}
+
+.non-modal-dialog-close:focus-visible {
+  outline: var(--apg-focus-ring-width) solid var(--apg-focus-ring-color);
+  outline-offset: 2px;
+}

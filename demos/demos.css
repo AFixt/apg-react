@@ -1,0 +1,28 @@
+/*
+ * Layout-only styling for the demo server pages. Component appearance comes
+ * entirely from `components/styles.css`, so nothing here sets a colour: a demo
+ * page must never be able to mask or "fix" a component's own presentation.
+ */
+
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+.demo-page {
+  box-sizing: border-box;
+  max-width: 60rem;
+  padding: 1.5rem;
+}
+
+.demo-page > h1 {
+  margin-block: 0 1rem;
+  font-size: 1.5rem;
+}
+
+.demo-section {
+  margin-block-start: 2rem;
+}

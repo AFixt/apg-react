@@ -1,0 +1,22 @@
+id: feed-home-end
+title: "Feed — End and Home jump to the last and first article"
+type: positive
+description: "End moves focus to the last article in the feed; Home returns it to the
+  first article."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+  - "The fetchArticles fixture resolves with three articles"
+
+start_location: "http://localhost:6006/iframe.html?id=components-feed--default&viewMode=story"
+
+expected_result: 'End lands on "Article 3", Home returns to "Article 1".'
+
+steps:
+  - wait_for: heading "Article 3"
+  - locate: role "article" name "Article 1"
+  - focus: role "article" name "Article 1"
+  - keyboard: "End"
+  - verify: focus role "article" name "Article 3"
+  - keyboard: "Home"
+  - verify: focus role "article" name "Article 1"

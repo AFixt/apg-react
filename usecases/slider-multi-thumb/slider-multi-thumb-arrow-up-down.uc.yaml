@@ -1,0 +1,20 @@
+id: slider-multi-thumb-arrow-up-down
+title: "SliderMultiThumb — ArrowUp and ArrowDown adjust the focused thumb"
+type: positive
+description: "ArrowUp increments the focused thumb by one step and ArrowDown decrements
+  it, mirroring ArrowRight and ArrowLeft."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-slidermultithumb--price-range-bare&viewMode=story"
+
+expected_result: "High aria-valuenow goes 80 → 81 on ArrowUp and back to 80 on ArrowDown."
+
+steps:
+  - locate: role "slider" name "Maximum price"
+  - focus: role "slider" name "Maximum price"
+  - keyboard: "ArrowUp"
+  - verify: role "slider" name "Maximum price" attribute "aria-valuenow" is "81"
+  - keyboard: "ArrowDown"
+  - verify: role "slider" name "Maximum price" attribute "aria-valuenow" is "80"

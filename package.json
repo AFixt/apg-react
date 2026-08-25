@@ -1,6 +1,6 @@
 {
   "name": "@afixt/apg-react",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Accessible React components implementing every pattern in the WAI-ARIA Authoring Practices Guide (APG)",
   "keywords": [
     "react",
@@ -64,7 +64,7 @@
     "test:e2e": "jest --config e2e/jest.config.js --runInBand",
     "test:e2e:build": "npm run build-storybook && npm run test:e2e",
     "test:all": "npm test && npm run test:e2e:build",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.demos.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -85,7 +85,9 @@
     "security": "npm-run-all -s security:audit security:osv security:secrets",
     "check": "npm run typecheck && npm run lint && npm run stylelint && npm run format:check && npm run markdownlint",
     "check:all": "npm-run-all -s check test dupes license:check build size security:audit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "serve": "vite --config vite.demos.config.mjs",
+    "demos:build": "vite build --config vite.demos.config.mjs"
   },
   "engines": {
     "node": ">=22.13.0"
@@ -116,6 +118,7 @@
     "@testing-library/jest-dom": "^6.2.0",
     "@testing-library/react": "^16.3.2",
     "@total-typescript/ts-reset": "0.6.1",
+    "@types/react-dom": "18.3.7",
     "@vitejs/plugin-react": "^4.7.0",
     "babel-jest": "^29.7.0",
     "eslint": "9.39.4",

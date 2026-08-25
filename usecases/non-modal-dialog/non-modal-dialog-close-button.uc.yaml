@@ -1,0 +1,17 @@
+id: non-modal-dialog-close-button
+title: "NonModalDialog — The close button dismisses the dialog"
+type: positive
+description: "Activating the dialog's close button removes the dialog."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-nonmodaldialog--open-by-default-bare&viewMode=story"
+
+expected_result: "After activation the dialog is no longer present."
+
+steps:
+  - locate: button "Close dialog"
+  - focus: button "Close dialog"
+  - activate: button "Close dialog"
+  - verify: hidden heading "Preferences"

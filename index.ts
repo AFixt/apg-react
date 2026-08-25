@@ -26,6 +26,7 @@ export { default as Menubar } from './components/Menubar/Menubar';
 export { default as MenuButton } from './components/MenuButton/MenuButton';
 export { default as Meter } from './components/Meter/Meter';
 export { default as ModalDialog } from './components/ModalDialog/ModalDialog';
+export { default as NonModalDialog } from './components/NonModalDialog/NonModalDialog';
 export { default as Progressbar } from './components/Progressbar/Progressbar';
 export { default as RadioGroup } from './components/RadioGroup/RadioGroup';
 export { default as Slider } from './components/Slider/Slider';

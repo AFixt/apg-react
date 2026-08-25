@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["vite/client"]
+  },
+  "include": ["demos/**/*.tsx", "demos/**/*.ts", "components/**/*.tsx", "types/**/*.d.ts"]
+}

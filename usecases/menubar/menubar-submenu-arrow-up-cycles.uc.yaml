@@ -1,0 +1,23 @@
+id: menubar-submenu-arrow-up-cycles
+title: "Menubar — ArrowUp inside a submenu moves focus to the previous menuitem (wrapping)"
+type: positive
+description: "Within an open submenu, ArrowUp moves focus to the previous item and wraps
+  from the first item to the last."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubar--default&viewMode=story"
+
+expected_result: 'From "New" (first File item) ArrowUp wraps to "Save" (last), and a second
+  ArrowUp lands on "Open…".'
+
+steps:
+  - locate: menuitem "File"
+  - focus: menuitem "File"
+  - keyboard: "ArrowDown"
+  - verify: focus menuitem "New"
+  - keyboard: "ArrowUp"
+  - verify: focus menuitem "Save"
+  - keyboard: "ArrowUp"
+  - verify: focus menuitem "Open…"

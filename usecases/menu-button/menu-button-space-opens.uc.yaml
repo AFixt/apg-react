@@ -1,0 +1,19 @@
+id: menu-button-space-opens
+title: "MenuButton — Space on the trigger opens the menu (first item focused)"
+type: positive
+description: "Per the APG, Space on the menu button opens the menu and moves focus to the
+  first menuitem, exactly like Enter and ArrowDown."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubutton--default&viewMode=story"
+
+expected_result: 'The menu opens and "New document" (first item) receives focus.'
+
+steps:
+  - locate: button "Actions"
+  - focus: button "Actions"
+  - keyboard: "Space"
+  - verify: button "Actions" attribute "aria-expanded" is "true"
+  - verify: focus menuitem "New document"

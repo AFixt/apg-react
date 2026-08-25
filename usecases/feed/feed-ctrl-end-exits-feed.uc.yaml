@@ -1,0 +1,22 @@
+id: feed-ctrl-end-exits-feed
+title: "Feed — Control+End moves focus to the element after the feed"
+type: positive
+description: "Control+End is the APG Feed pattern's documented way out of a feed,
+  moving focus to the first focusable element after it. Without it a long feed is a
+  place keyboard users get stuck, having to page through every remaining article to
+  reach the rest of the document."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+  - "The story renders a button on each side of the feed, so the escape hatch has a target"
+
+start_location: "http://localhost:6006/iframe.html?id=components-feed--in-page-context&viewMode=story"
+
+expected_result: 'Focus leaves the feed and lands on the "After the feed" button.'
+
+steps:
+  - wait_for: role "article" name "Article 1"
+  - locate: role "article" name "Article 1"
+  - focus: role "article" name "Article 1"
+  - keyboard: "Control+End"
+  - verify: focus role "button" name "After the feed"

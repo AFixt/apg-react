@@ -1,0 +1,23 @@
+id: menubar-submenu-home-end
+title: "Menubar — Home and End jump within the open submenu"
+type: positive
+description: "Within an open submenu, End moves focus to the last menuitem and Home
+  returns it to the first, without closing the submenu."
+
+preconditions:
+  - "Storybook is running on http://localhost:6006"
+
+start_location: "http://localhost:6006/iframe.html?id=components-menubar--default&viewMode=story"
+
+expected_result: 'Inside the Edit submenu, End focuses "Paste" and Home returns focus to
+  "Undo".'
+
+steps:
+  - locate: menuitem "Edit"
+  - focus: menuitem "Edit"
+  - keyboard: "ArrowDown"
+  - verify: focus menuitem "Undo"
+  - keyboard: "End"
+  - verify: focus menuitem "Paste"
+  - keyboard: "Home"
+  - verify: focus menuitem "Undo"

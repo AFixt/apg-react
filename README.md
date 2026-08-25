@@ -79,6 +79,7 @@ the official APG documentation.
 | `Menubar`          | [Menu / Menubar](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/)                                              |
 | `Meter`            | [`role=meter`](https://w3c.github.io/aria/#meter)                                                                |
 | `ModalDialog`      | [Dialog (Modal)](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)                                         |
+| `NonModalDialog`   | [Dialog (Modal)](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/) — non-modal: no focus trap, no backdrop |
 | `Progressbar`      | [`role=progressbar`](https://w3c.github.io/aria/#progressbar)                                                    |
 | `RadioGroup`       | [Radio Group](https://www.w3.org/WAI/ARIA/apg/patterns/radio/)                                                   |
 | `Slider`           | [Slider](https://www.w3.org/WAI/ARIA/apg/patterns/slider/)                                                       |
@@ -94,9 +95,9 @@ the official APG documentation.
 
 ### Structural
 
-| Component | Purpose                                                                     |
-| --------- | --------------------------------------------------------------------------- |
-| `Article` | Semantic `<article>` with heading + posinset/setsize for use inside `Feed`. |
+| Component | Purpose                                                                                                                                           |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Article` | Semantic `<article>` with heading + posinset/setsize for use inside `Feed`. Focusable and in the page tab sequence, as the Feed pattern requires. |
 
 ## Keyboard reference
 
@@ -106,10 +107,13 @@ Highlights:
 - **Roving tabindex** where the pattern calls for it: `RadioGroup`, `Toolbar`,
   `Tabs`, `Grid`, `TreeView`, `TreeGrid`, `Menubar`, `Listbox`.
 - **`aria-activedescendant`** for virtual focus: `Combobox`.
-- **Focus return** on dialog dismiss: `ModalDialog`, `AlertDialog`,
-  `MenuButton`, `Menubar`.
-- **Escape** closes popups: `ModalDialog`, `AlertDialog`, `MenuButton`,
-  `Menubar`, `Combobox`, `Tooltip`.
+- **Focus return** on dialog dismiss: `ModalDialog`, `NonModalDialog`,
+  `AlertDialog`, `MenuButton`, `Menubar`.
+- **Escape** closes popups: `ModalDialog`, `NonModalDialog` (only while focus is
+  inside it), `AlertDialog`, `MenuButton`, `Menubar`, `Combobox`, `Tooltip`.
+- **A way out of a long composite**: `Feed` — `Ctrl+Home` and `Ctrl+End` move
+  focus to the focusable element before and after the feed, so a keyboard user
+  need not Tab through every article to get past it.
 
 Explore the [live Storybook demo](https://afixt.github.io/apg-react/) or run
 `npm run storybook` locally to see every keyboard path with step-by-step `play`
@@ -261,9 +265,18 @@ bash scripts/bootstrap.sh
 
 npm install
 npm run storybook     # http://localhost:6006
+npm run serve         # http://localhost:8080/demos/index.html
 npm test
 npm run build         # produces dist/
 ```
+
+### Demo server
+
+`npm run serve` starts the static demo pages in [`demos/`](demos/README.md) —
+one page per APG pattern, each rendering this library's own component. They are
+the target that the `AFixt/apg-qa` use-case suite and the APG test-runner
+repositories assert against, so a demo page never reimplements the pattern it
+demonstrates.
 
 ### Quality gates
 
