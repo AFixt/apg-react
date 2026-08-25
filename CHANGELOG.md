@@ -5,6 +5,30 @@ All notable changes to this project are documented in this file.
 This project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **`LayoutGrid` component** — the APG Grid pattern's _layout_ variant, as
+  distinct from the existing `Grid`, which is a data grid. The APG separates
+  them by content: a data grid "presents tabular information that has column
+  titles, row titles, or both", while a layout grid holds "a single, logically
+  homogenous set of elements" and needs no header cells. `LayoutGrid` arranges
+  links in a roving-tabindex grid with no `columnheader`.
+
+  The distinction is not cosmetic — the variants have different keyboard
+  contracts, and the component exists so the difference is testable. Arrow keys,
+  `Home` and `End` are required; `Page Up`, `Page Down`, `Control+Home`,
+  `Control+End` and arrow-key wrapping are APG-**optional** for this variant.
+  `Control+Home` / `Control+End` are _required_ for a data grid, which is the
+  sharpest difference. All the optional behaviours are implemented so a
+  conformance suite can exercise them, and skip them against an implementation
+  offering only the required set.
+
+  Added with `demos/grid-layout.html`, a Storybook story, ten unit tests, and
+  four use cases. Closes the gap reported in #188, where six downstream suites
+  cited `grid-layout-navigation` as a source with no demo behind it.
+
 ## [2.1.0] — 2026-08-24
 
 ### Fixed

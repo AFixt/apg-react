@@ -20,6 +20,7 @@ export { default as Combobox } from './components/Combobox/Combobox';
 export { default as Disclosure } from './components/Disclosure/Disclosure';
 export { default as Feed } from './components/Feed/Feed';
 export { default as Grid } from './components/Grid/Grid';
+export { default as LayoutGrid } from './components/LayoutGrid/LayoutGrid';
 export { default as Link } from './components/Link/Link';
 export { default as Listbox } from './components/Listbox/Listbox';
 export { default as Menubar } from './components/Menubar/Menubar';
