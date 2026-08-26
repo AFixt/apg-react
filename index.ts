@@ -40,3 +40,4 @@ export { default as Toolbar } from './components/Toolbar/Toolbar';
 export { default as Tooltip } from './components/Tooltip/Tooltip';
 export { default as TreeGrid } from './components/TreeGrid/TreeGrid';
 export { default as TreeView } from './components/TreeView/TreeView';
+export { default as WindowSplitter } from './components/WindowSplitter/WindowSplitter';
