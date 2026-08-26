@@ -111,4 +111,177 @@ describe('Checkbox Component (APG checkbox pattern)', () => {
     const { asFragment } = render(<Harness />);
     expect(asFragment()).toMatchSnapshot();
   });
+  // --- Regression coverage -------------------------------------------------
+
+  describe('validation surface (#146)', () => {
+    const noop = () => {};
+
+    test('nothing is exposed when the props are omitted', () => {
+      render(<Checkbox label="Accept terms" checked={false} onChange={noop} />);
+      const box = screen.getByRole('checkbox');
+
+      expect(box).not.toHaveAttribute('aria-required');
+      expect(box).not.toHaveAttribute('aria-invalid');
+      expect(box).not.toHaveAttribute('aria-errormessage');
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    });
+
+    test('required exposes aria-required', () => {
+      render(<Checkbox label="Accept terms" checked={false} onChange={noop} required />);
+      expect(screen.getByRole('checkbox')).toHaveAttribute('aria-required', 'true');
+    });
+
+    test('invalid exposes aria-invalid', () => {
+      render(<Checkbox label="Accept terms" checked={false} onChange={noop} invalid />);
+      expect(screen.getByRole('checkbox')).toHaveAttribute('aria-invalid', 'true');
+    });
+
+    test('the error message is announced and associated', () => {
+      render(
+        <Checkbox
+          label="Accept terms"
+          checked={false}
+          onChange={noop}
+          required
+          invalid
+          errorMessage="You must accept the terms to continue"
+        />,
+      );
+      const box = screen.getByRole('checkbox');
+      const alert = screen.getByRole('alert');
+
+      expect(alert).toHaveTextContent('You must accept the terms to continue');
+      expect(box.getAttribute('aria-errormessage')).toBe(alert.id);
+      expect(box.getAttribute('aria-describedby')).toContain(alert.id);
+    });
+
+    test('no message renders while valid, even if errorMessage is supplied', () => {
+      render(
+        <Checkbox
+          label="Accept terms"
+          checked
+          onChange={noop}
+          required
+          errorMessage="You must accept the terms to continue"
+        />,
+      );
+
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      expect(screen.getByRole('checkbox')).not.toHaveAttribute('aria-errormessage');
+    });
+
+    test('a consumer-owned description is kept alongside the error', () => {
+      render(
+        <Checkbox
+          label="Accept terms"
+          checked={false}
+          onChange={noop}
+          invalid
+          errorMessage="Required"
+          ariaDescribedby="hint-id"
+        />,
+      );
+
+      const describedBy = screen.getByRole('checkbox').getAttribute('aria-describedby').split(' ');
+      expect(describedBy).toContain('hint-id');
+      expect(describedBy).toHaveLength(2);
+    });
+
+    test('a consumer-owned description survives on its own', () => {
+      render(
+        <Checkbox label="Accept terms" checked={false} onChange={noop} ariaDescribedby="hint-id" />,
+      );
+
+      expect(screen.getByRole('checkbox')).toHaveAttribute('aria-describedby', 'hint-id');
+    });
+
+    test('two invalid checkboxes do not share an error id', () => {
+      render(
+        <>
+          <Checkbox
+            label="Accept terms"
+            checked={false}
+            onChange={noop}
+            invalid
+            errorMessage="Required"
+          />
+          <Checkbox
+            label="Accept privacy"
+            checked={false}
+            onChange={noop}
+            invalid
+            errorMessage="Also required"
+          />
+        </>,
+      );
+
+      const ids = screen.getAllByRole('alert').map((el) => el.id);
+      expect(new Set(ids).size).toBe(2);
+    });
+
+    test('validation props do not disturb the tri-state model', () => {
+      render(
+        <Checkbox
+          label="Accept terms"
+          checked={null}
+          onChange={noop}
+          isTriState
+          required
+          invalid
+        />,
+      );
+      const box = screen.getByRole('checkbox');
+
+      expect(box).toHaveAttribute('aria-checked', 'mixed');
+      expect(box).toHaveAttribute('aria-required', 'true');
+    });
+  });
+  describe('ids are unique per instance (#146)', () => {
+    const noop = () => {};
+
+    test('two checkboxes with the same label do not collide', () => {
+      render(
+        <>
+          <Checkbox label="Accept" checked={false} onChange={noop} />
+          <Checkbox label="Accept" checked={false} onChange={noop} />
+        </>,
+      );
+
+      const ids = screen.getAllByRole('checkbox').map((c) => c.id);
+      expect(new Set(ids).size).toBe(2);
+    });
+
+    test('each label resolves to its own checkbox', () => {
+      render(
+        <>
+          <Checkbox label="Accept" checked={false} onChange={noop} />
+          <Checkbox label="Accept" checked={false} onChange={noop} />
+        </>,
+      );
+
+      const boxes = screen.getAllByRole('checkbox');
+      const labels = [...document.querySelectorAll('label')];
+
+      // Without unique ids both <label for> resolved to the first checkbox,
+      // so clicking the second label toggled the wrong control.
+      expect(labels[0].htmlFor).toBe(boxes[0].id);
+      expect(labels[1].htmlFor).toBe(boxes[1].id);
+    });
+
+    test('clicking the second label toggles the second checkbox', () => {
+      const first = jest.fn();
+      const second = jest.fn();
+      render(
+        <>
+          <Checkbox label="Accept" checked={false} onChange={first} />
+          <Checkbox label="Accept" checked={false} onChange={second} />
+        </>,
+      );
+
+      fireEvent.click([...document.querySelectorAll('label')][1]);
+
+      expect(second).toHaveBeenCalled();
+      expect(first).not.toHaveBeenCalled();
+    });
+  });
 });
