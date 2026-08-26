@@ -169,4 +169,152 @@ describe('Listbox Component (APG listbox pattern)', () => {
       expect(onChange).toHaveBeenCalledWith(['ap']);
     });
   });
+  describe('aria-activedescendant focus model (#213)', () => {
+    const fruits = [
+      { value: 'apple', label: 'Apple' },
+      { value: 'banana', label: 'Banana' },
+      { value: 'cherry', label: 'Cherry' },
+    ];
+
+    const Harness = (props) => {
+      const [value, setValue] = useState(props.multiple ? [] : 'apple');
+      return (
+        <Listbox
+          options={fruits}
+          value={value}
+          onChange={setValue}
+          label="Fruits"
+          focusModel="activedescendant"
+          {...props}
+        />
+      );
+    };
+
+    test('the listbox itself is the tab stop', () => {
+      render(<Harness />);
+      expect(screen.getByRole('listbox')).toHaveAttribute('tabindex', '0');
+    });
+
+    test('options are not in the tab order', () => {
+      render(<Harness />);
+      screen.getAllByRole('option').forEach((o) => {
+        expect(o).not.toHaveAttribute('tabindex');
+      });
+    });
+
+    test('aria-activedescendant resolves to a real option', () => {
+      render(<Harness />);
+      const list = screen.getByRole('listbox');
+
+      const active = list.getAttribute('aria-activedescendant');
+      expect(active).toBeTruthy();
+      expect(document.getElementById(active)).toHaveTextContent('Apple');
+    });
+
+    test('focusing the listbox and pressing a key drives it', () => {
+      render(<Harness />);
+      const list = screen.getByRole('listbox');
+
+      // This is the exact shape the QA runner uses: focus the element it
+      // located -- the listbox -- and then press a key. Under roving tabindex
+      // focus stays on the <ul>, no option handler fires, and nothing happens.
+      list.focus();
+      expect(document.activeElement).toBe(list);
+
+      fireEvent.keyDown(list, { key: 'ArrowDown' });
+
+      expect(document.getElementById(list.getAttribute('aria-activedescendant'))).toHaveTextContent(
+        'Banana',
+      );
+    });
+
+    test('focus stays on the listbox as the active option moves', () => {
+      render(<Harness />);
+      const list = screen.getByRole('listbox');
+      list.focus();
+
+      fireEvent.keyDown(list, { key: 'ArrowDown' });
+      fireEvent.keyDown(list, { key: 'ArrowDown' });
+
+      expect(document.activeElement).toBe(list);
+    });
+
+    test('selection still follows focus in single-select', () => {
+      render(<Harness />);
+      const list = screen.getByRole('listbox');
+      list.focus();
+
+      fireEvent.keyDown(list, { key: 'ArrowDown' });
+
+      expect(screen.getByRole('option', { name: 'Banana' })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
+    });
+
+    test('Home and End move the active option', () => {
+      render(<Harness />);
+      const list = screen.getByRole('listbox');
+      list.focus();
+
+      fireEvent.keyDown(list, { key: 'End' });
+      expect(document.getElementById(list.getAttribute('aria-activedescendant'))).toHaveTextContent(
+        'Cherry',
+      );
+
+      fireEvent.keyDown(list, { key: 'Home' });
+      expect(document.getElementById(list.getAttribute('aria-activedescendant'))).toHaveTextContent(
+        'Apple',
+      );
+    });
+
+    test('Space toggles and Shift+Arrow extends in multi-select', () => {
+      render(<Harness multiple />);
+      const list = screen.getByRole('listbox');
+      list.focus();
+
+      fireEvent.keyDown(list, { key: ' ' });
+      fireEvent.keyDown(list, { key: 'ArrowDown', shiftKey: true });
+      fireEvent.keyDown(list, { key: 'ArrowDown', shiftKey: true });
+
+      ['Apple', 'Banana', 'Cherry'].forEach((name) => {
+        expect(screen.getByRole('option', { name })).toHaveAttribute('aria-selected', 'true');
+      });
+    });
+
+    test('type-ahead works from the listbox too', () => {
+      render(<Harness />);
+      const list = screen.getByRole('listbox');
+      list.focus();
+
+      fireEvent.keyDown(list, { key: 'c' });
+
+      expect(document.getElementById(list.getAttribute('aria-activedescendant'))).toHaveTextContent(
+        'Cherry',
+      );
+    });
+
+    test('clicking an option leaves focus on the listbox', () => {
+      render(<Harness />);
+      const list = screen.getByRole('listbox');
+
+      fireEvent.click(screen.getByRole('option', { name: 'Cherry' }));
+
+      // Focus has to land where the keys are handled, or the widget stops
+      // being drivable after a click.
+      expect(document.activeElement).toBe(list);
+      expect(document.getElementById(list.getAttribute('aria-activedescendant'))).toHaveTextContent(
+        'Cherry',
+      );
+    });
+
+    test('the roving model is untouched and remains the default', () => {
+      render(<Listbox options={fruits} value="apple" onChange={() => {}} label="Fruits" />);
+      const list = screen.getByRole('listbox');
+
+      expect(list).toHaveAttribute('tabindex', '-1');
+      expect(list).not.toHaveAttribute('aria-activedescendant');
+      expect(screen.getByRole('option', { name: 'Apple' })).toHaveAttribute('tabindex', '0');
+    });
+  });
 });

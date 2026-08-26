@@ -12,8 +12,14 @@
  *   - Shift + Arrow: extend range selection.
  *   - Home / End: move focus.
  *   - Ctrl/Cmd + A: select all.
+ *
+ * Focus model:
+ *   - "roving" (default): DOM focus moves onto the active option.
+ *   - "activedescendant": the listbox itself holds focus and names the active
+ *     option with aria-activedescendant, which is the model the APG's own
+ *     listbox examples use.
  */
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useId, useMemo, useRef, useState } from 'react';
 import { isTypeaheadKey, nodeText, useTypeahead } from '../_internal/typeahead';
 import './Listbox.css';
 
@@ -31,6 +37,19 @@ interface ListboxProps {
   multiple?: boolean;
   label?: string;
   labelId?: string;
+  /**
+   * Where DOM focus lives.
+   *
+   * "roving" keeps today's behaviour: focus moves onto the active option and
+   * the option handles the keys. "activedescendant" keeps focus on the listbox
+   * and points aria-activedescendant at the active option, which is what the
+   * APG's listbox examples do and what a caller that focuses the listbox itself
+   * needs in order to drive it.
+   *
+   * Defaults to "roving" so this is non-breaking; "activedescendant" is the
+   * more faithful of the two and is what the demo pages use.
+   */
+  focusModel?: 'roving' | 'activedescendant';
 }
 
 const Listbox: React.FC<ListboxProps> = ({
@@ -40,7 +59,11 @@ const Listbox: React.FC<ListboxProps> = ({
   multiple,
   label,
   labelId,
+  focusModel = 'roving',
 }) => {
+  const uid = useId();
+  const usesActiveDescendant = focusModel === 'activedescendant';
+  const optionId = (i: number) => `listbox-opt-${uid}-${i}`;
   const [focusIndex, setFocusIndex] = useState(() => {
     if (multiple) return 0;
     const i = options.findIndex((o) => o.value === value);
@@ -87,7 +110,14 @@ const Listbox: React.FC<ListboxProps> = ({
     const clamped = Math.max(0, Math.min(options.length - 1, i));
     const prev = focusIndex;
     setFocusIndex(clamped);
-    optionRefs.current[clamped]?.focus();
+    if (usesActiveDescendant) {
+      // ARIA requires the element aria-activedescendant points at to be
+      // visible. Roving tabindex gets that for free from .focus(); this model
+      // has to ask for it. Optional-called because jsdom does not implement it.
+      optionRefs.current[clamped]?.scrollIntoView?.({ block: 'nearest' });
+    } else {
+      optionRefs.current[clamped]?.focus();
+    }
     if (!multiple) {
       commitSingle(clamped);
     } else if (extend) {
@@ -100,7 +130,7 @@ const Listbox: React.FC<ListboxProps> = ({
    * option whose label starts with what was typed; selection follows focus in
    * single-select mode, exactly as it does for the arrow keys.
    */
-  const tryTypeahead = (e: React.KeyboardEvent<HTMLLIElement>, i: number) => {
+  const tryTypeahead = (e: React.KeyboardEvent<HTMLElement>, i: number) => {
     if (!isTypeaheadKey(e)) return false;
     const match = resolveTypeahead(
       e.key,
@@ -112,7 +142,7 @@ const Listbox: React.FC<ListboxProps> = ({
     return true;
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLLIElement>, i: number) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>, i: number) => {
     let handled = true;
     switch (e.key) {
       case 'ArrowDown':
@@ -157,7 +187,11 @@ const Listbox: React.FC<ListboxProps> = ({
         aria-labelledby={label ? groupLabelId : undefined}
         aria-multiselectable={multiple || undefined}
         className="listbox"
-        tabIndex={-1}
+        tabIndex={usesActiveDescendant ? 0 : -1}
+        aria-activedescendant={
+          usesActiveDescendant && options.length > 0 ? optionId(focusIndex) : undefined
+        }
+        onKeyDown={usesActiveDescendant ? (e) => handleKeyDown(e, focusIndex) : undefined}
       >
         {options.map((opt, i) => {
           const selected = selectedSet.has(opt.value);
@@ -165,15 +199,19 @@ const Listbox: React.FC<ListboxProps> = ({
             <li
               key={opt.value}
               ref={(el) => (optionRefs.current[i] = el)}
+              id={optionId(i)}
               role="option"
               aria-selected={selected}
               className={`listbox-option${selected ? ' is-selected' : ''}${
                 i === focusIndex ? ' is-focused' : ''
               }`}
-              tabIndex={i === focusIndex ? 0 : -1}
+              tabIndex={usesActiveDescendant ? undefined : i === focusIndex ? 0 : -1}
               onClick={(e) => {
                 setFocusIndex(i);
-                optionRefs.current[i]?.focus();
+                // Focus belongs on whichever element owns the keys, so that a
+                // click leaves the widget drivable from the keyboard.
+                if (usesActiveDescendant) listRef.current?.focus();
+                else optionRefs.current[i]?.focus();
                 if (multiple) {
                   if (e.shiftKey) selectRange(focusIndex, i);
                   else toggleMulti(i);
@@ -181,7 +219,7 @@ const Listbox: React.FC<ListboxProps> = ({
                   commitSingle(i);
                 }
               }}
-              onKeyDown={(e) => handleKeyDown(e, i)}
+              onKeyDown={usesActiveDescendant ? undefined : (e) => handleKeyDown(e, i)}
             >
               {opt.label}
             </li>
