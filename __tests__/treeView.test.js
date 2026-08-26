@@ -222,4 +222,60 @@ describe('TreeView Component (APG tree pattern)', () => {
       expect(item('a')).toHaveAttribute('aria-expanded', 'false');
     });
   });
+
+  describe('type-ahead (#155)', () => {
+    const files = [
+      { id: 'docs', label: 'Documents', children: [{ id: 'cv', label: 'CV.pdf' }] },
+      { id: 'music', label: 'Music' },
+      { id: 'pics', label: 'Pictures' },
+    ];
+    const node = (id) => document.querySelector(`[data-itemid="${id}"]`);
+
+    test('typing a character moves focus to the next matching node', () => {
+      render(<TreeView label="Files" nodes={files} />);
+      act(() => node('docs').focus());
+
+      fireEvent.keyDown(node('docs'), { key: 'm' });
+
+      expect(document.activeElement).toBe(node('music'));
+    });
+
+    test('the search wraps', () => {
+      render(<TreeView label="Files" nodes={files} />);
+      act(() => node('pics').focus());
+
+      fireEvent.keyDown(node('pics'), { key: 'd' });
+
+      expect(document.activeElement).toBe(node('docs'));
+    });
+
+    test('only visible nodes are targets', () => {
+      render(<TreeView label="Files" nodes={files} />);
+      act(() => node('docs').focus());
+
+      // CV.pdf is inside a collapsed subtree, so "c" must find nothing.
+      fireEvent.keyDown(node('docs'), { key: 'c' });
+
+      expect(document.activeElement).toBe(node('docs'));
+    });
+
+    test('nodes in an expanded subtree become targets', () => {
+      render(<TreeView label="Files" nodes={files} defaultExpanded={['docs']} />);
+      act(() => node('docs').focus());
+
+      fireEvent.keyDown(node('docs'), { key: 'c' });
+
+      expect(document.activeElement).toBe(node('cv'));
+    });
+
+    test('Enter and Space still select rather than typing ahead', () => {
+      const onSelect = jest.fn();
+      render(<TreeView label="Files" nodes={files} onSelect={onSelect} />);
+      act(() => node('music').focus());
+
+      fireEvent.keyDown(node('music'), { key: ' ' });
+
+      expect(onSelect).toHaveBeenCalledWith('music');
+    });
+  });
 });

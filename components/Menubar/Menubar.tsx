@@ -24,6 +24,7 @@
  *   - Escape: close submenu, return focus to parent menubar item.
  */
 import React, { useEffect, useRef, useState } from 'react';
+import { isTypeaheadKey, nodeText, useTypeahead } from '../_internal/typeahead';
 import './Menubar.css';
 
 /** A single item inside a menu. */
@@ -60,6 +61,8 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
       itemRefs.current[`${openMenu}:${focusItem}`]?.focus();
     }
   }, [openMenu, activeMenu, focusItem]);
+
+  const resolveTypeahead = useTypeahead();
 
   const openAt = (mIdx: number, iIdx: number) => {
     setActiveMenu(mIdx);
@@ -109,8 +112,23 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
       case 'End':
         setActiveMenu(menus.length - 1);
         break;
-      default:
-        handled = false;
+      default: {
+        // APG grades type-ahead Optional for a menubar -- a recommendation, not
+        // a conformance requirement. Implemented for both the menubar row and
+        // the open submenu, since a user who can type-ahead in one will expect
+        // it in the other.
+        if (!isTypeaheadKey(e)) {
+          handled = false;
+          break;
+        }
+        const match = resolveTypeahead(
+          e.key,
+          menus.map((m) => nodeText(m.label)),
+          mIdx,
+        );
+        if (match < 0) handled = false;
+        else setActiveMenu(match);
+      }
     }
     if (handled) e.preventDefault();
   };
@@ -152,8 +170,21 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
         setOpenMenu(null);
         handled = false;
         break;
-      default:
-        handled = false;
+      default: {
+        // "Move focus to the next item in the current menu whose label begins
+        // with that printable character."
+        if (!isTypeaheadKey(e)) {
+          handled = false;
+          break;
+        }
+        const match = resolveTypeahead(
+          e.key,
+          (menus[mIdx]?.items ?? []).map((item) => nodeText(item.label)),
+          iIdx,
+        );
+        if (match < 0) handled = false;
+        else setFocusItem(match);
+      }
     }
     if (handled) e.preventDefault();
   };

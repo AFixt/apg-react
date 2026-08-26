@@ -14,6 +14,7 @@
  *   - Ctrl/Cmd + A: select all.
  */
 import React, { useMemo, useRef, useState } from 'react';
+import { isTypeaheadKey, nodeText, useTypeahead } from '../_internal/typeahead';
 import './Listbox.css';
 
 /** A single option in a Listbox. */
@@ -80,6 +81,8 @@ const Listbox: React.FC<ListboxProps> = ({
     onChange?.(Array.from(next));
   };
 
+  const resolveTypeahead = useTypeahead();
+
   const moveFocus = (i: number, { extend }: { extend?: boolean } = {}) => {
     const clamped = Math.max(0, Math.min(options.length - 1, i));
     const prev = focusIndex;
@@ -90,6 +93,23 @@ const Listbox: React.FC<ListboxProps> = ({
     } else if (extend) {
       selectRange(prev, clamped);
     }
+  };
+
+  /**
+   * APG grades type-ahead Recommended for a listbox. Focus moves to the next
+   * option whose label starts with what was typed; selection follows focus in
+   * single-select mode, exactly as it does for the arrow keys.
+   */
+  const tryTypeahead = (e: React.KeyboardEvent<HTMLLIElement>, i: number) => {
+    if (!isTypeaheadKey(e)) return false;
+    const match = resolveTypeahead(
+      e.key,
+      options.map((o) => nodeText(o.label)),
+      i,
+    );
+    if (match < 0) return false;
+    moveFocus(match);
+    return true;
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLLIElement>, i: number) => {
@@ -115,11 +135,11 @@ const Listbox: React.FC<ListboxProps> = ({
         if (multiple && (e.ctrlKey || e.metaKey)) {
           onChange?.(options.map((o) => o.value));
         } else {
-          handled = false;
+          handled = tryTypeahead(e, i);
         }
         break;
       default:
-        handled = false;
+        handled = tryTypeahead(e, i);
     }
     if (handled) e.preventDefault();
   };
