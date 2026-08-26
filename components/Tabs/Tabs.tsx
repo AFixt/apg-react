@@ -26,6 +26,10 @@ interface TabsProps {
   activation?: 'automatic' | 'manual';
   orientation?: 'horizontal' | 'vertical';
   idPrefix?: string;
+  /** Accessible name for the tablist. APG requires one when a page has more than one. */
+  label?: string;
+  /** Id of an existing element naming the tablist. Takes precedence over `label`. */
+  labelledBy?: string;
 }
 
 const Tabs: React.FC<TabsProps> = ({
@@ -34,6 +38,8 @@ const Tabs: React.FC<TabsProps> = ({
   activation = 'automatic',
   orientation = 'horizontal',
   idPrefix,
+  label,
+  labelledBy,
 }) => {
   const [activeIndex, setActiveIndex] = useState(defaultIndex ?? 0);
   const [focusIndex, setFocusIndex] = useState(defaultIndex ?? 0);
@@ -77,7 +83,13 @@ const Tabs: React.FC<TabsProps> = ({
 
   return (
     <div className={`tabs tabs-${orientation || 'horizontal'}`}>
-      <div role="tablist" aria-orientation={orientation || 'horizontal'} className="tablist">
+      <div
+        role="tablist"
+        aria-orientation={orientation || 'horizontal'}
+        aria-label={labelledBy ? undefined : label}
+        aria-labelledby={labelledBy}
+        className="tablist"
+      >
         {tabs.map((tab, i) => {
           const selected = i === activeIndex;
           return (
