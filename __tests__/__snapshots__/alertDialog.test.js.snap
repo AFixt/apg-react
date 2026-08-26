@@ -23,9 +23,15 @@ exports[`AlertDialog Component Alert Dialog Snapshot 1`] = `
       >
         This is an important alert message.
       </p>
-      <button>
-        Close
-      </button>
+      <div
+        class="dialog-actions"
+      >
+        <button
+          class="dialog-action"
+        >
+          Close
+        </button>
+      </div>
     </div>
   </div>
 </DocumentFragment>

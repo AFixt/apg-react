@@ -18,13 +18,29 @@ interface CheckboxGroupItem {
   label: string;
 }
 
+/** Translatable labels for the CheckboxGroup component. English defaults are used when a key is omitted. */
+interface CheckboxGroupLabels {
+  /**
+   * Accessible name of the tri-state parent control. This is what a screen
+   * reader user hears before the mixed state, so it is very often a string
+   * consumers want to localise or reword.
+   */
+  selectAll?: string;
+}
+
 /** Props for the CheckboxGroup component. */
 interface CheckboxGroupProps {
   items: CheckboxGroupItem[];
   label: string;
+  labels?: CheckboxGroupLabels;
 }
 
-const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ items, label }) => {
+const defaultLabels: Required<CheckboxGroupLabels> = {
+  selectAll: 'All',
+};
+
+const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ items, label, labels }) => {
+  const l = { ...defaultLabels, ...labels };
   const uid = useId();
   const groupLabelId = `checkbox-group-label-${uid}`;
   const [checkedItems, setCheckedItems] = useState(new Array(items.length).fill(false));
@@ -52,7 +68,7 @@ const CheckboxGroup: React.FC<CheckboxGroupProps> = ({ items, label }) => {
     <div className="checkbox-group" role="group" aria-labelledby={groupLabelId}>
       <h3 id={groupLabelId}>{label}</h3>
       <Checkbox
-        label="All"
+        label={l.selectAll}
         checked={groupState}
         onChange={handleGroupCheckboxChange}
         isTriState={true}

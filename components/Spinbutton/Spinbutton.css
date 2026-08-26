@@ -128,3 +128,18 @@
   bottom: 1px;
   border-bottom-right-radius: var(--apg-radius-md);
 }
+
+/*
+ * The out-of-range message. aria-invalid tells a screen reader user the value
+ * is wrong; this is what tells them why, and what constraint they violated.
+ */
+.spinbutton {
+  display: inline-block;
+}
+
+.spinbutton-error {
+  margin-top: var(--apg-space-xs);
+  color: var(--apg-color-invalid);
+  font-size: var(--apg-font-size-sm);
+  font-family: var(--apg-font-family);
+}

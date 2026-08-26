@@ -104,4 +104,91 @@ describe('TreeGrid Component (APG treegrid pattern)', () => {
     });
     expect(cells[0]).toHaveFocus();
   });
+  // --- Regression coverage -------------------------------------------------
+
+  describe('Right Arrow moves one cell right (#163)', () => {
+    const cell = (r, c) => document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+
+    const focusCell = (r, c) => {
+      const el = cell(r, c);
+      fireEvent.focus(el);
+      return el;
+    };
+
+    test('Right Arrow on the first cell of a collapsed parent row expands it', () => {
+      render(<TreeGrid label="Files" columns={columns} rows={rows} />);
+      const dataRows = () => screen.getAllByRole('row').slice(1);
+
+      expect(dataRows()[0]).toHaveAttribute('aria-expanded', 'false');
+
+      focusCell(0, 0);
+      fireEvent.keyDown(cell(0, 0), { key: 'ArrowRight' });
+
+      expect(dataRows()[0]).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    test('Right Arrow on the first cell of an expanded parent row moves one cell right', () => {
+      render(<TreeGrid label="Files" columns={columns} rows={rows} defaultExpanded={['a']} />);
+
+      focusCell(0, 0);
+      fireEvent.keyDown(cell(0, 0), { key: 'ArrowRight' });
+
+      // The second cell of the *same* row, not the first cell of the child row.
+      expect(cell(0, 1)).toHaveAttribute('tabindex', '0');
+      expect(cell(0, 1)).toHaveTextContent('1');
+      expect(cell(1, 0)).toHaveAttribute('tabindex', '-1');
+    });
+
+    test('every cell of an expanded parent row is reachable by Right Arrow alone', () => {
+      render(<TreeGrid label="Files" columns={columns} rows={rows} defaultExpanded={['a']} />);
+
+      focusCell(0, 0);
+      const visited = [cell(0, 0).dataset.col];
+
+      for (let i = 0; i < columns.length - 1; i += 1) {
+        const from = document.querySelector('[data-row][data-col][tabindex="0"]');
+        fireEvent.keyDown(from, { key: 'ArrowRight' });
+        const landed = document.querySelector('[data-row][data-col][tabindex="0"]');
+        // Right Arrow must never leave the row it started on.
+        expect(landed.dataset.row).toBe('0');
+        visited.push(landed.dataset.col);
+      }
+
+      // Every column of the parent row, reached from its first cell using
+      // Right Arrow alone. Before the fix, column 1 ("Size") was unreachable.
+      expect(visited).toEqual(['0', '1']);
+      expect(cell(0, 1)).toHaveTextContent('1');
+    });
+
+    test('Right Arrow on the right-most cell does not move or wrap', () => {
+      render(<TreeGrid label="Files" columns={columns} rows={rows} defaultExpanded={['a']} />);
+
+      focusCell(0, 1);
+      fireEvent.keyDown(cell(0, 1), { key: 'ArrowRight' });
+
+      expect(cell(0, 1)).toHaveAttribute('tabindex', '0');
+      expect(cell(1, 0)).toHaveAttribute('tabindex', '-1');
+      expect(cell(0, 0)).toHaveAttribute('tabindex', '-1');
+    });
+
+    test('child rows remain reachable by Down Arrow', () => {
+      render(<TreeGrid label="Files" columns={columns} rows={rows} defaultExpanded={['a']} />);
+
+      focusCell(0, 0);
+      fireEvent.keyDown(cell(0, 0), { key: 'ArrowDown' });
+
+      expect(cell(1, 0)).toHaveAttribute('tabindex', '0');
+      expect(cell(1, 0)).toHaveTextContent('A1');
+    });
+
+    test('Left Arrow still collapses an expanded row from its first cell', () => {
+      render(<TreeGrid label="Files" columns={columns} rows={rows} defaultExpanded={['a']} />);
+      const dataRows = () => screen.getAllByRole('row').slice(1);
+
+      focusCell(0, 0);
+      fireEvent.keyDown(cell(0, 0), { key: 'ArrowLeft' });
+
+      expect(dataRows()[0]).toHaveAttribute('aria-expanded', 'false');
+    });
+  });
 });

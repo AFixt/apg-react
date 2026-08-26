@@ -125,10 +125,14 @@ const TreeGrid: React.FC<TreeGridProps> = ({ label, columns, rows, defaultExpand
         focusCell(curR - 1, curC);
         break;
       case 'ArrowRight':
+        // The APG's "move to the first child row" clause applies when focus is
+        // on a *row*. This treegrid has no row-level focus -- tabIndex is only
+        // ever computed for gridcells -- so from a cell, Right Arrow always
+        // means one cell to the right. Descending into the child row here made
+        // every cell after the first of an expanded parent row unreachable,
+        // and was redundant with Down Arrow, which already reaches it.
         if (isFirstCol && row.hasChildren && !expanded.has(row.id)) {
           toggle(row.id, true);
-        } else if (isFirstCol && row.hasChildren && expanded.has(row.id)) {
-          focusCell(curR + 1, 0);
         } else {
           focusCell(curR, curC + 1);
         }

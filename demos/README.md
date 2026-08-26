@@ -30,6 +30,31 @@ Demos may supply behaviour the library documents as the consumer's job — the
 README's "Implementer responsibilities" section, e.g. returning focus to the
 invoking element when the consumer's own button closes a dialog.
 
+## Per-state pages
+
+Within several patterns, use cases need mutually exclusive load states of what
+would otherwise be one page — a disclosure that is collapsed on load and one
+that is expanded cannot be the same URL. Those states get their own page rather
+than a query parameter, so `apg-qa` can address each by a named URL variable and
+a change here is a one-line edit in its `data/urls.yaml`.
+
+| Page                         | `apg-qa` variable           | State                                                 |
+| ---------------------------- | --------------------------- | ----------------------------------------------------- |
+| `disclosure-expanded.html`   | `disclosure_expanded_url`   | expanded on load                                      |
+| `disclosure-lazy.html`       | `disclosure_lazy_url`       | content absent from the DOM until first expanded      |
+| `alert-severities.html`      | `alert_severities_url`      | one info, one warning and one error alert at once     |
+| `accordion-always-open.html` | `accordion_always_open_url` | at-least-one-open; the open header is `aria-disabled` |
+
+The default page for each of these patterns keeps its existing behaviour on
+purpose, because its own cases depend on it:
+
+- `disclosure.html` stays **collapsed** on load — the only state from which both
+  halves of the interaction can be exercised in one pass.
+- `alert.html` keeps **exactly one** alert on load — its dismissal cases rely on
+  `locate: role "alert"` resolving to a single element.
+- `accordion.html` keeps collapsing the open panel **closing** it — the opposite
+  of the always-open variant. These two genuinely cannot share a page.
+
 ## Page naming
 
 Slugs follow `AFixt/apg-gherkin`, the canonical pattern list, which `apg-qa`

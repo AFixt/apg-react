@@ -1,40 +1,34 @@
 # OSV-Scanner configuration for the PR-time security workflow (#127).
 #
-# READ THIS BEFORE TRUSTING A GREEN OSV-SCANNER CHECK.
+# This file no longer excludes anything from the scan. It used to carry a
+# blanket `group = "dev"` override, which silenced the ENTIRE dependency tree:
+# package.json declares no `dependencies` at all -- react/react-dom are peers --
+# so every entry in package-lock.json is marked dev, and excluding the dev group
+# left the scanner nothing to look at. The job could not fail. That is resolved
+# in #137: the toolchain advisories it was hiding have been fixed, and the
+# scanner now sees all 1350 packages.
 #
-# This exclusion currently silences the ENTIRE dependency tree, not merely a
-# dev-only subset of it. `package.json` declares no `dependencies` at all —
-# react/react-dom are peers — so all 1668 entries in package-lock.json are
-# marked `dev`, and excluding the dev group leaves nothing for the scanner to
-# look at:
+# The one entry below is a specific, dated ignore naming a single advisory, not
+# a category. If it stops being true, the job goes red, which is the point.
+
+# extract-zip: unvalidated symlink path traversal. No fixed version exists --
+# the package is unmaintained -- and it reaches us only through puppeteer's
+# browser download step:
 #
-#   $ osv-scanner --lockfile=package-lock.json
-#   Filtered 1378 ignored package/s from the scan.
-#   No issues found
+#   puppeteer -> @puppeteer/browsers -> extract-zip
 #
-# The job therefore cannot fail today. It is a placeholder that will start
-# gating the moment this package gains a real production dependency, not a
-# check that is protecting anything right now.
+# Not reachable from anything this repo builds or publishes. It runs once, in
+# the E2E job, unpacking an archive fetched from Chrome for Testing over TLS --
+# not an untrusted artifact. The real fix is puppeteer >= 25, which drops
+# extract-zip entirely; that upgrade is blocked because puppeteer 25 is
+# ESM-only ("type": "module", with `require` pointing at the ESM entry) and the
+# E2E suite is CommonJS Jest, so importing it fails to parse. Migrating the E2E
+# layer to ESM is the prerequisite and is deliberately not bundled into a
+# dependency-hygiene change.
 #
-# The usual counter-argument — "npm audit in ci.yml covers the published
-# surface" — does not apply here either, for the same reason:
-#
-#   $ npm audit --omit=dev --audit-level=high   ->  found 0 vulnerabilities
-#   $ npm audit                                 ->  27 vulnerabilities
-#                                                   (1 critical, 17 high)
-#
-# Both production gates are empty because there is no production tree. What
-# the 27 findings actually cover is the build toolchain — vite, svgo, postcss,
-# rollup and friends — which does not ship to consumers but does produce
-# dist/, so a compromise there reaches them anyway. Tracked in #137, where
-# nearly every advisory has a fixed version already available.
-#
-# Why exclude at all, then: scanning the dev group produced 65 findings and
-# kept the job permanently red, and a gate nobody can ever turn green is a
-# gate everybody learns to ignore. Excluding is the lesser evil *while #137 is
-# open* — it is not the end state. When #137 lands, delete this file and let
-# the scanner see the whole tree.
-[[PackageOverrides]]
-group = "dev"
-ignore = true
-reason = "temporary: see #137. Excludes the entire tree, since this package has no production dependencies"
+# Review by 2026-11-26. If the E2E suite has moved to ESM by then, bump
+# puppeteer and delete this entry rather than extending the date.
+[[IgnoredVulns]]
+id = "GHSA-jmr9-qjv8-65gv"
+ignoreUntil = 2026-11-26
+reason = "extract-zip via puppeteer's browser download; no fix published. Blocked on migrating the CommonJS E2E suite to ESM for puppeteer >= 25. See #137."

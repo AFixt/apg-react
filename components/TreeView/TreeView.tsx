@@ -108,7 +108,25 @@ const TreeView: React.FC<TreeViewProps> = ({ label, nodes, onSelect, defaultExpa
     onSelect?.(id);
   };
 
+  /**
+   * `onFocus` maps to focusin, which bubbles through every ancestor treeitem.
+   * Without this guard the roving tabindex was reset to the outermost ancestor
+   * whenever focus landed on a nested node, so tabbing out and back returned
+   * the user to the top of the subtree instead of where they left off.
+   */
+  const handleFocus = (e: React.FocusEvent<HTMLLIElement>, id: string) => {
+    if (e.currentTarget !== e.target) return;
+    setFocusId(id);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Child treeitems are rendered *inside* their parent treeitem, and React
+    // synthetic events bubble -- so without this guard a keystroke on a nested
+    // node is handled again by every ancestor, each re-running the same key
+    // against its own index. The ancestor lands second and undoes the child's
+    // move, which is why a subtree could be entered but never navigated.
+    if (e.currentTarget !== e.target) return;
+
     // Resolve the current node from the event target's data attribute so
     // we aren't dependent on React state catching up to native focus events.
     const itemId = (e.currentTarget as HTMLElement).dataset.itemid;
@@ -192,7 +210,7 @@ const TreeView: React.FC<TreeViewProps> = ({ label, nodes, onSelect, defaultExpa
             tabIndex={isFocused ? 0 : -1}
             className={`treeitem${isSelected ? ' is-selected' : ''}`}
             onKeyDown={handleKeyDown}
-            onFocus={() => setFocusId(n.id)}
+            onFocus={(e) => handleFocus(e, n.id)}
           >
             <span
               className="treeitem-label"

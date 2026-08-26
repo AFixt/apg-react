@@ -76,4 +76,107 @@ describe('Disclosure Component (APG disclosure pattern)', () => {
     const { asFragment } = render(<Disclosure title={title}>{content}</Disclosure>);
     expect(asFragment()).toMatchSnapshot();
   });
+  // --- Regression coverage -------------------------------------------------
+
+  describe('defaultOpen (#171)', () => {
+    test('collapsed on load by default', () => {
+      render(<Disclosure title="Click Me">Content</Disclosure>);
+      expect(screen.getByRole('button')).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test('defaultOpen renders expanded on first paint', () => {
+      render(
+        <Disclosure title="Click Me" defaultOpen>
+          Content
+        </Disclosure>,
+      );
+
+      expect(screen.getByRole('button')).toHaveAttribute('aria-expanded', 'true');
+      expect(screen.getByText('Content')).toBeVisible();
+    });
+
+    test('the disclosure still owns its state afterwards', () => {
+      render(
+        <Disclosure title="Click Me" defaultOpen>
+          Content
+        </Disclosure>,
+      );
+      const button = screen.getByRole('button');
+
+      fireEvent.click(button);
+      expect(button).toHaveAttribute('aria-expanded', 'false');
+
+      fireEvent.click(button);
+      expect(button).toHaveAttribute('aria-expanded', 'true');
+    });
+  });
+
+  describe('unmountWhenClosed (#171)', () => {
+    test('content is rendered but hidden by default', () => {
+      render(<Disclosure title="Click Me">Lazy content</Disclosure>);
+
+      // Present in the DOM, merely class-hidden -- this is the default and it
+      // is what makes a "count is 0" assertion impossible against it.
+      expect(screen.getByText('Lazy content')).toBeInTheDocument();
+    });
+
+    test('content is absent from the DOM until first expanded', () => {
+      render(
+        <Disclosure title="Click Me" unmountWhenClosed>
+          Lazy content
+        </Disclosure>,
+      );
+
+      expect(screen.queryByText('Lazy content')).not.toBeInTheDocument();
+    });
+
+    test('expanding renders the content', () => {
+      render(
+        <Disclosure title="Click Me" unmountWhenClosed>
+          Lazy content
+        </Disclosure>,
+      );
+
+      fireEvent.click(screen.getByRole('button'));
+
+      expect(screen.getByText('Lazy content')).toBeInTheDocument();
+    });
+
+    test('collapsing removes it again', () => {
+      render(
+        <Disclosure title="Click Me" unmountWhenClosed>
+          Lazy content
+        </Disclosure>,
+      );
+      const button = screen.getByRole('button');
+
+      fireEvent.click(button);
+      fireEvent.click(button);
+
+      expect(screen.queryByText('Lazy content')).not.toBeInTheDocument();
+    });
+
+    test('aria-controls still references the container either way', () => {
+      render(
+        <Disclosure title="Click Me" unmountWhenClosed>
+          Lazy content
+        </Disclosure>,
+      );
+      const controls = screen.getByRole('button').getAttribute('aria-controls');
+
+      // The container stays mounted so the IDREF never dangles; only its
+      // children come and go.
+      expect(document.getElementById(controls)).toBeInTheDocument();
+    });
+
+    test('the two props compose', () => {
+      render(
+        <Disclosure title="Click Me" defaultOpen unmountWhenClosed>
+          Lazy content
+        </Disclosure>,
+      );
+
+      expect(screen.getByText('Lazy content')).toBeInTheDocument();
+    });
+  });
 });

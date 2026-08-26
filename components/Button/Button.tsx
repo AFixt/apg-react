@@ -14,6 +14,10 @@
  * @param {string} [props.shortcutKey] - The shortcut key for the button.
  * @param {string} [props.ariaDescribedby] - The ID of the element that describes the button.
  * @param {boolean} [props.isDisabled=false] - Determines if the button is disabled.
+ * @param {string} [props.disabledStyle='native'] - How a disabled button is
+ *   disabled. 'native' removes it from the tab order; 'aria' keeps it focusable
+ *   and exposes aria-disabled, for buttons whose disabled reason a user needs to
+ *   be able to discover.
  * @param {boolean} [props.isToggleButton=false] - Determines if the button is a toggle button.
  * @param {boolean} [props.toggleState=false] - The initial state of the toggle button.
  * @returns {JSX.Element} The rendered Button component.
@@ -29,6 +33,15 @@ interface ButtonProps {
   ariaDescribedby?: string;
   ariaHaspopup?: 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | 'true';
   isDisabled?: boolean;
+  /**
+   * How `isDisabled` is expressed. 'native' (the default, and today's
+   * behaviour) sets the disabled attribute, which removes the button from the
+   * tab order and from the accessibility tree's interactive surface. 'aria'
+   * keeps it focusable and sets aria-disabled="true" instead, which APG
+   * recommends whenever a user needs to be able to reach the control to
+   * discover why it is unavailable.
+   */
+  disabledStyle?: 'native' | 'aria';
   isToggleButton?: boolean;
   toggleState?: boolean;
 }
@@ -40,9 +53,11 @@ const Button: React.FC<ButtonProps> = ({
   ariaDescribedby,
   ariaHaspopup,
   isDisabled,
+  disabledStyle = 'native',
   isToggleButton,
   toggleState,
 }) => {
+  const isAriaDisabled = Boolean(isDisabled) && disabledStyle === 'aria';
   const [pressed, setPressed] = useState(toggleState);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -66,6 +81,9 @@ const Button: React.FC<ButtonProps> = ({
 
   // Button action
   const buttonAction = () => {
+    // A natively disabled button never fires; an aria-disabled one is still
+    // focusable and clickable, so the action has to be suppressed here.
+    if (isAriaDisabled) return;
     if (isToggleButton) {
       toggleButtonAction();
     } else {
@@ -91,10 +109,16 @@ const Button: React.FC<ButtonProps> = ({
       aria-pressed={isToggleButton ? pressed : undefined}
       aria-haspopup={ariaHaspopup || undefined}
       aria-describedby={ariaDescribedby || undefined}
-      disabled={isDisabled || undefined}
+      disabled={(isDisabled && disabledStyle === 'native') || undefined}
+      aria-disabled={isAriaDisabled || undefined}
       onClick={buttonAction}
       onKeyDown={handleKeyDown}
     >
+      {isToggleButton && pressed && (
+        <span className="button-toggle-indicator" aria-hidden="true">
+          {'\u2713'}
+        </span>
+      )}
       {label}
     </button>
   );
