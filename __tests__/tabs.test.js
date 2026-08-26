@@ -87,4 +87,69 @@ describe('Tabs Component (APG tabs pattern)', () => {
     fireEvent.keyDown(allTabs[0], { key: 'ArrowDown' });
     expect(allTabs[1]).toHaveAttribute('aria-selected', 'true');
   });
+  // --- Regression coverage -------------------------------------------------
+
+  describe('the tablist can be named (#139)', () => {
+    const tabs = [
+      { id: 'one', label: 'One', content: 'First' },
+      { id: 'two', label: 'Two', content: 'Second' },
+    ];
+
+    test('label names the tablist', () => {
+      render(<Tabs tabs={tabs} label="Sample Tabs" />);
+      expect(screen.getByRole('tablist')).toHaveAccessibleName('Sample Tabs');
+    });
+
+    test('labelledBy names it from an existing element', () => {
+      render(
+        <>
+          <h2 id="heading">Account settings</h2>
+          <Tabs tabs={tabs} labelledBy="heading" />
+        </>,
+      );
+
+      expect(screen.getByRole('tablist')).toHaveAccessibleName('Account settings');
+    });
+
+    test('labelledBy takes precedence over label', () => {
+      render(
+        <>
+          <h2 id="heading">Account settings</h2>
+          <Tabs tabs={tabs} label="Ignored" labelledBy="heading" />
+        </>,
+      );
+      const tablist = screen.getByRole('tablist');
+
+      expect(tablist).toHaveAccessibleName('Account settings');
+      expect(tablist).not.toHaveAttribute('aria-label');
+    });
+
+    test('an unnamed tablist renders neither attribute', () => {
+      render(<Tabs tabs={tabs} />);
+      const tablist = screen.getByRole('tablist');
+
+      expect(tablist).not.toHaveAttribute('aria-label');
+      expect(tablist).not.toHaveAttribute('aria-labelledby');
+    });
+
+    test('two tablists on one page can be told apart', () => {
+      render(
+        <>
+          <Tabs tabs={tabs} label="Billing" idPrefix="billing" />
+          <Tabs tabs={tabs} label="Profile" idPrefix="profile" />
+        </>,
+      );
+
+      expect(screen.getByRole('tablist', { name: 'Billing' })).toBeInTheDocument();
+      expect(screen.getByRole('tablist', { name: 'Profile' })).toBeInTheDocument();
+    });
+
+    test('naming does not disturb tab selection', () => {
+      render(<Tabs tabs={tabs} label="Sample Tabs" />);
+
+      fireEvent.click(screen.getByRole('tab', { name: 'Two' }));
+
+      expect(screen.getByRole('tab', { name: 'Two' })).toHaveAttribute('aria-selected', 'true');
+    });
+  });
 });

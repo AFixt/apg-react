@@ -69,4 +69,83 @@ describe('Button Component', () => {
     fireEvent.keyDown(window, { key: 'k' });
     expect(mockAction).toHaveBeenCalledTimes(1);
   });
+  // --- Regression coverage -------------------------------------------------
+
+  describe('aria-disabled variant (#139)', () => {
+    const noop = () => {};
+
+    test('native remains the default and is unchanged', () => {
+      render(<Button action={noop} label="Save" isDisabled />);
+      const button = screen.getByRole('button', { name: 'Save' });
+
+      expect(button).toBeDisabled();
+      expect(button).not.toHaveAttribute('aria-disabled');
+    });
+
+    test('disabledStyle="aria" exposes aria-disabled instead', () => {
+      render(<Button action={noop} label="Save" isDisabled disabledStyle="aria" />);
+      const button = screen.getByRole('button', { name: 'Save' });
+
+      expect(button).toHaveAttribute('aria-disabled', 'true');
+      expect(button).not.toBeDisabled();
+    });
+
+    test('an aria-disabled button stays focusable', () => {
+      render(<Button action={noop} label="Save" isDisabled disabledStyle="aria" />);
+      const button = screen.getByRole('button', { name: 'Save' });
+
+      // The whole point: it must stay reachable so a user can discover why it
+      // is unavailable. A natively disabled button cannot be focused at all.
+      button.focus();
+      expect(document.activeElement).toBe(button);
+    });
+
+    test('an aria-disabled button suppresses its action on click', () => {
+      const action = jest.fn();
+      render(<Button action={action} label="Save" isDisabled disabledStyle="aria" />);
+
+      fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+      expect(action).not.toHaveBeenCalled();
+    });
+
+    test('an aria-disabled button suppresses Enter and Space', () => {
+      const action = jest.fn();
+      render(<Button action={action} label="Save" isDisabled disabledStyle="aria" />);
+      const button = screen.getByRole('button', { name: 'Save' });
+
+      fireEvent.keyDown(button, { key: 'Enter' });
+      fireEvent.keyDown(button, { key: ' ' });
+
+      expect(action).not.toHaveBeenCalled();
+    });
+
+    test('an aria-disabled toggle does not flip aria-pressed', () => {
+      render(
+        <Button
+          action={() => {}}
+          label="Mute"
+          isToggleButton
+          toggleState={false}
+          isDisabled
+          disabledStyle="aria"
+        />,
+      );
+      const button = screen.getByRole('button', { name: 'Mute' });
+
+      fireEvent.click(button);
+
+      expect(button).toHaveAttribute('aria-pressed', 'false');
+    });
+
+    test('disabledStyle without isDisabled changes nothing', () => {
+      const action = jest.fn();
+      render(<Button action={action} label="Save" disabledStyle="aria" />);
+      const button = screen.getByRole('button', { name: 'Save' });
+
+      expect(button).not.toHaveAttribute('aria-disabled');
+      fireEvent.click(button);
+      expect(action).toHaveBeenCalled();
+    });
+  });
 });
