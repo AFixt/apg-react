@@ -90,3 +90,19 @@
     outline-offset: 2px;
   }
 }
+
+/*
+ * Actions sit in a row, in the order the consumer supplied them. APG's guidance
+ * is that the least destructive choice takes initial focus, which the component
+ * resolves; the visual treatment below only marks which one is destructive.
+ */
+.dialog-actions {
+  display: flex;
+  gap: var(--apg-space-sm);
+  justify-content: flex-end;
+}
+
+.dialog-content button.dialog-action-destructive {
+  background-color: var(--apg-color-error);
+  border-color: var(--apg-color-error);
+}
