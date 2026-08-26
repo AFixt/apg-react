@@ -237,4 +237,18 @@ describe('AlertDialog Component', () => {
       expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
     });
   });
+  test('two actions sharing a label both render (#143)', () => {
+    render(
+      <AlertDialog
+        isOpen
+        title="Confirm"
+        message="Pick one"
+        onClose={() => {}}
+        actions={[{ label: 'Retry' }, { label: 'Retry' }]}
+      />,
+    );
+
+    // A duplicate React key would silently drop one of them.
+    expect(screen.getAllByRole('button', { name: 'Retry' })).toHaveLength(2);
+  });
 });

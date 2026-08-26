@@ -154,7 +154,9 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
         <div className="dialog-actions">
           {resolvedActions.map((action, i) => (
             <button
-              key={action.label}
+              // Index rather than label: two actions may legitimately share a
+              // label, and a duplicate React key silently drops one of them.
+              key={`${i}-${action.label}`}
               ref={i === focusIndex ? initialFocusRef : undefined}
               className={`dialog-action${action.destructive ? ' dialog-action-destructive' : ''}`}
               onClick={() => runAction(action)}
