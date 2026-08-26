@@ -112,7 +112,9 @@ const Carousel: React.FC<CarouselProps> = ({
   };
 
   useEffect(() => {
-    if (!isRotating || isHoverPaused) return undefined;
+    // A single-slide carousel has nowhere to advance to, so an interval would
+    // just wake up forever to compute the index it is already on.
+    if (!isRotating || isHoverPaused || slides.length < 2) return undefined;
     const rotation = setInterval(advance, 3000);
     return () => clearInterval(rotation);
     // `activeIndex` is deliberately absent: including it tore down and rebuilt
