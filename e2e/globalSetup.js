@@ -7,6 +7,7 @@ const path = require('path');
 const http = require('http');
 const fs = require('fs');
 const puppeteer = require('puppeteer');
+const { resolveStaticPath } = require('./resolveStaticPath');
 
 const PORT = process.env.E2E_PORT || 6007;
 const ROOT = path.resolve(__dirname, '..', 'storybook-static');
@@ -32,8 +33,14 @@ function startServer() {
       return reject(new Error(`E2E: ${ROOT} does not exist. Run "npm run build-storybook" first.`));
     }
     const server = http.createServer((req, res) => {
-      const urlPath = decodeURIComponent(req.url.split('?')[0]);
-      let filePath = path.join(ROOT, urlPath);
+      const resolved = resolveStaticPath(ROOT, req.url);
+      if (resolved === null) {
+        res.writeHead(403, { 'Content-Type': 'text/plain' });
+        res.end('Forbidden');
+        return;
+      }
+
+      let filePath = resolved;
       if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
         filePath = path.join(filePath, 'index.html');
       }
