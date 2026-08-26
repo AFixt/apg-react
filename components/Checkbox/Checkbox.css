@@ -80,3 +80,14 @@
   cursor: pointer;
   user-select: none;
 }
+
+/*
+ * The validation message, mirroring .textbox-error. aria-invalid says the
+ * control is wrong; this is what says why, and it is what aria-describedby /
+ * aria-errormessage point at.
+ */
+.checkbox-error {
+  margin-top: var(--apg-space-xs);
+  color: var(--apg-color-error);
+  font-size: var(--apg-font-size-sm);
+}
