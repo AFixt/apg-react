@@ -81,8 +81,18 @@
   box-shadow: var(--apg-shadow-inset);
 }
 
-.button-toggle.is-pressed::before,
-.button[aria-pressed='true']::before {
-  content: '\2713\00a0';
+/*
+ * The pressed tick is a real element rather than generated content. CSS
+ * generated content participates in accessible name computation, so attaching
+ * it to a state selector renamed the control every time it was toggled -- a
+ * voice-control user who could say "click Mute" could no longer address it once
+ * it read "check-mark Mute". The element carries aria-hidden="true", so the tick
+ * stays visible and stays out of the name.
+ *
+ * It is worth keeping rather than relying on the background and shadow above:
+ * those distinguish the pressed state by colour alone.
+ */
+.button-toggle-indicator {
+  margin-inline-end: 0.25em;
   font-weight: var(--apg-font-weight-bold);
 }
