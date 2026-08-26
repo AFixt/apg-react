@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, createEvent, fireEvent, render, screen } from '@testing-library/react';
 import React, { useState } from 'react';
 import Combobox from '../components/Combobox/Combobox';
 
@@ -83,5 +83,164 @@ describe('Combobox Component (APG combobox pattern)', () => {
     expect(screen.getByRole('combobox')).toHaveAttribute('aria-autocomplete', 'none');
     rerender(<Harness autocomplete="both" />);
     expect(screen.getByRole('combobox')).toHaveAttribute('aria-autocomplete', 'both');
+  });
+  // --- Regression coverage -------------------------------------------------
+
+  describe('no-match search (#152)', () => {
+    const typeNoMatch = () => {
+      render(<Harness autocomplete="list" />);
+      const input = screen.getByRole('combobox');
+      fireEvent.change(input, { target: { value: 'zzzz' } });
+      return input;
+    };
+
+    test('does not claim an open popup when nothing matched', () => {
+      const input = typeNoMatch();
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+      expect(input).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test('leaves no dangling aria-activedescendant', () => {
+      const input = typeNoMatch();
+      const active = input.getAttribute('aria-activedescendant');
+      expect(active).toBeNull();
+    });
+
+    test('every aria-activedescendant resolves while options exist', () => {
+      render(<Harness autocomplete="list" />);
+      const input = screen.getByRole('combobox');
+      fireEvent.keyDown(input, { key: 'ArrowDown' });
+
+      const active = input.getAttribute('aria-activedescendant');
+      expect(active).not.toBeNull();
+      expect(document.getElementById(active)).toBeInTheDocument();
+    });
+
+    test('recovers when the search is narrowed back to a match', () => {
+      render(<Harness autocomplete="list" />);
+      const input = screen.getByRole('combobox');
+
+      fireEvent.change(input, { target: { value: 'zzzz' } });
+      expect(input).toHaveAttribute('aria-expanded', 'false');
+
+      fireEvent.change(input, { target: { value: 'Ap' } });
+      expect(input).toHaveAttribute('aria-expanded', 'true');
+      expect(screen.getByRole('listbox')).toBeInTheDocument();
+    });
+  });
+
+  describe('deletion is not re-expanded by inline autocomplete (#153)', () => {
+    // The inline completion is applied inside a requestAnimationFrame callback,
+    // which jsdom never flushes on its own -- so without this these assertions
+    // pass against the unfixed component, which is worse than no test. The
+    // callbacks are queued and flushed *after* React commits, mirroring the
+    // browser: flushing them synchronously inside the change handler lets the
+    // controlled `value` overwrite the completion and hides the behaviour.
+    let rafSpy;
+    let rafQueue = [];
+
+    beforeEach(() => {
+      rafQueue = [];
+      rafSpy = jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+        rafQueue.push(cb);
+        return rafQueue.length;
+      });
+    });
+
+    afterEach(() => {
+      rafSpy.mockRestore();
+    });
+
+    const flushRaf = () => {
+      const queued = rafQueue;
+      rafQueue = [];
+      act(() => {
+        queued.forEach((cb) => cb(0));
+      });
+    };
+
+    // `fireEvent.change(el, { nativeEvent: { inputType } })` silently drops the
+    // inputType -- it is not a DOM event init key -- so the component would
+    // always fall through to the length comparison and these tests would not
+    // be testing the branch they name. Build the InputEvent for real instead.
+    const change = (input, value, inputType) => {
+      const event = createEvent.input(input, { target: { value }, inputType });
+      fireEvent(input, event);
+      flushRaf();
+    };
+
+    test('insertion still completes inline', () => {
+      render(<Harness autocomplete="both" />);
+      const input = screen.getByRole('combobox');
+
+      change(input, 'Ap', 'insertText');
+
+      expect(input.value).toBe('Apple');
+      expect(input.selectionStart).toBe(2);
+      expect(input.selectionEnd).toBe(5);
+    });
+
+    test('Backspace over a completion does not re-expand it', () => {
+      render(<Harness autocomplete="both" />);
+      const input = screen.getByRole('combobox');
+
+      change(input, 'Ap', 'insertText');
+      expect(input.value).toBe('Apple');
+
+      // Backspace with "ple" selected deletes the selection, leaving "Ap".
+      change(input, 'Ap', 'deleteContentBackward');
+      expect(input.value).toBe('Ap');
+
+      change(input, 'A', 'deleteContentBackward');
+      expect(input.value).toBe('A');
+    });
+
+    test('deleting to empty does not refill the field', () => {
+      render(<Harness autocomplete="both" />);
+      const input = screen.getByRole('combobox');
+
+      change(input, 'A', 'deleteContentBackward');
+      expect(input.value).toBe('A');
+
+      change(input, '', 'deleteContentBackward');
+      expect(input.value).toBe('');
+    });
+
+    test('a deletion never lengthens the value', () => {
+      render(<Harness autocomplete="both" />);
+      const input = screen.getByRole('combobox');
+
+      change(input, 'Ban', 'insertText');
+      const beforeLength = input.value.length;
+
+      change(input, 'Ba', 'deleteContentBackward');
+      expect(input.value.length).toBeLessThan(beforeLength);
+    });
+
+    test('falls back to a length comparison when inputType is absent', () => {
+      render(<Harness autocomplete="both" />);
+      const input = screen.getByRole('combobox');
+
+      change(input, 'Ap');
+      change(input, 'A');
+
+      expect(input.value).toBe('A');
+    });
+  });
+
+  describe('aria-haspopup (#142)', () => {
+    test('names the popup role', () => {
+      render(<Harness autocomplete="list" />);
+      expect(screen.getByRole('combobox')).toHaveAttribute('aria-haspopup', 'listbox');
+    });
+
+    test('is present whether or not the popup is showing', () => {
+      render(<Harness autocomplete="list" />);
+      const input = screen.getByRole('combobox');
+      expect(input).toHaveAttribute('aria-haspopup', 'listbox');
+
+      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      expect(input).toHaveAttribute('aria-haspopup', 'listbox');
+    });
   });
 });
