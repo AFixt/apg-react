@@ -51,7 +51,14 @@ interface GridProps {
   rowHeaderKey?: string;
   /** Makes every cell editable. A column's own `editable` takes precedence. */
   editable?: boolean;
-  /** Notified when an edit is committed. Row index is zero-based over `rows`. */
+  /**
+   * Notified when an edit is committed. Row index is zero-based over `rows`.
+   *
+   * Supplying this makes the consumer the owner of the data: the grid reports
+   * the new value and renders whatever `rows` says next, exactly as a
+   * controlled input does. Omit it and the grid keeps the edit itself. The same
+   * uncontrolled-unless-told split the rest of this library uses.
+   */
   onCellChange?: (rowIndex: number, columnKey: string, value: string) => void;
 }
 
@@ -73,7 +80,11 @@ const Grid: React.FC<GridProps> = ({
   // the caret moves inside the field instead of focus moving between cells.
   const [editing, setEditing] = useState<{ row: number; col: number } | null>(null);
   const [draft, setDraft] = useState('');
-  const [edits, setEdits] = useState<Record<string, string>>({});
+  // Only used when the consumer has not taken ownership via onCellChange. Each
+  // edit still remembers the `rows` value it was made against, so a later
+  // change to that cell from outside wins rather than being shadowed forever.
+  const [edits, setEdits] = useState<Record<string, { base: string; value: string }>>({});
+  const isControlled = onCellChange !== undefined;
   const cellRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const prefix = idPrefix || 'grid';
   const captionId = `${prefix}-caption`;
@@ -83,12 +94,25 @@ const Grid: React.FC<GridProps> = ({
 
   const isEditable = (c: number) => !isRowHeader(c) && (columns[c]?.editable ?? editable) === true;
 
-  /** The value a data cell currently shows, committed edits included. */
+  /** The `rows` value for a cell, as a string, for comparison against an edit. */
+  const sourceValue = (r: number, colKey: string) => {
+    const value = rows[r - 1]?.[colKey];
+    return value === undefined || value === null ? '' : String(value);
+  };
+
+  /**
+   * The value a data cell currently shows. With `onCellChange` supplied the
+   * consumer owns it and `rows` is the only source. Otherwise a local edit is
+   * honoured, but only while the underlying `rows` value is unchanged -- once
+   * it moves, the prop wins and the edit is discarded.
+   */
   const cellValue = (r: number, c: number) => {
     const col = columns[c];
     if (!col) return undefined;
-    const key = `${r}:${col.key}`;
-    if (key in edits) return edits[key];
+    if (!isControlled) {
+      const edit = edits[`${r}:${col.key}`];
+      if (edit && edit.base === sourceValue(r, col.key)) return edit.value;
+    }
     return rows[r - 1]?.[col.key];
   };
 
@@ -136,8 +160,12 @@ const Grid: React.FC<GridProps> = ({
     if (!editing) return;
     const col = columns[editing.col];
     if (col) {
-      setEdits((prev) => ({ ...prev, [`${editing.row}:${col.key}`]: draft }));
-      onCellChange?.(editing.row - 1, col.key, draft);
+      if (isControlled) {
+        onCellChange(editing.row - 1, col.key, draft);
+      } else {
+        const base = sourceValue(editing.row, col.key);
+        setEdits((prev) => ({ ...prev, [`${editing.row}:${col.key}`]: { base, value: draft } }));
+      }
     }
     stopEdit();
   };

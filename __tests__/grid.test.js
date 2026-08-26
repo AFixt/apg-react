@@ -319,4 +319,90 @@ describe('Grid Component (APG grid pattern)', () => {
       expect(screen.getByRole('textbox')).toHaveAccessibleName('Q1 Revenue');
     });
   });
+  describe('who owns an edited value (#170)', () => {
+    const one = [{ key: 'name', label: 'Name' }];
+    const editCell = (from, to) => {
+      fireEvent.keyDown(screen.getByRole('gridcell', { name: from }), { key: 'F2' });
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: to } });
+      fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Enter' });
+    };
+    const shown = () => screen.getAllByRole('gridcell').map((c) => c.textContent);
+
+    test('with onCellChange, the consumer owns it and rows is the only source', () => {
+      const onCellChange = jest.fn();
+      const { rerender } = render(
+        <Grid
+          label="P"
+          columns={one}
+          rows={[{ id: 1, name: 'ada' }]}
+          editable
+          onCellChange={onCellChange}
+        />,
+      );
+
+      editCell('ada', 'ADA LOVELACE');
+      expect(onCellChange).toHaveBeenCalledWith(0, 'name', 'ADA LOVELACE');
+
+      // The consumer normalises and pushes it back.
+      rerender(
+        <Grid
+          label="P"
+          columns={one}
+          rows={[{ id: 1, name: 'Ada Lovelace' }]}
+          editable
+          onCellChange={onCellChange}
+        />,
+      );
+      expect(shown()).toEqual(['Ada Lovelace']);
+    });
+
+    test('a consumer that rejects an edit is not overruled', () => {
+      const onCellChange = jest.fn();
+      const { rerender } = render(
+        <Grid
+          label="P"
+          columns={one}
+          rows={[{ id: 1, name: 'ada' }]}
+          editable
+          onCellChange={onCellChange}
+        />,
+      );
+
+      editCell('ada', 'nonsense');
+      // Consumer validates, refuses, and leaves rows alone.
+      rerender(
+        <Grid
+          label="P"
+          columns={one}
+          rows={[{ id: 1, name: 'ada' }]}
+          editable
+          onCellChange={onCellChange}
+        />,
+      );
+
+      // The grid must not go on showing a value the application refused --
+      // a screen reader user would be read data the app does not hold.
+      expect(shown()).toEqual(['ada']);
+    });
+
+    test('without onCellChange the grid keeps the edit itself', () => {
+      render(<Grid label="P" columns={one} rows={[{ id: 1, name: 'ada' }]} editable />);
+
+      editCell('ada', 'Ada L');
+
+      expect(shown()).toEqual(['Ada L']);
+    });
+
+    test('an outside change to an edited cell still wins when uncontrolled', () => {
+      const { rerender } = render(
+        <Grid label="P" columns={one} rows={[{ id: 1, name: 'ada' }]} editable />,
+      );
+
+      editCell('ada', 'Ada L');
+      rerender(<Grid label="P" columns={one} rows={[{ id: 1, name: 'Grace' }]} editable />);
+
+      // The local edit must not shadow rows forever.
+      expect(shown()).toEqual(['Grace']);
+    });
+  });
 });
