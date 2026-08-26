@@ -8,7 +8,7 @@
  * @param {string} [props.position='top'] - The position of the tooltip relative to the content. Can be 'top', 'right', 'bottom', or 'left'.
  * @returns {JSX.Element} The rendered Tooltip component.
  */
-import React, { cloneElement, isValidElement, useRef, useState } from 'react';
+import React, { cloneElement, isValidElement, useEffect, useId, useRef, useState } from 'react';
 import './Tooltip.css';
 
 /** Props for the Tooltip component. */
@@ -21,13 +21,30 @@ interface TooltipProps {
 const Tooltip: React.FC<TooltipProps> = ({ children, text, position = 'top' }) => {
   const [isVisible, setIsVisible] = useState(false);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
+  // One id per instance. A shared literal put two elements with the same id in
+  // the document whenever one trigger was focused while another was hovered,
+  // and IDREF resolution then described both controls with the first one's
+  // text.
+  const uid = useId();
+  const tooltipId = `tooltip-${uid}`;
 
   const showTooltip = () => setIsVisible(true);
   const hideTooltip = () => setIsVisible(false);
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') hideTooltip();
-  };
+  /**
+   * WCAG 1.4.13 requires content shown on hover or focus to be dismissible
+   * without moving the pointer or focus. A hover-triggered tooltip usually
+   * means focus is somewhere else entirely, so a handler bound to the trigger
+   * never sees the key -- this has to be listened for at the document level.
+   */
+  useEffect(() => {
+    if (!isVisible) return undefined;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') hideTooltip();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isVisible]);
 
   const enhanceChild = (child: React.ReactNode) => {
     if (isValidElement(child)) {
@@ -36,9 +53,8 @@ const Tooltip: React.FC<TooltipProps> = ({ children, text, position = 'top' }) =
         'onMouseLeave': hideTooltip,
         'onFocus': showTooltip,
         'onBlur': hideTooltip,
-        'onKeyDown': handleKeyPress,
         'tabIndex': 0,
-        'aria-describedby': isVisible ? 'tooltip-text' : undefined,
+        'aria-describedby': isVisible ? tooltipId : undefined,
       });
     }
     return child;
@@ -51,7 +67,7 @@ const Tooltip: React.FC<TooltipProps> = ({ children, text, position = 'top' }) =
         <div
           className="tooltip-text"
           role="tooltip"
-          id="tooltip-text"
+          id={tooltipId}
           ref={tooltipRef}
           data-position={position}
         >
