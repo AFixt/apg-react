@@ -69,4 +69,55 @@ describe('Button Component', () => {
     fireEvent.keyDown(window, { key: 'k' });
     expect(mockAction).toHaveBeenCalledTimes(1);
   });
+  // --- Regression coverage -------------------------------------------------
+
+  describe('the pressed tick stays out of the accessible name (#151)', () => {
+    // jsdom does not resolve stylesheets, so it cannot see CSS generated
+    // content and an accessible-name assertion here would have passed against
+    // the old code too. What these can prove is that the replacement is a real
+    // element and that it is hidden from the accessibility tree; the structural
+    // guarantee that no stylesheet reintroduces state-dependent generated
+    // content lives in __tests__/generatedContent.test.js.
+    const renderToggle = () =>
+      render(<Button action={() => {}} label="Mute" isToggleButton toggleState={false} />);
+
+    test('the indicator is not rendered while unpressed', () => {
+      const { container } = renderToggle();
+      expect(container.querySelector('.button-toggle-indicator')).toBeNull();
+    });
+
+    test('the indicator is rendered and aria-hidden once pressed', () => {
+      const { container } = renderToggle();
+      fireEvent.click(screen.getByRole('button', { name: 'Mute' }));
+
+      const indicator = container.querySelector('.button-toggle-indicator');
+      expect(indicator).not.toBeNull();
+      expect(indicator).toHaveAttribute('aria-hidden', 'true');
+      expect(indicator).toHaveTextContent('\u2713');
+    });
+
+    test('the button is addressable by the same name pressed or not', () => {
+      renderToggle();
+
+      const before = screen.getByRole('button', { name: 'Mute' });
+      expect(before).toHaveAttribute('aria-pressed', 'false');
+
+      fireEvent.click(before);
+
+      // Same query, same name -- this is what a voice-control user's
+      // "click Mute" resolves through.
+      const after = screen.getByRole('button', { name: 'Mute' });
+      expect(after).toHaveAttribute('aria-pressed', 'true');
+      expect(after).toBe(before);
+    });
+
+    test('the pressed state is still exposed, by aria-pressed alone', () => {
+      renderToggle();
+      const button = screen.getByRole('button', { name: 'Mute' });
+
+      fireEvent.click(button);
+      expect(button).toHaveAttribute('aria-pressed', 'true');
+      expect(button).toHaveClass('is-pressed');
+    });
+  });
 });

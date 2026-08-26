@@ -95,6 +95,11 @@ const Button: React.FC<ButtonProps> = ({
       onClick={buttonAction}
       onKeyDown={handleKeyDown}
     >
+      {isToggleButton && pressed && (
+        <span className="button-toggle-indicator" aria-hidden="true">
+          {'\u2713'}
+        </span>
+      )}
       {label}
     </button>
   );
