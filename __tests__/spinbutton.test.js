@@ -255,4 +255,20 @@ describe('an invalid value says why (#148)', () => {
 
     expect(queryByRole('alert')).not.toBeInTheDocument();
   });
+  test('an explicitly empty errorMessage renders no alert', () => {
+    const { input, queryByRole } = setup({
+      min: 1,
+      max: 10,
+      initialValue: 5,
+      ariaLabel: 'Quantity',
+      errorMessage: '',
+    });
+
+    fireEvent.change(input, { target: { value: '50' } });
+
+    // Empty means "no message", not "a nameless alert".
+    expect(queryByRole('alert')).not.toBeInTheDocument();
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).not.toHaveAttribute('aria-describedby');
+  });
 });

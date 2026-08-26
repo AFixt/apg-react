@@ -113,9 +113,13 @@ const Spinbutton: React.FC<SpinbuttonProps> = ({
     }
   };
 
+  // An explicitly empty errorMessage means "no message", not "an empty alert":
+  // rendering one would announce a nameless alert on every invalid entry.
   const message = errorMessage ?? l.rangeError(min, max);
+  const hasMessage = message.trim() !== '';
   const describedBy =
-    [ariaDescribedby, isInvalid ? errorId : undefined].filter(Boolean).join(' ') || undefined;
+    [ariaDescribedby, isInvalid && hasMessage ? errorId : undefined].filter(Boolean).join(' ') ||
+    undefined;
 
   return (
     <div className="spinbutton">
@@ -155,7 +159,7 @@ const Spinbutton: React.FC<SpinbuttonProps> = ({
           <span aria-hidden="true">&#x25BC;</span>
         </button>
       </div>
-      {isInvalid && (
+      {isInvalid && hasMessage && (
         <div id={errorId} role="alert" className="spinbutton-error">
           {message}
         </div>
