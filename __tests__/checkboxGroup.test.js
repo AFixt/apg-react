@@ -85,4 +85,55 @@ describe('CheckboxGroup Component (APG tri-state checkbox pattern)', () => {
     fireEvent.keyDown(child, { key: ' ' });
     expect(child).toBeChecked();
   });
+  // --- Regression coverage -------------------------------------------------
+
+  describe('the parent control can be named (#145)', () => {
+    const items = [
+      { id: '1', label: 'Email' },
+      { id: '2', label: 'SMS' },
+    ];
+
+    test('defaults to "All", so this stays non-breaking', () => {
+      render(<CheckboxGroup label="Notify me by" items={items} />);
+      expect(screen.getByRole('checkbox', { name: 'All' })).toBeInTheDocument();
+    });
+
+    test('labels.selectAll renames it', () => {
+      render(
+        <CheckboxGroup label="Notify me by" items={items} labels={{ selectAll: 'Select all' }} />,
+      );
+
+      expect(screen.getByRole('checkbox', { name: 'Select all' })).toBeInTheDocument();
+      expect(screen.queryByRole('checkbox', { name: 'All' })).not.toBeInTheDocument();
+    });
+
+    test('the renamed control is still the tri-state parent', () => {
+      render(
+        <CheckboxGroup label="Notify me by" items={items} labels={{ selectAll: 'Select all' }} />,
+      );
+      const parent = screen.getByRole('checkbox', { name: 'Select all' });
+
+      fireEvent.click(screen.getByRole('checkbox', { name: 'Email' }));
+      expect(parent).toHaveAttribute('aria-checked', 'mixed');
+
+      fireEvent.click(screen.getByRole('checkbox', { name: 'SMS' }));
+      expect(parent).toHaveAttribute('aria-checked', 'true');
+    });
+
+    test('the renamed control still toggles every item', () => {
+      render(
+        <CheckboxGroup label="Notify me by" items={items} labels={{ selectAll: 'Select all' }} />,
+      );
+
+      fireEvent.click(screen.getByRole('checkbox', { name: 'Select all' }));
+
+      expect(screen.getByRole('checkbox', { name: 'Email' })).toBeChecked();
+      expect(screen.getByRole('checkbox', { name: 'SMS' })).toBeChecked();
+    });
+
+    test('an omitted labels key falls back to the default', () => {
+      render(<CheckboxGroup label="Notify me by" items={items} labels={{}} />);
+      expect(screen.getByRole('checkbox', { name: 'All' })).toBeInTheDocument();
+    });
+  });
 });
