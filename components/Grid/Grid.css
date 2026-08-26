@@ -87,3 +87,27 @@
 .grid-row:focus .grid-cell {
   background-color: var(--apg-color-gray-50);
 }
+
+/*
+ * A row header labels its row, so it is given the same visual weight as a
+ * column header. It stays in the roving tabindex: the APG permits either, and
+ * keeping it reachable means Home still lands somewhere meaningful.
+ */
+.grid-rowheader {
+  font-weight: var(--apg-font-weight-bold);
+}
+
+/*
+ * The edit field fills its cell so entering edit mode does not reflow the grid.
+ */
+.grid-cell-input {
+  width: 100%;
+  border: var(--apg-border-width) solid var(--apg-color-primary);
+  border-radius: var(--apg-radius-sm);
+  padding: 0;
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
+  background-color: var(--apg-color-white);
+  box-sizing: border-box;
+}
