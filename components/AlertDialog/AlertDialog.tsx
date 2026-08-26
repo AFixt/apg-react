@@ -4,11 +4,28 @@
  * - role=alertdialog, aria-modal=true
  * - Focus trapped inside the dialog
  * - Escape closes and returns focus to the invoking element
- * - Initial focus placed on the close button
+ * - Initial focus placed on the least destructive action (see `actions`)
  */
 import React, { useEffect, useId, useRef } from 'react';
 import { cycleFocusInDialog } from '../_internal/dialog-focus';
 import './AlertDialog.css';
+
+/** One choice offered by an AlertDialog. */
+interface AlertDialogAction {
+  label: string;
+  /** Called when the action is activated, before the dialog closes. */
+  onSelect?: () => void;
+  /** Places initial focus here, overriding the least-destructive default. */
+  initialFocus?: boolean;
+  /** Marks a destructive choice, so it is styled as one and not focused first. */
+  destructive?: boolean;
+}
+
+/** Translatable labels for the AlertDialog component. English defaults are used when a key is omitted. */
+interface AlertDialogLabels {
+  /** Label of the acknowledge button used when no `actions` are supplied. */
+  close?: string;
+}
 
 /** Props for the AlertDialog component. */
 interface AlertDialogProps {
@@ -16,14 +33,38 @@ interface AlertDialogProps {
   title: string;
   message: string;
   onClose: () => void;
+  /**
+   * The choices the dialog offers. Omit for an acknowledge-only dialog with a
+   * single Close button, which is the previous behaviour.
+   *
+   * Initial focus goes to the action marked `initialFocus`; failing that, to
+   * the first action that is not `destructive`; failing that, to the first.
+   * That ordering is what APG's guidance about focusing the least destructive
+   * choice needs, without making the consumer restate it every time.
+   */
+  actions?: AlertDialogAction[];
+  labels?: AlertDialogLabels;
 }
 
-const AlertDialog: React.FC<AlertDialogProps> = ({ isOpen, title, message, onClose }) => {
+const defaultLabels: Required<AlertDialogLabels> = {
+  close: 'Close',
+};
+
+const AlertDialog: React.FC<AlertDialogProps> = ({
+  isOpen,
+  title,
+  message,
+  onClose,
+  actions,
+  labels,
+}) => {
+  const l = { ...defaultLabels, ...labels };
   const uid = useId();
   const titleId = `alertdialog-title-${uid}`;
   const descId = `alertdialog-desc-${uid}`;
   const dialogRef = useRef<HTMLDivElement>(null);
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  /** The element that takes initial focus, and that the focus trap returns to. */
+  const initialFocusRef = useRef<HTMLButtonElement>(null);
   const invokingElementRef = useRef<Element | null>(null);
   // Tracks whether the dialog is in the process of closing so the focus trap
   // doesn't yank focus back to the dialog while we're restoring it to the
@@ -35,7 +76,7 @@ const AlertDialog: React.FC<AlertDialogProps> = ({ isOpen, title, message, onClo
     if (isOpen) {
       closingRef.current = false;
       invokingElementRef.current = document.activeElement;
-      closeBtnRef.current?.focus();
+      initialFocusRef.current?.focus();
     }
   }, [isOpen]);
 
@@ -71,12 +112,29 @@ const AlertDialog: React.FC<AlertDialogProps> = ({ isOpen, title, message, onClo
       if (closingRef.current) return;
       if (dialogRef.current && !dialogRef.current.contains(e.target as Node)) {
         e.stopPropagation();
-        closeBtnRef.current?.focus();
+        initialFocusRef.current?.focus();
       }
     };
     document.addEventListener('focus', handleFocusTrap, true);
     return () => document.removeEventListener('focus', handleFocusTrap, true);
   }, [isOpen]);
+
+  const resolvedActions: AlertDialogAction[] =
+    actions && actions.length > 0 ? actions : [{ label: l.close }];
+
+  const explicit = resolvedActions.findIndex((a) => a.initialFocus);
+  const leastDestructive = resolvedActions.findIndex((a) => !a.destructive);
+  const focusIndex = explicit >= 0 ? explicit : leastDestructive >= 0 ? leastDestructive : 0;
+
+  const runAction = (action: AlertDialogAction) => {
+    closingRef.current = true;
+    const invoker = invokingElementRef.current as HTMLElement | null;
+    if (invoker && typeof invoker.focus === 'function') {
+      invoker.focus();
+    }
+    action.onSelect?.();
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -93,9 +151,18 @@ const AlertDialog: React.FC<AlertDialogProps> = ({ isOpen, title, message, onClo
       <div className="dialog-content">
         <h2 id={titleId}>{title}</h2>
         <p id={descId}>{message}</p>
-        <button ref={closeBtnRef} onClick={closeAndRestoreFocus}>
-          Close
-        </button>
+        <div className="dialog-actions">
+          {resolvedActions.map((action, i) => (
+            <button
+              key={action.label}
+              ref={i === focusIndex ? initialFocusRef : undefined}
+              className={`dialog-action${action.destructive ? ' dialog-action-destructive' : ''}`}
+              onClick={() => runAction(action)}
+            >
+              {action.label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

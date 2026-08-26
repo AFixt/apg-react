@@ -67,4 +67,174 @@ describe('AlertDialog Component', () => {
     fireEvent.click(closeBtn);
     expect(mockOnClose).toHaveBeenCalled();
   });
+  // --- Regression coverage -------------------------------------------------
+
+  describe('confirm / cancel actions (#143)', () => {
+    const confirmProps = (overrides = {}) => ({
+      isOpen: true,
+      title: 'Confirm Delete',
+      message: 'Are you sure you want to delete your account?',
+      onClose: jest.fn(),
+      ...overrides,
+    });
+
+    test('with no actions it is still an acknowledge-only dialog', () => {
+      render(<AlertDialog {...confirmProps()} />);
+
+      const buttons = screen.getAllByRole('button');
+      expect(buttons).toHaveLength(1);
+      expect(buttons[0]).toHaveTextContent('Close');
+    });
+
+    test('labels.close renames the acknowledge button', () => {
+      render(<AlertDialog {...confirmProps({ labels: { close: 'Dismiss' } })} />);
+      expect(screen.getByRole('button', { name: 'Dismiss' })).toBeInTheDocument();
+    });
+
+    test("actions render as the dialog's choices", () => {
+      render(
+        <AlertDialog
+          {...confirmProps({
+            actions: [{ label: 'Cancel' }, { label: 'OK', destructive: true }],
+          })}
+        />,
+      );
+
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'OK' })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument();
+    });
+
+    test('initial focus goes to the least destructive action by default', () => {
+      render(
+        <AlertDialog
+          {...confirmProps({
+            actions: [{ label: 'OK', destructive: true }, { label: 'Cancel' }],
+          })}
+        />,
+      );
+
+      // Cancel is second, but OK is destructive -- the APG's guidance is to
+      // focus the least destructive choice, so listing order must not decide it.
+      expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Cancel' }));
+    });
+
+    test('initialFocus overrides that', () => {
+      render(
+        <AlertDialog
+          {...confirmProps({
+            actions: [{ label: 'Cancel' }, { label: 'OK', destructive: true, initialFocus: true }],
+          })}
+        />,
+      );
+
+      expect(document.activeElement).toBe(screen.getByRole('button', { name: 'OK' }));
+    });
+
+    test('the first action is focused when none is destructive', () => {
+      render(
+        <AlertDialog {...confirmProps({ actions: [{ label: 'Later' }, { label: 'Now' }] })} />,
+      );
+
+      expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Later' }));
+    });
+
+    test('activating an action runs onSelect and closes', () => {
+      const onSelect = jest.fn();
+      const onClose = jest.fn();
+      render(
+        <AlertDialog
+          {...confirmProps({
+            onClose,
+            actions: [{ label: 'Cancel' }, { label: 'OK', onSelect, destructive: true }],
+          })}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole('button', { name: 'OK' }));
+
+      expect(onSelect).toHaveBeenCalledTimes(1);
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    test('each action gets its own onSelect', () => {
+      const cancel = jest.fn();
+      const confirm = jest.fn();
+      render(
+        <AlertDialog
+          {...confirmProps({
+            actions: [
+              { label: 'Cancel', onSelect: cancel },
+              { label: 'OK', onSelect: confirm, destructive: true },
+            ],
+          })}
+        />,
+      );
+
+      fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+      expect(cancel).toHaveBeenCalledTimes(1);
+      expect(confirm).not.toHaveBeenCalled();
+    });
+
+    test('an action without onSelect still closes', () => {
+      const onClose = jest.fn();
+      render(<AlertDialog {...confirmProps({ onClose, actions: [{ label: 'Cancel' }] })} />);
+
+      fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    test('the destructive action is marked as such', () => {
+      render(
+        <AlertDialog
+          {...confirmProps({
+            actions: [{ label: 'Cancel' }, { label: 'OK', destructive: true }],
+          })}
+        />,
+      );
+
+      expect(screen.getByRole('button', { name: 'OK' })).toHaveClass('dialog-action-destructive');
+      expect(screen.getByRole('button', { name: 'Cancel' })).not.toHaveClass(
+        'dialog-action-destructive',
+      );
+    });
+
+    test('Escape is still equivalent to dismissing', () => {
+      const onClose = jest.fn();
+      render(
+        <AlertDialog
+          {...confirmProps({
+            onClose,
+            actions: [{ label: 'Cancel' }, { label: 'OK', destructive: true }],
+          })}
+        />,
+      );
+
+      fireEvent.keyDown(document, { key: 'Escape' });
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    test('the dialog keeps its alertdialog semantics with actions', () => {
+      render(
+        <AlertDialog
+          {...confirmProps({
+            actions: [{ label: 'Cancel' }, { label: 'OK', destructive: true }],
+          })}
+        />,
+      );
+      const dialog = screen.getByRole('alertdialog');
+
+      expect(dialog).toHaveAttribute('aria-modal', 'true');
+      expect(dialog).toHaveAccessibleName('Confirm Delete');
+    });
+
+    test('an empty actions array falls back to the acknowledge button', () => {
+      render(<AlertDialog {...confirmProps({ actions: [] })} />);
+
+      expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
+    });
+  });
 });
