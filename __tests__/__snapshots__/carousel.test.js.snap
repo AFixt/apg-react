@@ -72,6 +72,7 @@ exports[`Carousel Component Carousel Initial Render Snapshot 1`] = `
     >
       <button
         aria-current="true"
+        aria-disabled="true"
         aria-label="Select slide 1"
       >
         1
@@ -168,6 +169,7 @@ exports[`Carousel Component Carousel Snapshot After Navigation 1`] = `
       </button>
       <button
         aria-current="true"
+        aria-disabled="true"
         aria-label="Select slide 2"
       >
         2

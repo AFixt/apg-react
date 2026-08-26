@@ -56,11 +56,22 @@ const Carousel: React.FC<CarouselProps> = ({
   };
   const l = { ...defaultLabels, ...labels };
   const [activeIndex, setActiveIndex] = useState(0);
+  // `isRotating` is the user's explicit preference and is the only thing the
+  // rotation control's label reflects. A hover pause is tracked separately so
+  // that drifting a pointer over the carousel cannot silently relabel the
+  // control from Pause to Start before the user has clicked anything.
   const [isRotating, setIsRotating] = useState(initiallyRotating);
+  const [isHoverPaused, setIsHoverPaused] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const rotationBtnRef = useRef<HTMLButtonElement>(null);
+
+  /** Advance one slide without touching rotation state. Used by the timer. */
+  const advance = () => {
+    setActiveIndex((prevIndex) => (prevIndex + 1) % slides.length);
+  };
 
   const nextSlide = () => {
-    setActiveIndex((prevIndex) => (prevIndex + 1) % slides.length);
+    advance();
     stopRotation();
   };
 
@@ -70,25 +81,44 @@ const Carousel: React.FC<CarouselProps> = ({
   };
 
   const selectSlide = (index: number) => {
+    // The picker for the slide already on screen is aria-disabled; activating
+    // it does nothing at all, including to rotation state.
+    if (index === activeIndex) return;
     setActiveIndex(index);
     stopRotation();
   };
 
   const toggleRotation = () => {
-    setIsRotating(!isRotating);
+    const next = !isRotating;
+    setIsRotating(next);
+    // An explicit request to start clears any lingering hover pause, so the
+    // control never reports rotating while a pointer silently holds it still.
+    if (next) setIsHoverPaused(false);
   };
 
   const stopRotation = () => {
     if (isRotating) setIsRotating(false);
   };
 
+  /**
+   * APG: rotation stops when keyboard focus enters the carousel and does not
+   * resume unless the user explicitly asks for it. The rotation control is
+   * exempt -- focusing it is how the user reaches the button that turns
+   * rotation back on, so letting focus pre-empt the click would invert it.
+   */
+  const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => {
+    if (rotationBtnRef.current?.contains(e.target as Node)) return;
+    stopRotation();
+  };
+
   useEffect(() => {
-    if (isRotating) {
-      const rotation = setInterval(nextSlide, 3000);
-      return () => clearInterval(rotation);
-    }
-    return undefined;
-  }, [isRotating, activeIndex]);
+    if (!isRotating || isHoverPaused) return undefined;
+    const rotation = setInterval(advance, 3000);
+    return () => clearInterval(rotation);
+    // `activeIndex` is deliberately absent: including it tore down and rebuilt
+    // the interval on every advance.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRotating, isHoverPaused, slides.length]);
 
   return (
     <div
@@ -97,11 +127,13 @@ const Carousel: React.FC<CarouselProps> = ({
       aria-roledescription="carousel"
       aria-label={ariaLabel}
       ref={carouselRef}
-      onMouseEnter={stopRotation}
-      onFocus={stopRotation}
+      onMouseEnter={() => setIsHoverPaused(true)}
+      onMouseLeave={() => setIsHoverPaused(false)}
+      onFocus={handleFocus}
       tabIndex={0}
     >
       <button
+        ref={rotationBtnRef}
         className="carousel-control carousel-control-play"
         onClick={toggleRotation}
         aria-label={isRotating ? l.pauseRotation : l.startRotation}
@@ -142,6 +174,7 @@ const Carousel: React.FC<CarouselProps> = ({
             onClick={() => selectSlide(index)}
             aria-label={l.selectSlide!(index + 1)}
             aria-current={index === activeIndex ? 'true' : undefined}
+            aria-disabled={index === activeIndex ? 'true' : undefined}
           >
             {index + 1}
           </button>
