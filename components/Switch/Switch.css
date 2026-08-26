@@ -99,3 +99,13 @@
     outline-offset: 2px;
   }
 }
+
+/*
+ * aria-disabled rather than the native disabled attribute keeps the control
+ * focusable, so a keyboard user can still reach it and discover why it is
+ * unavailable. The styling has to carry that meaning on its own.
+ */
+.switch-control.is-disabled {
+  opacity: 65%;
+  cursor: not-allowed;
+}
