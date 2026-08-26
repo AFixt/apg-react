@@ -67,6 +67,16 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
     return undefined;
   }, [isOpen, initialFocusRef]);
 
+  // A consumer may decline to close -- an unsaved-changes confirmation is the
+  // usual reason -- in which case `isOpen` never changes and the effect above,
+  // which is keyed on it, never re-runs to clear `closingRef`. The focus trap
+  // would then stay disarmed for the rest of the dialog's life. Running on
+  // every render re-arms it as soon as we can see that the dialog is still
+  // open, and leaves it latched once it really is closing.
+  useEffect(() => {
+    if (isOpen) closingRef.current = false;
+  });
+
   // Restore focus to the element that opened the dialog, then call onClose.
   // If onClose moves focus somewhere else, that naturally takes precedence.
   const closeAndRestoreFocus = () => {
@@ -78,12 +88,16 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
     onClose();
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      closeAndRestoreFocus();
-    }
-  };
-
+  // The only Escape handler. There used to be a React onKeyDown on the dialog
+  // element as well, which meant a single Escape ran the close path twice --
+  // invisible while onClose was idempotent (`setIsOpen(false)` twice is
+  // harmless), but it silently broke any consumer whose onClose is a state
+  // machine, such as an unsaved-changes confirmation: the first call raised the
+  // warning and the second immediately dismissed past it.
+  //
+  // Document level rather than element level is right for a *modal* dialog,
+  // which owns the page's key events while it is open and must respond wherever
+  // focus is. NonModalDialog deliberately does the opposite, and says so.
   useEffect(() => {
     if (!isOpen) return;
     const onDocKeyDown = (e: KeyboardEvent) => {
@@ -125,7 +139,6 @@ const ModalDialog: React.FC<ModalDialogProps> = ({
         aria-describedby={ariaDescribedby}
         ref={dialogRef}
         className={`modal-dialog${isAnimatingIn ? ' open' : ''}`}
-        onKeyDown={handleKeyDown}
         tabIndex={-1}
       >
         {children}
