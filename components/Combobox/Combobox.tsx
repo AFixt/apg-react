@@ -98,11 +98,20 @@ const Combobox: React.FC<ComboboxProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const next = e.target.value;
+    // Inline completion must not run on a deletion, or Backspace re-expands the
+    // value it just shortened and the field refills itself with a different
+    // option. `inputType` is the reliable signal -- deleting a selected
+    // completion leaves the text the same length as the state it came from, so
+    // a length comparison alone cannot see it. The length fallback exists for
+    // environments that do not populate `inputType`.
+    const inputType = (e.nativeEvent as InputEvent).inputType;
+    const isDeletion = inputType ? inputType.startsWith('delete') : next.length < inputText.length;
+
     setInputText(next);
     onChange?.(next);
     setOpen(true);
     setActiveIndex(0);
-    inlineComplete(next);
+    if (!isDeletion) inlineComplete(next);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -169,7 +178,15 @@ const Combobox: React.FC<ComboboxProps> = ({
     return () => document.removeEventListener('mousedown', onDocClick);
   }, [open]);
 
-  const activeId = activeIndex >= 0 ? optionId(activeIndex) : undefined;
+  // The popup is only *shown* when there is something to show. `aria-expanded`,
+  // `aria-activedescendant` and the rendered listbox are all derived from this
+  // one value so they cannot contradict each other: a search that matches
+  // nothing must not claim an open popup with a current option in it.
+  const isPopupOpen = open && filtered.length > 0;
+  const activeId =
+    isPopupOpen && activeIndex >= 0 && activeIndex < filtered.length
+      ? optionId(activeIndex)
+      : undefined;
 
   return (
     <div className="combobox-container">
@@ -193,7 +210,8 @@ const Combobox: React.FC<ComboboxProps> = ({
             if (autocomplete === 'none') openPopup(0);
           }}
           aria-autocomplete={autocomplete}
-          aria-expanded={open}
+          aria-expanded={isPopupOpen}
+          aria-haspopup="listbox"
           aria-controls={listId}
           aria-activedescendant={activeId}
           autoComplete="off"
@@ -202,9 +220,9 @@ const Combobox: React.FC<ComboboxProps> = ({
           type="button"
           className="combobox-toggle"
           tabIndex={-1}
-          aria-label={open ? 'Close suggestions' : 'Open suggestions'}
+          aria-label={isPopupOpen ? 'Close suggestions' : 'Open suggestions'}
           onClick={() => {
-            if (open) {
+            if (isPopupOpen) {
               setOpen(false);
               setActiveIndex(-1);
             } else {
@@ -215,7 +233,7 @@ const Combobox: React.FC<ComboboxProps> = ({
         >
           <span aria-hidden="true">▾</span>
         </button>
-        {open && filtered.length > 0 && (
+        {isPopupOpen && (
           <ul
             ref={listRef}
             id={listId}
