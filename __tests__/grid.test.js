@@ -93,4 +93,316 @@ describe('Grid Component (APG grid pattern)', () => {
     const allRows = screen.getAllByRole('row');
     expect(allRows[0]).toHaveAttribute('aria-rowindex', '1');
   });
+  // --- Regression coverage -------------------------------------------------
+
+  describe('row headers (#169)', () => {
+    const metrics = [
+      { key: 'metric', label: 'Metric' },
+      { key: 'q1', label: 'Q1' },
+      { key: 'q2', label: 'Q2' },
+    ];
+    const data = [
+      { id: 'revenue', metric: 'Revenue', q1: 100, q2: 200 },
+      { id: 'costs', metric: 'Costs', q1: 60, q2: 70 },
+    ];
+
+    test('no rowheader is rendered when rowHeaderKey is omitted', () => {
+      render(<Grid label="Quarterly Report" columns={metrics} rows={data} />);
+      expect(screen.queryAllByRole('rowheader')).toHaveLength(0);
+    });
+
+    test('the named column renders role=rowheader', () => {
+      render(<Grid label="Quarterly Report" columns={metrics} rows={data} rowHeaderKey="metric" />);
+
+      const headers = screen.getAllByRole('rowheader');
+      expect(headers).toHaveLength(2);
+      expect(headers[0]).toHaveTextContent('Revenue');
+      expect(headers[1]).toHaveTextContent('Costs');
+    });
+
+    test('a rowheader is locatable by role and name', () => {
+      render(<Grid label="Quarterly Report" columns={metrics} rows={data} rowHeaderKey="metric" />);
+      expect(screen.getByRole('rowheader', { name: 'Revenue' })).toBeInTheDocument();
+    });
+
+    test('column headers are unaffected', () => {
+      render(<Grid label="Quarterly Report" columns={metrics} rows={data} rowHeaderKey="metric" />);
+      expect(screen.getByRole('columnheader', { name: 'Q1' })).toBeInTheDocument();
+    });
+
+    test('the other cells stay gridcells', () => {
+      render(<Grid label="Quarterly Report" columns={metrics} rows={data} rowHeaderKey="metric" />);
+
+      const cells = screen.getAllByRole('gridcell');
+      expect(cells).toHaveLength(4);
+      cells.forEach((cell) => expect(cell).not.toHaveTextContent('Revenue'));
+    });
+
+    test('the rowheader stays in the roving tabindex', () => {
+      render(<Grid label="Quarterly Report" columns={metrics} rows={data} rowHeaderKey="metric" />);
+      const header = screen.getByRole('rowheader', { name: 'Revenue' });
+
+      fireEvent.focus(header);
+      expect(header).toHaveAttribute('tabindex', '0');
+    });
+  });
+
+  describe('editable cells (#170)', () => {
+    const cell = (name) => screen.getByRole('gridcell', { name });
+
+    const renderEditable = (props = {}) =>
+      render(<Grid label="People" columns={columns} rows={rows} editable {...props} />);
+
+    test('cells are not editable by default', () => {
+      render(<Grid label="People" columns={columns} rows={rows} />);
+      const target = cell('Ada');
+
+      fireEvent.focus(target);
+      fireEvent.keyDown(target, { key: 'F2' });
+
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    });
+
+    test('F2 puts an editable cell into edit mode', () => {
+      renderEditable();
+      const target = cell('Ada');
+
+      fireEvent.focus(target);
+      fireEvent.keyDown(target, { key: 'F2' });
+
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveValue('Ada');
+    });
+
+    test('Enter also enters edit mode', () => {
+      renderEditable();
+      const target = cell('Ada');
+
+      fireEvent.focus(target);
+      fireEvent.keyDown(target, { key: 'Enter' });
+
+      expect(screen.getByRole('textbox')).toBeInTheDocument();
+    });
+
+    test('Enter commits and returns to navigation mode', () => {
+      renderEditable();
+      const target = cell('Ada');
+
+      fireEvent.focus(target);
+      fireEvent.keyDown(target, { key: 'F2' });
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Ada L' } });
+      fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Enter' });
+
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+      expect(screen.getByRole('gridcell', { name: 'Ada L' })).toBeInTheDocument();
+    });
+
+    test('Escape cancels and restores the previous value', () => {
+      renderEditable();
+      const target = cell('Ada');
+
+      fireEvent.focus(target);
+      fireEvent.keyDown(target, { key: 'F2' });
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: 'discarded' } });
+      fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Escape' });
+
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+      expect(screen.getByRole('gridcell', { name: 'Ada' })).toBeInTheDocument();
+      expect(screen.queryByRole('gridcell', { name: 'discarded' })).not.toBeInTheDocument();
+    });
+
+    test('arrow keys move the caret rather than the focused cell', () => {
+      renderEditable();
+      const target = cell('Ada');
+
+      fireEvent.focus(target);
+      fireEvent.keyDown(target, { key: 'F2' });
+      const input = screen.getByRole('textbox');
+
+      fireEvent.keyDown(input, { key: 'ArrowRight' });
+      fireEvent.keyDown(input, { key: 'ArrowDown' });
+
+      // Still editing the same cell: the grid's navigation handler must not
+      // have seen either key. This is the part implementations most often miss.
+      expect(screen.getByRole('textbox')).toBe(input);
+      expect(input).toHaveValue('Ada');
+    });
+
+    test('onCellChange reports the committed value', () => {
+      const onCellChange = jest.fn();
+      renderEditable({ onCellChange });
+      const target = cell('Ada');
+
+      fireEvent.focus(target);
+      fireEvent.keyDown(target, { key: 'F2' });
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Ada L' } });
+      fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Enter' });
+
+      expect(onCellChange).toHaveBeenCalledWith(0, 'name', 'Ada L');
+    });
+
+    test('onCellChange is not called when the edit is cancelled', () => {
+      const onCellChange = jest.fn();
+      renderEditable({ onCellChange });
+      const target = cell('Ada');
+
+      fireEvent.focus(target);
+      fireEvent.keyDown(target, { key: 'F2' });
+      fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Escape' });
+
+      expect(onCellChange).not.toHaveBeenCalled();
+    });
+
+    test('a column can opt in on its own', () => {
+      const mixed = [
+        { key: 'name', label: 'Name' },
+        { key: 'role', label: 'Role', editable: true },
+      ];
+      render(<Grid label="People" columns={mixed} rows={rows} />);
+
+      fireEvent.keyDown(cell('Ada'), { key: 'F2' });
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+
+      fireEvent.keyDown(cell('Mathematician'), { key: 'F2' });
+      expect(screen.getByRole('textbox')).toBeInTheDocument();
+    });
+
+    test('a column can opt out of a grid-wide editable', () => {
+      const mixed = [
+        { key: 'name', label: 'Name', editable: false },
+        { key: 'role', label: 'Role' },
+      ];
+      render(<Grid label="People" columns={mixed} rows={rows} editable />);
+
+      fireEvent.keyDown(cell('Ada'), { key: 'F2' });
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    });
+
+    test('a row header is never editable', () => {
+      const metrics = [
+        { key: 'metric', label: 'Metric' },
+        { key: 'q1', label: 'Q1' },
+      ];
+      const data = [{ id: 'revenue', metric: 'Revenue', q1: 100 }];
+      render(<Grid label="Report" columns={metrics} rows={data} rowHeaderKey="metric" editable />);
+
+      fireEvent.keyDown(screen.getByRole('rowheader', { name: 'Revenue' }), { key: 'F2' });
+
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    });
+
+    test('navigation still works after an edit', () => {
+      renderEditable();
+      const target = cell('Ada');
+
+      fireEvent.focus(target);
+      fireEvent.keyDown(target, { key: 'F2' });
+      fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Escape' });
+      fireEvent.keyDown(target, { key: 'ArrowRight' });
+
+      expect(screen.getByRole('gridcell', { name: 'Mathematician' })).toHaveAttribute(
+        'tabindex',
+        '0',
+      );
+    });
+
+    test('the edit field is named after its column and row', () => {
+      const metrics = [
+        { key: 'metric', label: 'Metric' },
+        { key: 'q1', label: 'Q1' },
+      ];
+      const data = [{ id: 'revenue', metric: 'Revenue', q1: 100 }];
+      render(<Grid label="Report" columns={metrics} rows={data} rowHeaderKey="metric" editable />);
+
+      fireEvent.keyDown(screen.getByRole('gridcell', { name: '100' }), { key: 'F2' });
+
+      expect(screen.getByRole('textbox')).toHaveAccessibleName('Q1 Revenue');
+    });
+  });
+  describe('who owns an edited value (#170)', () => {
+    const one = [{ key: 'name', label: 'Name' }];
+    const editCell = (from, to) => {
+      fireEvent.keyDown(screen.getByRole('gridcell', { name: from }), { key: 'F2' });
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: to } });
+      fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Enter' });
+    };
+    const shown = () => screen.getAllByRole('gridcell').map((c) => c.textContent);
+
+    test('with onCellChange, the consumer owns it and rows is the only source', () => {
+      const onCellChange = jest.fn();
+      const { rerender } = render(
+        <Grid
+          label="P"
+          columns={one}
+          rows={[{ id: 1, name: 'ada' }]}
+          editable
+          onCellChange={onCellChange}
+        />,
+      );
+
+      editCell('ada', 'ADA LOVELACE');
+      expect(onCellChange).toHaveBeenCalledWith(0, 'name', 'ADA LOVELACE');
+
+      // The consumer normalises and pushes it back.
+      rerender(
+        <Grid
+          label="P"
+          columns={one}
+          rows={[{ id: 1, name: 'Ada Lovelace' }]}
+          editable
+          onCellChange={onCellChange}
+        />,
+      );
+      expect(shown()).toEqual(['Ada Lovelace']);
+    });
+
+    test('a consumer that rejects an edit is not overruled', () => {
+      const onCellChange = jest.fn();
+      const { rerender } = render(
+        <Grid
+          label="P"
+          columns={one}
+          rows={[{ id: 1, name: 'ada' }]}
+          editable
+          onCellChange={onCellChange}
+        />,
+      );
+
+      editCell('ada', 'nonsense');
+      // Consumer validates, refuses, and leaves rows alone.
+      rerender(
+        <Grid
+          label="P"
+          columns={one}
+          rows={[{ id: 1, name: 'ada' }]}
+          editable
+          onCellChange={onCellChange}
+        />,
+      );
+
+      // The grid must not go on showing a value the application refused --
+      // a screen reader user would be read data the app does not hold.
+      expect(shown()).toEqual(['ada']);
+    });
+
+    test('without onCellChange the grid keeps the edit itself', () => {
+      render(<Grid label="P" columns={one} rows={[{ id: 1, name: 'ada' }]} editable />);
+
+      editCell('ada', 'Ada L');
+
+      expect(shown()).toEqual(['Ada L']);
+    });
+
+    test('an outside change to an edited cell still wins when uncontrolled', () => {
+      const { rerender } = render(
+        <Grid label="P" columns={one} rows={[{ id: 1, name: 'ada' }]} editable />,
+      );
+
+      editCell('ada', 'Ada L');
+      rerender(<Grid label="P" columns={one} rows={[{ id: 1, name: 'Grace' }]} editable />);
+
+      // The local edit must not shadow rows forever.
+      expect(shown()).toEqual(['Grace']);
+    });
+  });
 });

@@ -9,7 +9,11 @@
  *   the switch. When provided, `label` is still rendered visually but the
  *   external reference takes precedence.
  * @param {string} props.ariaDescribedby - ID of an element that describes the switch.
- * @param {boolean} props.initialChecked - The initial checked state of the switch.
+ * @param {boolean} props.initialChecked - The initial checked state when uncontrolled.
+ * @param {boolean} props.checked - Controlled checked state. When supplied, the
+ *   consumer owns the value and `onChange` reports every requested change.
+ * @param {Function} props.onChange - Called with the next checked state.
+ * @param {boolean} props.isDisabled - Exposes aria-disabled and suppresses activation.
  * @returns {JSX.Element} The switch component.
  */
 import React, { useId, useState } from 'react';
@@ -21,6 +25,16 @@ interface SwitchProps {
   ariaLabelledby?: string;
   ariaDescribedby?: string;
   initialChecked?: boolean;
+  /** Controlled checked state. Omit to let the switch own its own. */
+  checked?: boolean;
+  /** Reports the next checked state on every activation. */
+  onChange?: (checked: boolean) => void;
+  /**
+   * Exposes aria-disabled and suppresses activation. Deliberately not the
+   * native disabled attribute: per APG guidance the control stays focusable so
+   * a keyboard user can still discover it and find out why it is unavailable.
+   */
+  isDisabled?: boolean;
 }
 
 const Switch: React.FC<SwitchProps> = ({
@@ -28,13 +42,24 @@ const Switch: React.FC<SwitchProps> = ({
   ariaLabelledby,
   ariaDescribedby,
   initialChecked = false,
+  checked,
+  onChange,
+  isDisabled,
 }) => {
-  const [isChecked, setIsChecked] = useState(initialChecked);
+  const [internalChecked, setInternalChecked] = useState(initialChecked);
+  // Internally stateful and optionally controlled, matching Tabs, RadioGroup,
+  // Combobox and TreeView. Previously the switch had only the first half, so a
+  // consuming page could never read the state it was displaying.
+  const isControlled = checked !== undefined;
+  const isChecked = isControlled ? checked : internalChecked;
   const generatedId = useId();
   const labelId = `switch-label-${generatedId}`;
 
   const toggleSwitch = () => {
-    setIsChecked(!isChecked);
+    if (isDisabled) return;
+    const next = !isChecked;
+    if (!isControlled) setInternalChecked(next);
+    onChange?.(next);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -59,7 +84,8 @@ const Switch: React.FC<SwitchProps> = ({
         onClick={toggleSwitch}
         aria-labelledby={ariaLabelledby || (label ? labelId : undefined)}
         aria-describedby={ariaDescribedby}
-        className="switch-control"
+        aria-disabled={isDisabled || undefined}
+        className={`switch-control${isDisabled ? ' is-disabled' : ''}`}
       >
         <span className={`switch ${isChecked ? 'switch-on' : 'switch-off'}`} />
       </span>

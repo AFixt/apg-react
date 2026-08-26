@@ -92,6 +92,7 @@ the official APG documentation.
 | `Tooltip`          | [Tooltip](https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/)                                                     |
 | `TreeGrid`         | [Tree Grid](https://www.w3.org/WAI/ARIA/apg/patterns/treegrid/)                                                  |
 | `TreeView`         | [Tree View](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/)                                                  |
+| `WindowSplitter`   | [Window Splitter](https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/)                                      |
 
 ### Structural
 

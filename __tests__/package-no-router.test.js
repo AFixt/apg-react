@@ -21,7 +21,7 @@ const distCjs = path.join(repoRoot, 'dist', 'index.cjs.js');
 const distEsm = path.join(repoRoot, 'dist', 'index.esm.js');
 
 /** Number of components the barrel is expected to export (see index.ts). */
-const EXPECTED_COMPONENT_COUNT = 33;
+const EXPECTED_COMPONENT_COUNT = 34;
 
 let consumerDir;
 let tmpRoot;
@@ -144,7 +144,7 @@ describe('published package without react-router-dom', () => {
       ],
       { cwd: consumerDir },
     );
-    // 33 components plus the LinkComponentProvider escape hatch.
+    // 34 components plus the LinkComponentProvider escape hatch.
     expect(Number(output)).toBe(EXPECTED_COMPONENT_COUNT + 1);
   });
 

@@ -39,11 +39,11 @@ jobs:
       - uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
 
   osv-scanner:
-    # The name says "not gating yet" on purpose. This package declares no
-    # production dependencies, so osv-scanner.toml's dev exclusion currently
-    # covers the entire tree and the job cannot fail. A green tick here is not
-    # evidence of anything until #137 lands and the exclusion comes off.
-    name: OSV-Scanner (production deps — none yet, see #137)
+    # This gates for real as of #137. The blanket dev exclusion that used to
+    # cover the entire tree -- this package declares no production dependencies,
+    # so excluding the dev group excluded everything -- is gone, and the scanner
+    # now sees all 1350 packages. A green tick here means something again.
+    name: OSV-Scanner (full dependency tree)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
@@ -53,8 +53,8 @@ jobs:
             https://github.com/google/osv-scanner/releases/latest/download/osv-scanner_linux_amd64
           chmod +x /tmp/osv-scanner
           sudo mv /tmp/osv-scanner /usr/local/bin/osv-scanner
-      # Dev-only advisories are excluded via osv-scanner.toml; production
-      # advisories gate the PR that introduces them.
+      # osv-scanner.toml carries no category exclusions. The single entry in it
+      # is a specific, dated ignore naming one advisory with no published fix.
       - run: osv-scanner --config=osv-scanner.toml --lockfile=package-lock.json
 
   semgrep:

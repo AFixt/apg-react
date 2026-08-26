@@ -1,0 +1,63 @@
+.window-splitter {
+  display: flex;
+  border: var(--apg-border-width) solid var(--apg-color-gray-400);
+  border-radius: var(--apg-radius-md);
+  overflow: hidden;
+}
+
+.window-splitter-vertical {
+  flex-direction: row;
+  height: 12rem;
+}
+
+.window-splitter-horizontal {
+  flex-direction: column;
+  height: 16rem;
+}
+
+.window-splitter-pane {
+  padding: var(--apg-space-sm);
+  overflow: auto;
+  background-color: var(--apg-color-white);
+  color: var(--apg-color-black);
+}
+
+.window-splitter-pane-secondary {
+  flex: 1;
+}
+
+.window-splitter-separator {
+  flex: none;
+  background-color: var(--apg-color-gray-400);
+}
+
+.window-splitter-vertical .window-splitter-separator {
+  width: 0.5rem;
+  cursor: col-resize;
+}
+
+.window-splitter-horizontal .window-splitter-separator {
+  height: 0.5rem;
+  cursor: row-resize;
+}
+
+.window-splitter-separator:focus,
+.window-splitter-separator:focus-visible {
+  outline: none;
+  box-shadow: var(--apg-focus-ring);
+  background-color: var(--apg-color-primary);
+}
+
+/*
+ * Forced colors suppresses box-shadow and overrides background-color, so both
+ * indicators above render nothing there, and the `outline: none` they pair with
+ * removed the UA outline that would have covered for them. An outline is all
+ * forced colors preserves; see Link.css for the long-form rationale.
+ */
+@media (forced-colors: active) {
+  .window-splitter-separator:focus,
+  .window-splitter-separator:focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 2px;
+  }
+}

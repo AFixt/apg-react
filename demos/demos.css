@@ -26,3 +26,13 @@ body {
 .demo-section {
   margin-block-start: 2rem;
 }
+
+/*
+ * The unsaved-changes warning in the modal dialog demo. A role="alert" region,
+ * so it is announced when it appears without moving focus.
+ */
+.demo-unsaved-warning {
+  margin: var(--apg-space-sm) 0;
+  color: var(--apg-color-error);
+  font-weight: var(--apg-font-weight-bold);
+}

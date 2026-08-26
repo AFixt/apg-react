@@ -5,10 +5,24 @@ import './Disclosure.css';
 interface DisclosureProps {
   title: React.ReactNode;
   children: React.ReactNode;
+  /** Renders expanded on first paint. The disclosure still owns its state after that. */
+  defaultOpen?: boolean;
+  /**
+   * Keeps the content out of the DOM entirely until first expanded, rather than
+   * rendering it hidden. Use for content that is expensive to build or that
+   * should not be in the document until asked for -- with the default, the
+   * content is always present and merely hidden.
+   */
+  unmountWhenClosed?: boolean;
 }
 
-const Disclosure: React.FC<DisclosureProps> = ({ title, children }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const Disclosure: React.FC<DisclosureProps> = ({
+  title,
+  children,
+  defaultOpen = false,
+  unmountWhenClosed = false,
+}) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const uid = useId();
   const contentId = `disclosure-content-${uid}`;
 
@@ -38,7 +52,7 @@ const Disclosure: React.FC<DisclosureProps> = ({ title, children }) => {
         </span>
       </button>
       <div className={`disclosure-content ${!isOpen ? 'hidden' : ''}`} id={contentId}>
-        {children}
+        {unmountWhenClosed && !isOpen ? null : children}
       </div>
     </div>
   );
