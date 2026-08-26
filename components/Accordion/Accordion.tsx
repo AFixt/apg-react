@@ -4,6 +4,15 @@ import React from 'react';
 interface AccordionItem {
   title: React.ReactNode;
   content: React.ReactNode;
+  /**
+   * Marks this header's toggle as unavailable, exposing aria-disabled="true".
+   * The at-least-one-open variant uses it to say, before the user tries, that
+   * collapsing the only open panel will do nothing.
+   *
+   * aria-disabled rather than the native disabled attribute: the header must
+   * stay focusable so a keyboard user can still reach it and find out why.
+   */
+  disabled?: boolean;
 }
 
 /** Props for the Accordion component. */
@@ -56,6 +65,7 @@ const Accordion: React.FC<AccordionProps> = ({ items, toggleItem, openIndex }) =
               onKeyDown={(e) => handleKeyDown(e, index)}
               aria-expanded={openIndex === index}
               aria-controls={`panel-${index}`}
+              aria-disabled={item.disabled || undefined}
             >
               <span className="accordion-title">{item.title}</span>
               <span className="accordion-chevron" aria-hidden="true" />
