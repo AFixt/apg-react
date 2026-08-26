@@ -40,6 +40,17 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
 
   const groupLabelId = labelId || `${name}-label`;
 
+  // A radio group is a single tab stop, and it has to be reachable whether or
+  // not anything is selected. Keying the tab stop off the checked radio alone
+  // left every radio at tabIndex -1 for an unselected group, so a keyboard user
+  // tabbing through the page skipped the group entirely and could never reach
+  // it -- a 2.1.1 failure for what is often a required input. Falling back to
+  // the first radio is what this component's own keyboard model already
+  // promised: "moves focus into the group at the checked radio (or first if
+  // none)".
+  const checkedIndex = options.findIndex((opt) => opt.value === current);
+  const tabbableIndex = checkedIndex >= 0 ? checkedIndex : 0;
+
   const select = (newValue: string) => {
     if (value === undefined) setInternalValue(newValue);
     onChange?.(newValue);
@@ -100,7 +111,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
               role="radio"
               className={`radio${selected ? ' is-checked' : ''}`}
               aria-checked={selected}
-              tabIndex={selected ? 0 : -1}
+              tabIndex={idx === tabbableIndex ? 0 : -1}
               onClick={() => {
                 radioRefs.current[idx]?.focus();
                 select(opt.value);
