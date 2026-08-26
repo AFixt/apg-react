@@ -127,4 +127,60 @@ describe('Menubar Component (APG menubar pattern)', () => {
     fireEvent.keyDown(first, { key: 'ArrowRight' });
     expect(top[1]).toHaveAttribute('aria-expanded', 'true');
   });
+  describe('type-ahead (#155, APG-Optional for menubar)', () => {
+    const wide = [
+      {
+        id: 'file',
+        label: 'File',
+        items: [
+          { id: 'new', label: 'New' },
+          { id: 'open', label: 'Open' },
+          { id: 'print', label: 'Print' },
+        ],
+      },
+      { id: 'edit', label: 'Edit', items: [{ id: 'undo', label: 'Undo' }] },
+      { id: 'view', label: 'View', items: [{ id: 'zoom', label: 'Zoom' }] },
+    ];
+
+    test('typing a character moves focus to the next matching submenu item', () => {
+      render(<Menubar label="Main" menus={wide} />);
+      const file = screen.getByRole('menuitem', { name: 'File' });
+
+      fireEvent.keyDown(file, { key: 'ArrowDown' });
+      const items = screen.getAllByRole('menuitem').filter((el) => el.closest('[role="menu"]'));
+
+      fireEvent.keyDown(items[0], { key: 'p' });
+
+      expect(document.activeElement).toHaveTextContent('Print');
+    });
+
+    test('typing on the menubar row moves between menus', () => {
+      render(<Menubar label="Main" menus={wide} />);
+      const file = screen.getByRole('menuitem', { name: 'File' });
+      file.focus();
+
+      fireEvent.keyDown(file, { key: 'v' });
+
+      expect(document.activeElement).toHaveTextContent('View');
+    });
+
+    test('a non-matching character moves nothing', () => {
+      render(<Menubar label="Main" menus={wide} />);
+      const file = screen.getByRole('menuitem', { name: 'File' });
+      file.focus();
+
+      fireEvent.keyDown(file, { key: 'z' });
+
+      expect(document.activeElement).toHaveTextContent('File');
+    });
+
+    test('Space still opens a submenu rather than typing ahead', () => {
+      render(<Menubar label="Main" menus={wide} />);
+      const file = screen.getByRole('menuitem', { name: 'File' });
+
+      fireEvent.keyDown(file, { key: ' ' });
+
+      expect(screen.getByRole('menu')).toBeInTheDocument();
+    });
+  });
 });

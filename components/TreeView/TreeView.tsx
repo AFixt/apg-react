@@ -17,6 +17,7 @@
  *   - Enter / Space: select / toggle.
  */
 import React, { useMemo, useRef, useState } from 'react';
+import { isTypeaheadKey, nodeText, useTypeahead } from '../_internal/typeahead';
 import './TreeView.css';
 
 /** Tree Node used by the TreeView component. */
@@ -82,6 +83,7 @@ const TreeView: React.FC<TreeViewProps> = ({ label, nodes, onSelect, defaultExpa
   const itemRefs = useRef<Record<string, HTMLLIElement | null>>({});
 
   const visible = useMemo(() => flattenVisible(nodes, expanded), [nodes, expanded]);
+  const resolveTypeahead = useTypeahead();
 
   const focusAt = (i: number) => {
     const target = visible[i];
@@ -145,8 +147,22 @@ const TreeView: React.FC<TreeViewProps> = ({ label, nodes, onSelect, defaultExpa
         if (hasChildren) toggleExpand(id);
         select(id);
         break;
-      default:
-        handled = false;
+      default: {
+        // APG grades type-ahead Recommended for a tree, where it is often the
+        // only practical way to reach a node in a deep hierarchy. It searches
+        // the visible nodes, so a collapsed subtree's contents are not targets.
+        if (!isTypeaheadKey(e)) {
+          handled = false;
+          break;
+        }
+        const match = resolveTypeahead(
+          e.key,
+          visible.map((v) => nodeText(v.label)),
+          idx,
+        );
+        if (match < 0) handled = false;
+        else focusAt(match);
+      }
     }
     if (handled) e.preventDefault();
   };

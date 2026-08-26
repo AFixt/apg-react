@@ -86,4 +86,87 @@ describe('Listbox Component (APG listbox pattern)', () => {
     fireEvent.click(options[2]);
     expect(options[2]).toHaveAttribute('aria-selected', 'true');
   });
+  // --- Regression coverage -------------------------------------------------
+
+  describe('type-ahead (#155)', () => {
+    const fruit = [
+      { value: 'ap', label: 'Apple' },
+      { value: 'apr', label: 'Apricot' },
+      { value: 'b', label: 'Banana' },
+      { value: 'c', label: 'Cherry' },
+    ];
+
+    const renderFruit = () => {
+      const onChange = jest.fn();
+      render(<Listbox options={fruit} value="ap" onChange={onChange} label="Fruit" />);
+      return { onChange, options: screen.getAllByRole('option') };
+    };
+
+    test('typing a character moves focus to the next matching option', () => {
+      const { options } = renderFruit();
+      options[0].focus();
+
+      fireEvent.keyDown(options[0], { key: 'b' });
+
+      expect(document.activeElement).toBe(options[2]);
+    });
+
+    test('selection follows focus, as it does for the arrow keys', () => {
+      const { onChange, options } = renderFruit();
+      options[0].focus();
+
+      fireEvent.keyDown(options[0], { key: 'c' });
+
+      expect(onChange).toHaveBeenCalledWith('c');
+    });
+
+    test('a non-matching character moves nothing', () => {
+      const { options } = renderFruit();
+      options[0].focus();
+
+      fireEvent.keyDown(options[0], { key: 'z' });
+
+      expect(document.activeElement).toBe(options[0]);
+    });
+
+    test('the search wraps to the start of the list', () => {
+      const { options } = renderFruit();
+      options[3].focus();
+
+      fireEvent.keyDown(options[3], { key: 'a' });
+
+      expect(document.activeElement).toBe(options[0]);
+    });
+
+    test('Ctrl+A still selects all rather than typing ahead', () => {
+      const onChange = jest.fn();
+      render(<Listbox options={fruit} value={[]} onChange={onChange} label="Fruit" multiple />);
+      const options = screen.getAllByRole('option');
+      options[0].focus();
+
+      fireEvent.keyDown(options[0], { key: 'a', ctrlKey: true });
+
+      expect(onChange).toHaveBeenCalledWith(['ap', 'apr', 'b', 'c']);
+    });
+
+    test('an unmodified "a" types ahead instead of selecting all', () => {
+      const { options } = renderFruit();
+      options[0].focus();
+
+      fireEvent.keyDown(options[0], { key: 'a' });
+
+      expect(document.activeElement).toBe(options[1]);
+    });
+
+    test('Space still toggles in multi-select rather than typing ahead', () => {
+      const onChange = jest.fn();
+      render(<Listbox options={fruit} value={[]} onChange={onChange} label="Fruit" multiple />);
+      const options = screen.getAllByRole('option');
+      options[0].focus();
+
+      fireEvent.keyDown(options[0], { key: ' ' });
+
+      expect(onChange).toHaveBeenCalledWith(['ap']);
+    });
+  });
 });
