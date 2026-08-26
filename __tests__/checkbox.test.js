@@ -236,4 +236,52 @@ describe('Checkbox Component (APG checkbox pattern)', () => {
       expect(box).toHaveAttribute('aria-required', 'true');
     });
   });
+  describe('ids are unique per instance (#146)', () => {
+    const noop = () => {};
+
+    test('two checkboxes with the same label do not collide', () => {
+      render(
+        <>
+          <Checkbox label="Accept" checked={false} onChange={noop} />
+          <Checkbox label="Accept" checked={false} onChange={noop} />
+        </>,
+      );
+
+      const ids = screen.getAllByRole('checkbox').map((c) => c.id);
+      expect(new Set(ids).size).toBe(2);
+    });
+
+    test('each label resolves to its own checkbox', () => {
+      render(
+        <>
+          <Checkbox label="Accept" checked={false} onChange={noop} />
+          <Checkbox label="Accept" checked={false} onChange={noop} />
+        </>,
+      );
+
+      const boxes = screen.getAllByRole('checkbox');
+      const labels = [...document.querySelectorAll('label')];
+
+      // Without unique ids both <label for> resolved to the first checkbox,
+      // so clicking the second label toggled the wrong control.
+      expect(labels[0].htmlFor).toBe(boxes[0].id);
+      expect(labels[1].htmlFor).toBe(boxes[1].id);
+    });
+
+    test('clicking the second label toggles the second checkbox', () => {
+      const first = jest.fn();
+      const second = jest.fn();
+      render(
+        <>
+          <Checkbox label="Accept" checked={false} onChange={first} />
+          <Checkbox label="Accept" checked={false} onChange={second} />
+        </>,
+      );
+
+      fireEvent.click([...document.querySelectorAll('label')][1]);
+
+      expect(second).toHaveBeenCalled();
+      expect(first).not.toHaveBeenCalled();
+    });
+  });
 });

@@ -8,11 +8,11 @@ exports[`Checkbox Component (APG checkbox pattern) matches the snapshot 1`] = `
     <input
       aria-checked="false"
       class="checkbox-input"
-      id="checkbox-accept"
+      id="checkbox-accept-:ra:"
       type="checkbox"
     />
     <label
-      for="checkbox-accept"
+      for="checkbox-accept-:ra:"
     >
       Accept
     </label>

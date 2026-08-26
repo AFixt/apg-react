@@ -28,8 +28,13 @@ const Checkbox: React.FC<CheckboxProps> = ({
   invalid,
   errorMessage,
 }) => {
-  const checkboxId = `checkbox-${label.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
   const uid = useId();
+  // The slug keeps the id readable; the uid is what makes it unique. Deriving
+  // it from the label alone gave two checkboxes with the same label the same
+  // id -- invalid HTML, and both <label for> then resolved to the first, so
+  // clicking the second label toggled the wrong control.
+  const slug = label.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const checkboxId = `checkbox-${slug}-${uid}`;
   const errorId = `checkbox-error-${uid}`;
   const inputRef = useRef<HTMLInputElement>(null);
 
