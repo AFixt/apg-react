@@ -7,6 +7,8 @@ This project adheres to
 
 ## [Unreleased]
 
+## [2.2.0] — 2026-08-27
+
 ### Added
 
 - **`LayoutGrid` component** — the APG Grid pattern's _layout_ variant, as
@@ -28,6 +30,145 @@ This project adheres to
   Added with `demos/grid-layout.html`, a Storybook story, ten unit tests, and
   four use cases. Closes the gap reported in #188, where six downstream suites
   cited `grid-layout-navigation` as a source with no demo behind it.
+
+- **`WindowSplitter` component** — the APG Window Splitter pattern, one of two
+  canonical patterns the library did not cover. The separator is the widget: it
+  is the tab stop, carries `aria-valuenow` / `aria-valuemin` / `aria-valuemax`
+  describing the primary pane as a percentage, and points `aria-controls` at
+  that pane. Arrow keys resize, `Home` / `End` jump to the extremes, and `Enter`
+  collapses the primary pane or restores the size it had beforehand, so a
+  collapse does not cost the user their layout. Both arrow axes are accepted
+  whatever the orientation, since a keyboard user cannot see which orientation a
+  separator claims. (#210, closes #140)
+
+- **Type-ahead in `Listbox`, `TreeView` and `Menubar`** — typing a printable
+  character moves focus to the next item whose label starts with it, wrapping;
+  repeating a character cycles the matches; characters typed in quick succession
+  match a prefix. Implemented once in a shared helper. APG grades it Recommended
+  for Listbox and Tree View and Optional for Menubar; all three are implemented,
+  with the grading recorded at each call site. (#204, closes #155)
+
+- **`Listbox` `focusModel="activedescendant"`** — the listbox holds focus and
+  names the active option with `aria-activedescendant`, which is the model the
+  APG's own examples use. Defaults to `"roving"`, so this is opt-in and nothing
+  changes for existing consumers. The active option is scrolled into view as it
+  changes, which ARIA requires and roving tabindex got for free from `.focus()`.
+  (#215, closes #213)
+
+- **`Grid` row headers and an editable-cell mode** — `rowHeaderKey` renders a
+  column's cells as `role="rowheader"`, so a screen reader user navigating the
+  data is told which row they are in. `editable` (per grid or per column) adds
+  `F2` / `Enter` to edit, `Enter` to commit and `Escape` to cancel. Edit mode is
+  a real state rather than an input in a cell: the arrow keys move the caret
+  inside the field rather than between cells, which is the part implementations
+  most often miss. (#207, closes #169, #170)
+
+- **`AlertDialog` `actions`** — the dialog can now express a confirm/cancel
+  choice rather than only being acknowledged. Initial focus resolves to the
+  action marked `initialFocus`, failing that the first non-`destructive` action,
+  so APG's guidance about focusing the least destructive choice holds regardless
+  of the order the consumer lists them in. (#203, closes #143)
+
+- **Validation and state surfaces** — `Checkbox` gains `required`, `invalid` and
+  `errorMessage`, named as `Textbox` already does it (#200, closes #146).
+  `Switch` gains `checked` / `onChange` and `isDisabled` (#201, closes #147).
+  `Spinbutton` gains `errorMessage` and `labels.rangeError`, so an invalid value
+  says which constraint it violated (#198, closes #148). `Button` gains
+  `disabledStyle: 'native' | 'aria'`, and `Tabs` gains `label` / `labelledBy`
+  for the tablist plus per-tab `disabled` (#202, #217, closes #139).
+  `CheckboxGroup` gains `labels.selectAll` (#199, closes #145). `Listbox`
+  options gain `disabled` (#216, closes #214). `Disclosure` gains `defaultOpen`
+  and `unmountWhenClosed`, and `Accordion` items gain `disabled` (#208, closes
+  #171).
+
+- **Eight per-state demo pages** the QA suite addresses by name — expanded
+  disclosure, lazy disclosure, all alert severities, always-open accordion,
+  manual-activation tabs, a disabled tab, a vertical toolbar and a multi-select
+  listbox. Several patterns need mutually exclusive load states of what would
+  otherwise be one URL. (#208, #217, closes #171, #212)
+
+### Fixed
+
+- **`TreeView` subtree navigation was unusable.** Child treeitems render inside
+  their parent, and React synthetic events bubble, so every keystroke on a
+  nested node was handled again by each ancestor — the ancestor landed second
+  and undid the child's move. A subtree could be entered but not navigated: the
+  roving tabindex did not follow focus into a child, Down Arrow moved nowhere,
+  and Left Arrow moved to the parent _and collapsed it_. Root-level navigation
+  was unaffected, which is why a static ARIA audit passed. (#194, closes #154)
+
+- **A toggle `Button`'s accessible name changed when pressed.** A CSS `::before`
+  tick entered the name, so "Mute" became "✓ Mute" in Chromium, Firefox and
+  WebKit alike — a voice-control user could no longer address the control once
+  it was pressed. The tick is now a real `aria-hidden` element. A stylesheet
+  contract test enforces the general rule. (#197, closes #151)
+
+- **A `RadioGroup` with nothing selected was unreachable by Tab.** Every radio
+  got `tabIndex={-1}`, so the group was not a tab stop at all — an unreachable
+  required input. (#195, closes #138)
+
+- **`Tooltip` announced the wrong control's text.** Every instance rendered the
+  same hard-coded `id`, so focusing one trigger while hovering another put two
+  elements with that id in the document and `aria-describedby` resolved to the
+  first. Escape also now dismisses a hover-triggered tooltip, which WCAG 1.4.13
+  requires and which a handler bound to the trigger never saw. (#193, closes
+  #156, #157)
+
+- **`Combobox` claimed an open popup that was not there.** A search matching
+  nothing left `aria-expanded="true"` and an `aria-activedescendant` pointing at
+  a removed option. Backspace also no longer re-expands the value: inline
+  completion ran on every input event, so deleting sometimes _lengthened_ the
+  text. (#192, closes #152, #153)
+
+- **`Carousel` auto-rotation stopped itself after one advance** and then
+  reported a user-initiated pause that never happened, because the timer shared
+  a function with the Next button. Hovering also paused rotation permanently
+  with no counterpart resume, silently relabelling Pause to Start before any
+  click. The picker for the displayed slide now carries `aria-disabled`. (#191,
+  closes #150, #161, #162)
+
+- **`Spinbutton` flagged clamped values invalid.** Stepping past a bound is
+  normal operation and clamping is what the APG specifies, so the same value was
+  reported valid on one line and invalid on the next. (#198, closes #158)
+
+- **`TreeGrid` Right Arrow skipped the rest of the row.** From the first cell of
+  an expanded parent row it jumped into the child row, leaving every other cell
+  of that row unreachable by Right Arrow. (#196, closes #163)
+
+- **`ModalDialog` called `onClose` twice for one Escape.** It had both a
+  document listener and an element handler. Invisible while `onClose` was
+  idempotent, but it broke any consumer whose `onClose` is a state machine — an
+  unsaved-changes confirmation was raised and dismissed in the same keypress.
+  (#209, closes #172)
+
+- **Roving-tabindex widgets became keyboard-unreachable when their collection
+  shrank.** Seven components remembered a position in state without clamping it,
+  so shrinking the collection beneath that index left nothing with
+  `tabIndex={0}` — the widget silently left the tab order. `Tabs` degraded
+  further, rendering with no tab selected and no panel visible. (#219, closes
+  #218)
+
+### Security
+
+- **Cleared the build-toolchain advisories and made the OSV gate real.**
+  `npm audit` went from 27 findings (1 critical, 17 high) to 4. Both dependency
+  gates had been structurally empty — this package declares no production
+  dependencies, so `npm audit --omit=dev` saw nothing and `osv-scanner.toml`'s
+  blanket dev exclusion filtered all 1350 packages. That exclusion is gone; what
+  remains is one specific, dated ignore naming an advisory with no published
+  fix. (#211, closes #137)
+
+- **The E2E static server was path-traversable.** `path.join` normalises `..`
+  after joining, so `/../package.json` resolved outside the served directory and
+  was returned with a 200 — verified against the old handler before the fix. A
+  malformed percent-encoding also crashed the server outright. This was the
+  repo's entire open CodeQL backlog. (#205, closes #135)
+
+### Changed
+
+- **Use cases are validated on every pull request.** 216 `.uc.yaml` files were
+  authored and maintained with nothing ever checking them. The gate was probed
+  in both directions before shipping. (#206, closes #144)
 
 ## [2.1.0] — 2026-08-24
 
