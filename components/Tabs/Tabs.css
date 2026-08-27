@@ -152,3 +152,12 @@
     outline-offset: -2px;
   }
 }
+
+/*
+ * A disabled tab stays in the tablist and in the roving tabindex, per APG, so
+ * arrow keys still reach it. The styling has to convey "unavailable" itself.
+ */
+.tab.is-disabled {
+  opacity: 65%;
+  cursor: not-allowed;
+}
