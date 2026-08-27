@@ -401,4 +401,137 @@ describe('Listbox Component (APG listbox pattern)', () => {
       expect(screen.getByRole('listbox')).not.toHaveAttribute('aria-activedescendant');
     });
   });
+
+  describe('disabled options (#214)', () => {
+    const withDisabled = [
+      { value: 'apple', label: 'Apple' },
+      { value: 'durian', label: 'Durian', disabled: true },
+      { value: 'elderberry', label: 'Elderberry' },
+    ];
+
+    const Harness = (props) => {
+      const [value, setValue] = useState(props.multiple ? [] : '');
+      return (
+        <Listbox
+          options={withDisabled}
+          value={value}
+          onChange={setValue}
+          label="Fruits"
+          focusModel="activedescendant"
+          {...props}
+        />
+      );
+    };
+
+    test('a disabled option exposes aria-disabled', () => {
+      render(<Harness />);
+      expect(screen.getByRole('option', { name: 'Durian' })).toHaveAttribute(
+        'aria-disabled',
+        'true',
+      );
+    });
+
+    test('the others do not', () => {
+      render(<Harness />);
+      expect(screen.getByRole('option', { name: 'Apple' })).not.toHaveAttribute('aria-disabled');
+    });
+
+    test('it still counts as an option and stays in the list', () => {
+      render(<Harness />);
+      // The APG keeps a disabled option present and reachable rather than
+      // removing it, so a keyboard user can discover it exists.
+      expect(screen.getAllByRole('option')).toHaveLength(3);
+    });
+
+    test('arrowing onto it does not select it', () => {
+      render(<Harness />);
+      const list = screen.getByRole('listbox');
+      list.focus();
+
+      fireEvent.keyDown(list, { key: 'ArrowDown' });
+
+      expect(document.getElementById(list.getAttribute('aria-activedescendant'))).toHaveTextContent(
+        'Durian',
+      );
+      expect(screen.getByRole('option', { name: 'Durian' })).toHaveAttribute(
+        'aria-selected',
+        'false',
+      );
+    });
+
+    test('clicking it does not select it', () => {
+      render(<Harness />);
+
+      fireEvent.click(screen.getByRole('option', { name: 'Durian' }));
+
+      expect(screen.getByRole('option', { name: 'Durian' })).toHaveAttribute(
+        'aria-selected',
+        'false',
+      );
+    });
+
+    test('Space does not toggle it in multi-select', () => {
+      render(<Harness multiple />);
+      const list = screen.getByRole('listbox');
+      list.focus();
+
+      fireEvent.keyDown(list, { key: 'ArrowDown' });
+      fireEvent.keyDown(list, { key: ' ' });
+
+      expect(screen.getByRole('option', { name: 'Durian' })).toHaveAttribute(
+        'aria-selected',
+        'false',
+      );
+    });
+
+    test('a range selection skips it', () => {
+      render(<Harness multiple />);
+      const list = screen.getByRole('listbox');
+      list.focus();
+
+      fireEvent.keyDown(list, { key: 'ArrowDown', shiftKey: true });
+      fireEvent.keyDown(list, { key: 'ArrowDown', shiftKey: true });
+
+      expect(screen.getByRole('option', { name: 'Durian' })).toHaveAttribute(
+        'aria-selected',
+        'false',
+      );
+      expect(screen.getByRole('option', { name: 'Elderberry' })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
+    });
+
+    test('Ctrl+A skips it', () => {
+      render(<Harness multiple />);
+      const list = screen.getByRole('listbox');
+      list.focus();
+
+      fireEvent.keyDown(list, { key: 'a', ctrlKey: true });
+
+      expect(screen.getByRole('option', { name: 'Durian' })).toHaveAttribute(
+        'aria-selected',
+        'false',
+      );
+      expect(screen.getByRole('option', { name: 'Apple' })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
+    });
+
+    test('End still reaches the last option past a disabled one', () => {
+      render(<Harness />);
+      const list = screen.getByRole('listbox');
+      list.focus();
+
+      fireEvent.keyDown(list, { key: 'End' });
+
+      // This is why Durian sits between Date and Elderberry on the demo page
+      // rather than last: End must land on a selectable option.
+      expect(screen.getByRole('option', { name: 'Elderberry' })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
+    });
+  });
 });

@@ -80,3 +80,13 @@
 .listbox-option.is-selected:focus {
   background-color: var(--apg-color-primary-hover);
 }
+
+/*
+ * A disabled option stays in the list and stays reachable by arrow keys, per
+ * the APG -- it is aria-disabled, not removed -- so the styling has to carry
+ * "unavailable" on its own.
+ */
+.listbox-option.is-disabled {
+  opacity: 65%;
+  cursor: not-allowed;
+}

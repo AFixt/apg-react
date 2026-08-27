@@ -27,6 +27,15 @@ import './Listbox.css';
 interface ListboxOption {
   value: string;
   label: React.ReactNode;
+  /**
+   * Marks the option unavailable, exposing aria-disabled="true".
+   *
+   * aria-disabled rather than removing it: the APG keeps a disabled option in
+   * the list and focusable, so a keyboard user can still arrow onto it and
+   * discover that it exists and why it cannot be chosen. It simply never
+   * becomes selected.
+   */
+  disabled?: boolean;
 }
 
 /** Props for the Listbox component. */
@@ -86,13 +95,13 @@ const Listbox: React.FC<ListboxProps> = ({
 
   const commitSingle = (i: number) => {
     const opt = options[i];
-    if (!opt) return;
+    if (!opt || opt.disabled) return;
     onChange?.(opt.value);
   };
 
   const toggleMulti = (i: number) => {
     const opt = options[i];
-    if (!opt) return;
+    if (!opt || opt.disabled) return;
     const next = new Set(selectedSet);
     const v = opt.value;
     if (next.has(v)) next.delete(v);
@@ -105,7 +114,7 @@ const Listbox: React.FC<ListboxProps> = ({
     const next = new Set(selectedSet);
     for (let i = a; i <= b; i++) {
       const opt = options[i];
-      if (opt) next.add(opt.value);
+      if (opt && !opt.disabled) next.add(opt.value);
     }
     onChange?.(Array.from(next));
   };
@@ -169,7 +178,7 @@ const Listbox: React.FC<ListboxProps> = ({
       case 'a':
       case 'A':
         if (multiple && (e.ctrlKey || e.metaKey)) {
-          onChange?.(options.map((o) => o.value));
+          onChange?.(options.filter((o) => !o.disabled).map((o) => o.value));
         } else {
           handled = tryTypeahead(e, i);
         }
@@ -201,6 +210,7 @@ const Listbox: React.FC<ListboxProps> = ({
       >
         {options.map((opt, i) => {
           const selected = selectedSet.has(opt.value);
+          const isDisabled = opt.disabled === true;
           return (
             <li
               key={opt.value}
@@ -208,9 +218,10 @@ const Listbox: React.FC<ListboxProps> = ({
               id={optionId(i)}
               role="option"
               aria-selected={selected}
+              aria-disabled={isDisabled || undefined}
               className={`listbox-option${selected ? ' is-selected' : ''}${
                 i === focusIndex ? ' is-focused' : ''
-              }`}
+              }${isDisabled ? ' is-disabled' : ''}`}
               tabIndex={usesActiveDescendant ? undefined : i === focusIndex ? 0 : -1}
               onClick={(e) => {
                 setFocusIndex(i);
