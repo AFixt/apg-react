@@ -221,8 +221,14 @@ const Grid: React.FC<GridProps> = ({
     if (handled) e.preventDefault();
   };
 
-  const cellTabIndex = (r: number, c: number) =>
-    r === focusPos.row && c === focusPos.col ? 0 : -1;
+  // Clamped at render rather than trusted: the stored index survives a change to
+  // the collection, and if it now points past the end nothing gets tabIndex 0 --
+  // the widget silently drops out of the tab order. See #218.
+  const cellTabIndex = (r: number, c: number) => {
+    const row = Math.min(focusPos.row, totalRows);
+    const col = Math.min(focusPos.col, Math.max(0, totalCols - 1));
+    return r === row && c === col ? 0 : -1;
+  };
 
   /**
    * Keys typed inside the edit field. Everything is stopped from bubbling so

@@ -62,6 +62,16 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
     }
   }, [openMenu, activeMenu, focusItem]);
 
+  // Clamped at render rather than trusted: the stored index survives a change to
+  // the collection, and if it now points past the end nothing gets tabIndex 0 --
+  // the widget silently drops out of the tab order. See #218.
+  const renderedMenu = Math.min(activeMenu, Math.max(0, menus.length - 1));
+  // The open submenu needs the same treatment: its items are a second roving
+  // collection, and focusItem survives a change to them independently of
+  // activeMenu.
+  const renderedItem = (mIdx: number) =>
+    Math.min(focusItem, Math.max(0, (menus[mIdx]?.items.length ?? 1) - 1));
+
   const resolveTypeahead = useTypeahead();
 
   const openAt = (mIdx: number, iIdx: number) => {
@@ -213,7 +223,7 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
               role="menuitem"
               aria-haspopup="menu"
               aria-expanded={isOpen}
-              tabIndex={mIdx === activeMenu ? 0 : -1}
+              tabIndex={mIdx === renderedMenu ? 0 : -1}
               className={`menubar-item${isOpen ? ' is-open' : ''}`}
               onClick={() => (isOpen ? closeMenu(false) : openAt(mIdx, 0))}
               onKeyDown={(e) => handleBarKey(e, mIdx)}
@@ -229,7 +239,7 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
                       ref={(el) => (itemRefs.current[`${mIdx}:${iIdx}`] = el)}
                       type="button"
                       role="menuitem"
-                      tabIndex={iIdx === focusItem ? 0 : -1}
+                      tabIndex={iIdx === renderedItem(mIdx) ? 0 : -1}
                       className="menubar-menuitem"
                       onClick={() => activate(mIdx, iIdx)}
                       onKeyDown={(e) => handleMenuKey(e, mIdx, iIdx)}

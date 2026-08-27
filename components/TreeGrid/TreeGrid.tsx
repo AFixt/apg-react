@@ -88,6 +88,12 @@ const TreeGrid: React.FC<TreeGridProps> = ({ label, columns, rows, defaultExpand
   const visible = useMemo(() => flatten(rows, expanded), [rows, expanded]);
   const totalCols = columns.length;
 
+  // Clamped at render rather than trusted: the stored index survives a change to
+  // the collection, and if it now points past the end nothing gets tabIndex 0 --
+  // the widget silently drops out of the tab order. See #218.
+  const renderedRow = Math.min(focus.row, Math.max(0, visible.length - 1));
+  const renderedCol = Math.min(focus.col, Math.max(0, totalCols - 1));
+
   const focusCell = (r: number, c: number) => {
     const rr = Math.max(0, Math.min(visible.length - 1, r));
     const cc = Math.max(0, Math.min(totalCols - 1, c));
@@ -195,7 +201,7 @@ const TreeGrid: React.FC<TreeGridProps> = ({ label, columns, rows, defaultExpand
             className="treegrid-row"
           >
             {columns.map((col, c) => {
-              const tabIndex = r === focus.row && c === focus.col ? 0 : -1;
+              const tabIndex = r === renderedRow && c === renderedCol ? 0 : -1;
               const isFirst = c === 0;
               return (
                 <div

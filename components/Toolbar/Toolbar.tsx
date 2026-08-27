@@ -35,6 +35,11 @@ const Toolbar: React.FC<ToolbarProps> = ({ label, ariaLabelledby, orientation, c
       : 0,
   );
 
+  // Clamped at render rather than trusted: the stored index survives a change to
+  // the collection, and if it now points past the end nothing gets tabIndex 0 --
+  // the widget silently drops out of the tab order. See #218.
+  const renderedFocus = Math.min(focusIndex, Math.max(0, items.length - 1));
+
   const focusable = (i: number) => {
     const el = itemRefs.current[i];
     return !!el && !(el as HTMLButtonElement).disabled && !el.getAttribute?.('aria-disabled');
@@ -90,7 +95,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ label, ariaLabelledby, orientation, c
         cloneElement(child, {
           key: child.key ?? i,
           ref: (el: HTMLElement | null) => (itemRefs.current[i] = el),
-          tabIndex: i === focusIndex ? 0 : -1,
+          tabIndex: i === renderedFocus ? 0 : -1,
           onKeyDown: (e: React.KeyboardEvent) => {
             child.props.onKeyDown?.(e);
             if (!e.defaultPrevented) handleKeyDown(e, i);

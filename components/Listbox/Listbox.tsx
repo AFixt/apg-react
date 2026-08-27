@@ -222,7 +222,7 @@ const Listbox: React.FC<ListboxProps> = ({
               className={`listbox-option${selected ? ' is-selected' : ''}${
                 i === focusIndex ? ' is-focused' : ''
               }${isDisabled ? ' is-disabled' : ''}`}
-              tabIndex={usesActiveDescendant ? undefined : i === focusIndex ? 0 : -1}
+              tabIndex={usesActiveDescendant ? undefined : i === activeOptionIndex ? 0 : -1}
               onClick={(e) => {
                 setFocusIndex(i);
                 // Focus belongs on whichever element owns the keys, so that a

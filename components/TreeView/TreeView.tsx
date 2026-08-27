@@ -83,6 +83,11 @@ const TreeView: React.FC<TreeViewProps> = ({ label, nodes, onSelect, defaultExpa
   const itemRefs = useRef<Record<string, HTMLLIElement | null>>({});
 
   const visible = useMemo(() => flattenVisible(nodes, expanded), [nodes, expanded]);
+  // Keyed by id rather than index, so the failure shape differs: when the node
+  // focusId names is no longer visible, nothing matches and no treeitem gets
+  // tabIndex 0. Fall back to the first visible node. See #218.
+  const renderedFocusId = visible.some((v) => v.id === focusId) ? focusId : visible[0]?.id;
+
   const resolveTypeahead = useTypeahead();
 
   const focusAt = (i: number) => {
@@ -194,7 +199,7 @@ const TreeView: React.FC<TreeViewProps> = ({ label, nodes, onSelect, defaultExpa
       {ns.map((n, i) => {
         const hasChildren = !!n.children?.length;
         const isOpen = expanded.has(n.id);
-        const isFocused = focusId === n.id;
+        const isFocused = renderedFocusId === n.id;
         const isSelected = selected === n.id;
         return (
           <li
