@@ -33,6 +33,13 @@ Below, you'll find our guidelines for contributing to this repository.
 7. **Merge**: Once your pull request is approved, a maintainer will merge it
    into the `develop` branch.
 
+## Releasing
+
+Cutting a release is a documented procedure with several steps that fail
+silently if skipped — see [docs/RELEASING.md](docs/RELEASING.md). Release
+automation is deliberately deferred; the reasoning is in
+[ADR 0008](docs/adr/0008-release-workflow-deferred.md).
+
 ## Logging Issues
 
 If you're not comfortable with Git or coding, you can still contribute

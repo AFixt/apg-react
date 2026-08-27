@@ -338,6 +338,8 @@ This library follows [Semantic Versioning](https://semver.org). Breaking changes
 land in major releases; new components and opt-in features in minor; fixes in
 patch. See [CHANGELOG.md](./CHANGELOG.md).
 
+Cutting a release is documented in [docs/RELEASING.md](./docs/RELEASING.md).
+
 ## License
 
 MIT © [AFixt, Inc.](https://www.afixt.com) — see [LICENSE](./LICENSE).
