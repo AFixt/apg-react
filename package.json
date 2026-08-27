@@ -1,6 +1,6 @@
 {
   "name": "@afixt/apg-react",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Accessible React components implementing every pattern in the WAI-ARIA Authoring Practices Guide (APG)",
   "keywords": [
     "react",
