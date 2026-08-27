@@ -23,6 +23,11 @@ const fruits = [
  * counts and locators for "option" run unscoped against the whole page
  * rather than the located listbox, so a second listbox's options would
  * inflate the option count this page's own use cases assert against.
+ *
+ * `focusModel="activedescendant"` is the model the APG's own listbox examples
+ * use, and the one a caller that focuses the listbox itself needs in order to
+ * drive it -- under roving tabindex, focus lands on the <ul>, no option handler
+ * fires, and nothing responds. See #213.
  */
 function ListboxDemo(): React.ReactElement {
   const [value, setValue] = useState('');
@@ -35,6 +40,7 @@ function ListboxDemo(): React.ReactElement {
         options={fruits}
         value={value}
         onChange={(next) => setValue(next as string)}
+        focusModel="activedescendant"
       />
     </main>
   );
