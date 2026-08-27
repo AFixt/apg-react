@@ -107,4 +107,157 @@ describe('Carousel Component', () => {
     });
     expect(screen.getByText('Content 2')).toBeVisible(); // Assert rotation has stopped
   });
+  // --- Regression coverage -------------------------------------------------
+
+  describe('auto-rotation lifecycle (#150)', () => {
+    test('keeps advancing past the first tick', async () => {
+      render(<Carousel slides={slides} />);
+
+      await act(async () => {
+        jest.advanceTimersByTime(3000);
+      });
+      expect(screen.getByText('Content 2')).toBeVisible();
+
+      await act(async () => {
+        jest.advanceTimersByTime(3000);
+      });
+      expect(screen.getByText('Content 3')).toBeVisible();
+
+      await act(async () => {
+        jest.advanceTimersByTime(3000);
+      });
+      expect(screen.getByText('Content 1')).toBeVisible();
+    });
+
+    test('does not report a user-initiated pause it invented itself', async () => {
+      render(<Carousel slides={slides} />);
+
+      await act(async () => {
+        jest.advanceTimersByTime(6000);
+      });
+
+      // The timer advanced twice; the user touched nothing, so the control
+      // must still offer to pause rather than to resume.
+      expect(screen.getByLabelText(/pause rotation/i)).toBeInTheDocument();
+    });
+  });
+
+  describe('hover pause (#161)', () => {
+    test('hovering does not relabel the rotation control', async () => {
+      render(<Carousel slides={slides} />);
+
+      await act(async () => {
+        fireEvent.mouseEnter(screen.getByRole('region'));
+      });
+
+      expect(screen.getByLabelText(/pause rotation/i)).toBeInTheDocument();
+      expect(screen.queryByLabelText(/start rotation/i)).not.toBeInTheDocument();
+    });
+
+    test('rotation resumes when the pointer leaves', async () => {
+      render(<Carousel slides={slides} />);
+      const region = screen.getByRole('region');
+
+      await act(async () => {
+        fireEvent.mouseEnter(region);
+      });
+      await act(async () => {
+        jest.advanceTimersByTime(6000);
+      });
+      expect(screen.getByText('Content 1')).toBeVisible();
+
+      await act(async () => {
+        fireEvent.mouseLeave(region);
+      });
+      await act(async () => {
+        jest.advanceTimersByTime(3000);
+      });
+      expect(screen.getByText('Content 2')).toBeVisible();
+    });
+
+    test('clicking the control while hovered pauses rather than starts', async () => {
+      render(<Carousel slides={slides} />);
+      const region = screen.getByRole('region');
+
+      await act(async () => {
+        fireEvent.mouseEnter(region);
+      });
+
+      const pause = screen.getByLabelText(/pause rotation/i);
+      await act(async () => {
+        pause.focus();
+        fireEvent.click(pause);
+      });
+
+      expect(screen.getByLabelText(/start rotation/i)).toBeInTheDocument();
+
+      await act(async () => {
+        fireEvent.mouseLeave(region);
+      });
+      await act(async () => {
+        jest.advanceTimersByTime(6000);
+      });
+      expect(screen.getByText('Content 1')).toBeVisible();
+    });
+  });
+
+  describe('focus entry (APG)', () => {
+    test('focus entering the carousel stops rotation', async () => {
+      render(<Carousel slides={slides} />);
+
+      await act(async () => {
+        screen.getByLabelText(/next/i).focus();
+      });
+
+      expect(screen.getByLabelText(/start rotation/i)).toBeInTheDocument();
+
+      await act(async () => {
+        jest.advanceTimersByTime(6000);
+      });
+      expect(screen.getByText('Content 1')).toBeVisible();
+    });
+  });
+
+  describe('slide picker (#162)', () => {
+    test('the picker for the displayed slide is aria-disabled', () => {
+      render(<Carousel slides={slides} />);
+      const pickers = screen.getAllByRole('button', { name: /select slide/i });
+
+      expect(pickers[0]).toHaveAttribute('aria-disabled', 'true');
+      expect(pickers[1]).not.toHaveAttribute('aria-disabled');
+      expect(pickers[2]).not.toHaveAttribute('aria-disabled');
+    });
+
+    test('aria-disabled follows the displayed slide', async () => {
+      render(<Carousel slides={slides} />);
+      const pickers = screen.getAllByRole('button', { name: /select slide/i });
+
+      await act(async () => {
+        fireEvent.click(pickers[2]);
+      });
+
+      expect(pickers[2]).toHaveAttribute('aria-disabled', 'true');
+      expect(pickers[0]).not.toHaveAttribute('aria-disabled');
+    });
+
+    test('activating the picker for the displayed slide is a no-op', async () => {
+      render(<Carousel slides={slides} />);
+      const pickers = screen.getAllByRole('button', { name: /select slide/i });
+
+      // Stop rotation first so the assertion is about the picker alone.
+      await act(async () => {
+        fireEvent.click(screen.getByLabelText(/pause rotation/i));
+      });
+      await act(async () => {
+        fireEvent.click(pickers[1]);
+      });
+      expect(screen.getByText('Content 2')).toBeVisible();
+
+      await act(async () => {
+        fireEvent.click(pickers[1]);
+      });
+      expect(screen.getByText('Content 2')).toBeVisible();
+      expect(pickers[1]).toHaveAttribute('aria-current', 'true');
+    });
+  });
 });

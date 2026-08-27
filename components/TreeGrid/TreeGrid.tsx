@@ -88,6 +88,12 @@ const TreeGrid: React.FC<TreeGridProps> = ({ label, columns, rows, defaultExpand
   const visible = useMemo(() => flatten(rows, expanded), [rows, expanded]);
   const totalCols = columns.length;
 
+  // Clamped at render rather than trusted: the stored index survives a change to
+  // the collection, and if it now points past the end nothing gets tabIndex 0 --
+  // the widget silently drops out of the tab order. See #218.
+  const renderedRow = Math.min(focus.row, Math.max(0, visible.length - 1));
+  const renderedCol = Math.min(focus.col, Math.max(0, totalCols - 1));
+
   const focusCell = (r: number, c: number) => {
     const rr = Math.max(0, Math.min(visible.length - 1, r));
     const cc = Math.max(0, Math.min(totalCols - 1, c));
@@ -125,10 +131,14 @@ const TreeGrid: React.FC<TreeGridProps> = ({ label, columns, rows, defaultExpand
         focusCell(curR - 1, curC);
         break;
       case 'ArrowRight':
+        // The APG's "move to the first child row" clause applies when focus is
+        // on a *row*. This treegrid has no row-level focus -- tabIndex is only
+        // ever computed for gridcells -- so from a cell, Right Arrow always
+        // means one cell to the right. Descending into the child row here made
+        // every cell after the first of an expanded parent row unreachable,
+        // and was redundant with Down Arrow, which already reaches it.
         if (isFirstCol && row.hasChildren && !expanded.has(row.id)) {
           toggle(row.id, true);
-        } else if (isFirstCol && row.hasChildren && expanded.has(row.id)) {
-          focusCell(curR + 1, 0);
         } else {
           focusCell(curR, curC + 1);
         }
@@ -191,7 +201,7 @@ const TreeGrid: React.FC<TreeGridProps> = ({ label, columns, rows, defaultExpand
             className="treegrid-row"
           >
             {columns.map((col, c) => {
-              const tabIndex = r === focus.row && c === focus.col ? 0 : -1;
+              const tabIndex = r === renderedRow && c === renderedCol ? 0 : -1;
               const isFirst = c === 0;
               return (
                 <div

@@ -24,6 +24,7 @@
  *   - Escape: close submenu, return focus to parent menubar item.
  */
 import React, { useEffect, useRef, useState } from 'react';
+import { isTypeaheadKey, nodeText, useTypeahead } from '../_internal/typeahead';
 import './Menubar.css';
 
 /** A single item inside a menu. */
@@ -60,6 +61,18 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
       itemRefs.current[`${openMenu}:${focusItem}`]?.focus();
     }
   }, [openMenu, activeMenu, focusItem]);
+
+  // Clamped at render rather than trusted: the stored index survives a change to
+  // the collection, and if it now points past the end nothing gets tabIndex 0 --
+  // the widget silently drops out of the tab order. See #218.
+  const renderedMenu = Math.min(activeMenu, Math.max(0, menus.length - 1));
+  // The open submenu needs the same treatment: its items are a second roving
+  // collection, and focusItem survives a change to them independently of
+  // activeMenu.
+  const renderedItem = (mIdx: number) =>
+    Math.min(focusItem, Math.max(0, (menus[mIdx]?.items.length ?? 1) - 1));
+
+  const resolveTypeahead = useTypeahead();
 
   const openAt = (mIdx: number, iIdx: number) => {
     setActiveMenu(mIdx);
@@ -109,8 +122,23 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
       case 'End':
         setActiveMenu(menus.length - 1);
         break;
-      default:
-        handled = false;
+      default: {
+        // APG grades type-ahead Optional for a menubar -- a recommendation, not
+        // a conformance requirement. Implemented for both the menubar row and
+        // the open submenu, since a user who can type-ahead in one will expect
+        // it in the other.
+        if (!isTypeaheadKey(e)) {
+          handled = false;
+          break;
+        }
+        const match = resolveTypeahead(
+          e.key,
+          menus.map((m) => nodeText(m.label)),
+          mIdx,
+        );
+        if (match < 0) handled = false;
+        else setActiveMenu(match);
+      }
     }
     if (handled) e.preventDefault();
   };
@@ -152,8 +180,21 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
         setOpenMenu(null);
         handled = false;
         break;
-      default:
-        handled = false;
+      default: {
+        // "Move focus to the next item in the current menu whose label begins
+        // with that printable character."
+        if (!isTypeaheadKey(e)) {
+          handled = false;
+          break;
+        }
+        const match = resolveTypeahead(
+          e.key,
+          (menus[mIdx]?.items ?? []).map((item) => nodeText(item.label)),
+          iIdx,
+        );
+        if (match < 0) handled = false;
+        else setFocusItem(match);
+      }
     }
     if (handled) e.preventDefault();
   };
@@ -182,7 +223,7 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
               role="menuitem"
               aria-haspopup="menu"
               aria-expanded={isOpen}
-              tabIndex={mIdx === activeMenu ? 0 : -1}
+              tabIndex={mIdx === renderedMenu ? 0 : -1}
               className={`menubar-item${isOpen ? ' is-open' : ''}`}
               onClick={() => (isOpen ? closeMenu(false) : openAt(mIdx, 0))}
               onKeyDown={(e) => handleBarKey(e, mIdx)}
@@ -198,7 +239,7 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
                       ref={(el) => (itemRefs.current[`${mIdx}:${iIdx}`] = el)}
                       type="button"
                       role="menuitem"
-                      tabIndex={iIdx === focusItem ? 0 : -1}
+                      tabIndex={iIdx === renderedItem(mIdx) ? 0 : -1}
                       className="menubar-menuitem"
                       onClick={() => activate(mIdx, iIdx)}
                       onKeyDown={(e) => handleMenuKey(e, mIdx, iIdx)}

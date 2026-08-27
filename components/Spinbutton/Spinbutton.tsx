@@ -1,13 +1,15 @@
 /**
  * A customizable spin button component.
  */
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import './Spinbutton.css';
 
 /** Translatable labels for the Spinbutton component. English defaults are used when a key is omitted. */
 interface SpinbuttonLabels {
   increaseValue?: string;
   decreaseValue?: string;
+  /** Wording of the default out-of-range message. */
+  rangeError?: (min: number, max: number) => string;
 }
 
 /** Props for the Spinbutton component. */
@@ -19,11 +21,16 @@ interface SpinbuttonProps {
   ariaLabelledby?: string;
   initialValue?: number;
   labels?: SpinbuttonLabels;
+  /** Overrides the default out-of-range message shown when the value is invalid. */
+  errorMessage?: string;
+  /** Id of a consumer-owned description. Combined with the error message, not replaced by it. */
+  ariaDescribedby?: string;
 }
 
-const defaultLabels = {
+const defaultLabels: Required<SpinbuttonLabels> = {
   increaseValue: 'Increase value',
   decreaseValue: 'Decrease value',
+  rangeError: (min, max) => `Value must be between ${min} and ${max}`,
 };
 
 const Spinbutton: React.FC<SpinbuttonProps> = ({
@@ -34,12 +41,30 @@ const Spinbutton: React.FC<SpinbuttonProps> = ({
   ariaLabelledby,
   initialValue,
   labels,
+  errorMessage,
+  ariaDescribedby,
 }) => {
   const l = { ...defaultLabels, ...labels };
+  const uid = useId();
+  const errorId = `spinbutton-error-${uid}`;
   const [value, setValue] = useState(initialValue ?? min ?? 0);
   const [isInvalid, setIsInvalid] = useState(false);
 
-  const changeValue = (newValue: number) => {
+  const clamp = (n: number) => Math.min(max, Math.max(min, n));
+
+  /**
+   * Stepping can never produce an invalid value: reaching the end of the range
+   * is normal operation, and the APG specifies clamping as the behaviour, so a
+   * refused step is a no-op rather than an error. aria-invalid therefore
+   * describes whether the *committed* value is out of range -- which only typed
+   * input can make it -- and not whether the last step request was honoured.
+   */
+  const stepTo = (newValue: number) => {
+    setValue(clamp(newValue));
+    setIsInvalid(false);
+  };
+
+  const commitTyped = (newValue: number) => {
     if (newValue >= min && newValue <= max) {
       setValue(newValue);
       setIsInvalid(false);
@@ -52,27 +77,27 @@ const Spinbutton: React.FC<SpinbuttonProps> = ({
     switch (e.key) {
       case 'ArrowUp':
         e.preventDefault();
-        changeValue(value + step);
+        stepTo(value + step);
         break;
       case 'ArrowDown':
         e.preventDefault();
-        changeValue(value - step);
+        stepTo(value - step);
         break;
       case 'PageUp':
         e.preventDefault();
-        changeValue(value + step * 10);
+        stepTo(value + step * 10);
         break;
       case 'PageDown':
         e.preventDefault();
-        changeValue(value - step * 10);
+        stepTo(value - step * 10);
         break;
       case 'Home':
         e.preventDefault();
-        changeValue(min);
+        stepTo(min);
         break;
       case 'End':
         e.preventDefault();
-        changeValue(max);
+        stepTo(max);
         break;
       default:
         break;
@@ -82,47 +107,63 @@ const Spinbutton: React.FC<SpinbuttonProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseInt(e.target.value, 10);
     if (!isNaN(newValue)) {
-      changeValue(newValue);
+      commitTyped(newValue);
     } else {
       setIsInvalid(true);
     }
   };
 
+  // An explicitly empty errorMessage means "no message", not "an empty alert":
+  // rendering one would announce a nameless alert on every invalid entry.
+  const message = errorMessage ?? l.rangeError(min, max);
+  const hasMessage = message.trim() !== '';
+  const describedBy =
+    [ariaDescribedby, isInvalid && hasMessage ? errorId : undefined].filter(Boolean).join(' ') ||
+    undefined;
+
   return (
-    <div className="spinbutton-container">
-      <input
-        type="text"
-        role="spinbutton"
-        className={isInvalid ? 'is-invalid' : ''}
-        aria-valuenow={value}
-        aria-valuemin={min}
-        aria-valuemax={max}
-        aria-valuetext={String(value)}
-        aria-label={ariaLabelledby ? undefined : ariaLabel}
-        aria-labelledby={ariaLabelledby}
-        aria-invalid={isInvalid}
-        value={value}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-      />
-      <button
-        type="button"
-        className="spinbutton-arrow spinbutton-arrow-up"
-        aria-label={l.increaseValue}
-        tabIndex={-1}
-        onClick={() => changeValue(value + step)}
-      >
-        <span aria-hidden="true">&#x25B2;</span>
-      </button>
-      <button
-        type="button"
-        className="spinbutton-arrow spinbutton-arrow-down"
-        aria-label={l.decreaseValue}
-        tabIndex={-1}
-        onClick={() => changeValue(value - step)}
-      >
-        <span aria-hidden="true">&#x25BC;</span>
-      </button>
+    <div className="spinbutton">
+      <div className="spinbutton-container">
+        <input
+          type="text"
+          role="spinbutton"
+          className={isInvalid ? 'is-invalid' : ''}
+          aria-valuenow={value}
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-valuetext={String(value)}
+          aria-label={ariaLabelledby ? undefined : ariaLabel}
+          aria-labelledby={ariaLabelledby}
+          aria-invalid={isInvalid}
+          aria-describedby={describedBy}
+          value={value}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+        />
+        <button
+          type="button"
+          className="spinbutton-arrow spinbutton-arrow-up"
+          aria-label={l.increaseValue}
+          tabIndex={-1}
+          onClick={() => stepTo(value + step)}
+        >
+          <span aria-hidden="true">&#x25B2;</span>
+        </button>
+        <button
+          type="button"
+          className="spinbutton-arrow spinbutton-arrow-down"
+          aria-label={l.decreaseValue}
+          tabIndex={-1}
+          onClick={() => stepTo(value - step)}
+        >
+          <span aria-hidden="true">&#x25BC;</span>
+        </button>
+      </div>
+      {isInvalid && hasMessage && (
+        <div id={errorId} role="alert" className="spinbutton-error">
+          {message}
+        </div>
+      )}
     </div>
   );
 };

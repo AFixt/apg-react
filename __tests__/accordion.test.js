@@ -81,4 +81,54 @@ describe('Accordion Component', () => {
       expect(headerButton).toHaveAttribute('aria-controls', `panel-${index}`);
     });
   });
+  // --- Regression coverage -------------------------------------------------
+
+  describe('aria-disabled pass-through (#171)', () => {
+    const base = [
+      { title: 'Section 1', content: 'Content 1' },
+      { title: 'Section 2', content: 'Content 2' },
+    ];
+
+    test('nothing is exposed when no item is disabled', () => {
+      render(<Accordion items={base} openIndex={0} toggleItem={() => {}} />);
+
+      screen.getAllByRole('button').forEach((header) => {
+        expect(header).not.toHaveAttribute('aria-disabled');
+      });
+    });
+
+    test('a disabled item exposes aria-disabled on its header', () => {
+      const items = [{ ...base[0], disabled: true }, base[1]];
+      render(<Accordion items={items} openIndex={0} toggleItem={() => {}} />);
+
+      const headers = screen.getAllByRole('button');
+      expect(headers[0]).toHaveAttribute('aria-disabled', 'true');
+      expect(headers[1]).not.toHaveAttribute('aria-disabled');
+    });
+
+    test('the header stays focusable and keeps aria-expanded', () => {
+      const items = [{ ...base[0], disabled: true }, base[1]];
+      render(<Accordion items={items} openIndex={0} toggleItem={() => {}} />);
+      const header = screen.getAllByRole('button')[0];
+
+      // aria-disabled, not native disabled: it must stay reachable so a
+      // keyboard user can discover why collapsing does nothing.
+      expect(header).not.toBeDisabled();
+      header.focus();
+      expect(document.activeElement).toBe(header);
+      expect(header).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    test('the consumer still owns whether activation does anything', () => {
+      const toggleItem = jest.fn();
+      const items = [{ ...base[0], disabled: true }, base[1]];
+      render(<Accordion items={items} openIndex={0} toggleItem={toggleItem} />);
+
+      fireEvent.click(screen.getAllByRole('button')[0]);
+
+      // The component reports the activation; enforcing the at-least-one-open
+      // rule is the consumer's job, since it owns openIndex.
+      expect(toggleItem).toHaveBeenCalledWith(0);
+    });
+  });
 });

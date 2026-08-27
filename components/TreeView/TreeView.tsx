@@ -17,6 +17,7 @@
  *   - Enter / Space: select / toggle.
  */
 import React, { useMemo, useRef, useState } from 'react';
+import { isTypeaheadKey, nodeText, useTypeahead } from '../_internal/typeahead';
 import './TreeView.css';
 
 /** Tree Node used by the TreeView component. */
@@ -82,6 +83,12 @@ const TreeView: React.FC<TreeViewProps> = ({ label, nodes, onSelect, defaultExpa
   const itemRefs = useRef<Record<string, HTMLLIElement | null>>({});
 
   const visible = useMemo(() => flattenVisible(nodes, expanded), [nodes, expanded]);
+  // Keyed by id rather than index, so the failure shape differs: when the node
+  // focusId names is no longer visible, nothing matches and no treeitem gets
+  // tabIndex 0. Fall back to the first visible node. See #218.
+  const renderedFocusId = visible.some((v) => v.id === focusId) ? focusId : visible[0]?.id;
+
+  const resolveTypeahead = useTypeahead();
 
   const focusAt = (i: number) => {
     const target = visible[i];
@@ -106,7 +113,25 @@ const TreeView: React.FC<TreeViewProps> = ({ label, nodes, onSelect, defaultExpa
     onSelect?.(id);
   };
 
+  /**
+   * `onFocus` maps to focusin, which bubbles through every ancestor treeitem.
+   * Without this guard the roving tabindex was reset to the outermost ancestor
+   * whenever focus landed on a nested node, so tabbing out and back returned
+   * the user to the top of the subtree instead of where they left off.
+   */
+  const handleFocus = (e: React.FocusEvent<HTMLLIElement>, id: string) => {
+    if (e.currentTarget !== e.target) return;
+    setFocusId(id);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Child treeitems are rendered *inside* their parent treeitem, and React
+    // synthetic events bubble -- so without this guard a keystroke on a nested
+    // node is handled again by every ancestor, each re-running the same key
+    // against its own index. The ancestor lands second and undoes the child's
+    // move, which is why a subtree could be entered but never navigated.
+    if (e.currentTarget !== e.target) return;
+
     // Resolve the current node from the event target's data attribute so
     // we aren't dependent on React state catching up to native focus events.
     const itemId = (e.currentTarget as HTMLElement).dataset.itemid;
@@ -145,8 +170,22 @@ const TreeView: React.FC<TreeViewProps> = ({ label, nodes, onSelect, defaultExpa
         if (hasChildren) toggleExpand(id);
         select(id);
         break;
-      default:
-        handled = false;
+      default: {
+        // APG grades type-ahead Recommended for a tree, where it is often the
+        // only practical way to reach a node in a deep hierarchy. It searches
+        // the visible nodes, so a collapsed subtree's contents are not targets.
+        if (!isTypeaheadKey(e)) {
+          handled = false;
+          break;
+        }
+        const match = resolveTypeahead(
+          e.key,
+          visible.map((v) => nodeText(v.label)),
+          idx,
+        );
+        if (match < 0) handled = false;
+        else focusAt(match);
+      }
     }
     if (handled) e.preventDefault();
   };
@@ -160,7 +199,7 @@ const TreeView: React.FC<TreeViewProps> = ({ label, nodes, onSelect, defaultExpa
       {ns.map((n, i) => {
         const hasChildren = !!n.children?.length;
         const isOpen = expanded.has(n.id);
-        const isFocused = focusId === n.id;
+        const isFocused = renderedFocusId === n.id;
         const isSelected = selected === n.id;
         return (
           <li
@@ -176,7 +215,7 @@ const TreeView: React.FC<TreeViewProps> = ({ label, nodes, onSelect, defaultExpa
             tabIndex={isFocused ? 0 : -1}
             className={`treeitem${isSelected ? ' is-selected' : ''}`}
             onKeyDown={handleKeyDown}
-            onFocus={() => setFocusId(n.id)}
+            onFocus={(e) => handleFocus(e, n.id)}
           >
             <span
               className="treeitem-label"

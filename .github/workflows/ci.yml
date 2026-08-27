@@ -24,6 +24,29 @@ jobs:
         with:
           extra_args: --only-verified
 
+  usecases:
+    name: Validate use cases
+    runs-on: ubuntu-latest
+    # PR-triggered, not scheduled: this repo's CI policy bans cron, and a check
+    # that reports hours after the fact gets ignored. See #144 -- 216 .uc.yaml
+    # files were authored and maintained here with nothing ever checking them.
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Validate use cases
+        run: npm run validate:usecases
+        env:
+          # @afixt/usecase-runner is under the private @afixt scope. The
+          # org-level secret is always the one to use; a repo-level NPM_TOKEN
+          # would be stale and would 404 here.
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
   test:
     runs-on: ubuntu-latest
     strategy:
