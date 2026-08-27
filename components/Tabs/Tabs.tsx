@@ -69,6 +69,13 @@ const Tabs: React.FC<TabsProps> = ({
 
   const isDisabled = (i: number) => tabs[i]?.disabled === true;
 
+  // Clamped at render rather than trusted: the stored index survives a change to
+  // the collection, and if it now points past the end nothing gets tabIndex 0 --
+  // the widget silently drops out of the tab order. See #218.
+  const lastIndex = Math.max(0, tabs.length - 1);
+  const renderedFocus = Math.min(focusIndex, lastIndex);
+  const renderedActive = Math.min(activeIndex, lastIndex);
+
   const focusTab = (i: number) => {
     setFocusIndex(i);
     tabRefs.current[i]?.focus();
@@ -116,7 +123,7 @@ const Tabs: React.FC<TabsProps> = ({
         className="tablist"
       >
         {tabs.map((tab, i) => {
-          const selected = i === activeIndex;
+          const selected = i === renderedActive;
           return (
             <button
               key={tab.id}
@@ -128,7 +135,7 @@ const Tabs: React.FC<TabsProps> = ({
               aria-selected={selected}
               aria-disabled={tab.disabled || undefined}
               aria-controls={`${prefix}-panel-${tab.id}`}
-              tabIndex={i === focusIndex ? 0 : -1}
+              tabIndex={i === renderedFocus ? 0 : -1}
               onClick={() => {
                 if (!tab.disabled) setActiveIndex(i);
                 setFocusIndex(i);
@@ -147,7 +154,7 @@ const Tabs: React.FC<TabsProps> = ({
           role="tabpanel"
           aria-labelledby={`${prefix}-tab-${tab.id}`}
           className="tabpanel"
-          hidden={i !== activeIndex}
+          hidden={i !== renderedActive}
           tabIndex={0}
         >
           {tab.content}

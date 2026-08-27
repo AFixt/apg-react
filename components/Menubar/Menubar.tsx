@@ -62,6 +62,11 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
     }
   }, [openMenu, activeMenu, focusItem]);
 
+  // Clamped at render rather than trusted: the stored index survives a change to
+  // the collection, and if it now points past the end nothing gets tabIndex 0 --
+  // the widget silently drops out of the tab order. See #218.
+  const renderedMenu = Math.min(activeMenu, Math.max(0, menus.length - 1));
+
   const resolveTypeahead = useTypeahead();
 
   const openAt = (mIdx: number, iIdx: number) => {
@@ -213,7 +218,7 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
               role="menuitem"
               aria-haspopup="menu"
               aria-expanded={isOpen}
-              tabIndex={mIdx === activeMenu ? 0 : -1}
+              tabIndex={mIdx === renderedMenu ? 0 : -1}
               className={`menubar-item${isOpen ? ' is-open' : ''}`}
               onClick={() => (isOpen ? closeMenu(false) : openAt(mIdx, 0))}
               onKeyDown={(e) => handleBarKey(e, mIdx)}
