@@ -225,4 +225,38 @@ describe('built bundles', () => {
       expect(ROUTER_IMPORT.some((pattern) => pattern.test(sample))).toBe(true);
     }
   });
+  /**
+   * Guards against orphaned build output (#224 follow-up).
+   *
+   * `rollup -c` writes into whatever `dist/` already exists, so before the
+   * `clean` step was added a renamed or deleted source file left its old
+   * declaration behind forever — and `files` ships `dist` wholesale, so the
+   * orphan went into the published tarball. Two were found in a real
+   * `npm publish --dry-run`: `dist/components/internal/link-component.d.ts`
+   * and `.../linkComponent.d.ts`, from a directory that had been renamed to
+   * `_internal/`. 51 files shipped where 49 were correct.
+   *
+   * The staleness check in `beforeAll` above cannot catch this: it compares
+   * mtimes to decide whether to rebuild, which reasons about stale *content*
+   * and says nothing about files the build no longer produces.
+   *
+   * Keyed to structure rather than to the two names that happened to appear,
+   * so any future rename is caught rather than just that one.
+   */
+  test('dist contains no directory without a matching source directory', () => {
+    const distComponents = path.join(repoRoot, 'dist', 'components');
+    const srcComponents = path.join(repoRoot, 'components');
+
+    const dirsIn = (root) =>
+      fs
+        .readdirSync(root, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => entry.name);
+
+    const orphans = dirsIn(distComponents).filter(
+      (name) => !fs.existsSync(path.join(srcComponents, name)),
+    );
+
+    expect(orphans).toEqual([]);
+  });
 });

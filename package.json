@@ -56,7 +56,8 @@
     "**/*.css"
   ],
   "scripts": {
-    "build": "rollup -c",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "npm run clean && rollup -c",
     "prepublishOnly": "npm run build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
