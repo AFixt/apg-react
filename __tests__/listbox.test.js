@@ -317,4 +317,88 @@ describe('Listbox Component (APG listbox pattern)', () => {
       expect(screen.getByRole('option', { name: 'Apple' })).toHaveAttribute('tabindex', '0');
     });
   });
+  describe('aria-activedescendant always resolves (#213)', () => {
+    const five = ['a', 'b', 'c', 'd', 'e'].map((v) => ({ value: v, label: v.toUpperCase() }));
+
+    const render5 = (opts) =>
+      render(
+        <Listbox
+          options={opts}
+          value=""
+          onChange={() => {}}
+          label="F"
+          focusModel="activedescendant"
+        />,
+      );
+
+    test('it still resolves after the options shrink beneath it', () => {
+      const { rerender } = render5(five);
+      const list = screen.getByRole('listbox');
+      list.focus();
+      fireEvent.keyDown(list, { key: 'End' });
+
+      rerender(
+        <Listbox
+          options={five.slice(0, 2)}
+          value=""
+          onChange={() => {}}
+          label="F"
+          focusModel="activedescendant"
+        />,
+      );
+
+      // focusIndex is state and survives the prop change; an IDREF to a removed
+      // option would tell a screen reader which option is current when none is.
+      const active = list.getAttribute('aria-activedescendant');
+      expect(document.getElementById(active)).toBeInTheDocument();
+    });
+
+    test('it lands on the last remaining option', () => {
+      const { rerender } = render5(five);
+      const list = screen.getByRole('listbox');
+      list.focus();
+      fireEvent.keyDown(list, { key: 'End' });
+
+      rerender(
+        <Listbox
+          options={five.slice(0, 2)}
+          value=""
+          onChange={() => {}}
+          label="F"
+          focusModel="activedescendant"
+        />,
+      );
+
+      expect(document.getElementById(list.getAttribute('aria-activedescendant'))).toHaveTextContent(
+        'B',
+      );
+    });
+
+    test('keys still work after the shrink', () => {
+      const { rerender } = render5(five);
+      const list = screen.getByRole('listbox');
+      list.focus();
+      fireEvent.keyDown(list, { key: 'End' });
+
+      rerender(
+        <Listbox
+          options={five.slice(0, 2)}
+          value=""
+          onChange={() => {}}
+          label="F"
+          focusModel="activedescendant"
+        />,
+      );
+      fireEvent.keyDown(list, { key: 'ArrowUp' });
+
+      expect(document.getElementById(list.getAttribute('aria-activedescendant'))).toHaveTextContent(
+        'A',
+      );
+    });
+
+    test('no aria-activedescendant at all when there are no options', () => {
+      render5([]);
+      expect(screen.getByRole('listbox')).not.toHaveAttribute('aria-activedescendant');
+    });
+  });
 });

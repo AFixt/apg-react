@@ -73,6 +73,12 @@ const Listbox: React.FC<ListboxProps> = ({
   const optionRefs = useRef<(HTMLLIElement | null)[]>([]);
   const groupLabelId = labelId || 'listbox-label';
 
+  // focusIndex is state, so it survives a change to `options`. Clamping here
+  // keeps aria-activedescendant pointing at an option that actually exists:
+  // an IDREF to a removed element tells a screen reader which option is
+  // current when none is, the same contradiction #152 fixed in Combobox.
+  const activeOptionIndex = Math.max(0, Math.min(focusIndex, options.length - 1));
+
   const selectedSet = useMemo(() => {
     if (multiple) return new Set(Array.isArray(value) ? value : []);
     return new Set(value !== undefined && value !== null ? [value as string] : []);
@@ -189,9 +195,9 @@ const Listbox: React.FC<ListboxProps> = ({
         className="listbox"
         tabIndex={usesActiveDescendant ? 0 : -1}
         aria-activedescendant={
-          usesActiveDescendant && options.length > 0 ? optionId(focusIndex) : undefined
+          usesActiveDescendant && options.length > 0 ? optionId(activeOptionIndex) : undefined
         }
-        onKeyDown={usesActiveDescendant ? (e) => handleKeyDown(e, focusIndex) : undefined}
+        onKeyDown={usesActiveDescendant ? (e) => handleKeyDown(e, activeOptionIndex) : undefined}
       >
         {options.map((opt, i) => {
           const selected = selectedSet.has(opt.value);
