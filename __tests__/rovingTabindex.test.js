@@ -173,3 +173,70 @@ describe('roving tabindex survives the collection shrinking (#218)', () => {
     });
   });
 });
+
+describe('second-level roving collections (#218)', () => {
+  const menus = (itemCount) => [
+    {
+      id: 'm0',
+      label: 'M0',
+      items: Array.from({ length: itemCount }, (_, i) => ({ id: `i${i}`, label: `I${i}` })),
+    },
+  ];
+  const submenuItems = () =>
+    screen.getAllByRole('menuitem').filter((m) => m.closest('[role="menu"]'));
+
+  test("an open submenu's items keep a tab stop when they shrink", () => {
+    const { rerender } = render(<Menubar label="MB" menus={menus(4)} />);
+    fireEvent.keyDown(screen.getByRole('menuitem', { name: 'M0' }), { key: 'ArrowDown' });
+    fireEvent.keyDown(submenuItems()[0], { key: 'End' });
+
+    rerender(<Menubar label="MB" menus={menus(2)} />);
+
+    // focusItem is a second roving collection, tracked independently of
+    // activeMenu -- clamping only the menubar row leaves this one broken.
+    expect(submenuItems().filter((m) => m.getAttribute('tabindex') === '0')).toHaveLength(1);
+  });
+
+  test('control: a freshly opened small submenu has exactly one tab stop', () => {
+    render(<Menubar label="MB" menus={menus(2)} />);
+    fireEvent.keyDown(screen.getByRole('menuitem', { name: 'M0' }), { key: 'ArrowDown' });
+
+    expect(submenuItems().filter((m) => m.getAttribute('tabindex') === '0')).toHaveLength(1);
+  });
+});
+
+describe('a collection that grows back restores the position (#218)', () => {
+  const tab = (n) =>
+    Array.from({ length: n }, (_, i) => ({ id: `${i}`, label: `T${i}`, content: `P${i}` }));
+
+  test('selection returns to where the user left it', () => {
+    const { rerender } = render(<Tabs tabs={tab(4)} label="T" />);
+    const ts = screen.getAllByRole('tab');
+    ts[0].focus();
+    fireEvent.keyDown(ts[0], { key: 'End' });
+    expect(screen.getByRole('tab', { name: 'T3' })).toHaveAttribute('aria-selected', 'true');
+
+    rerender(<Tabs tabs={tab(2)} label="T" />);
+    expect(screen.getByRole('tab', { name: 'T1' })).toHaveAttribute('aria-selected', 'true');
+
+    rerender(<Tabs tabs={tab(4)} label="T" />);
+
+    // Clamping is applied at render rather than written back to state, so a
+    // collection that is transiently filtered and restored puts the user back
+    // where they were instead of silently losing their place. Pinned because
+    // it is a decision, not an accident.
+    expect(screen.getByRole('tab', { name: 'T3' })).toHaveAttribute('aria-selected', 'true');
+  });
+});
+
+describe('empty collections do not break (#218)', () => {
+  test('an empty listbox renders no options and does not throw', () => {
+    render(<Listbox options={[]} value="" onChange={() => {}} label="L" />);
+    expect(screen.queryAllByRole('option')).toHaveLength(0);
+  });
+
+  test('an empty tabs renders no tabs and does not throw', () => {
+    render(<Tabs tabs={[]} label="T" />);
+    expect(screen.queryAllByRole('tab')).toHaveLength(0);
+  });
+});
