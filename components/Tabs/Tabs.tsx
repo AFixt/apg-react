@@ -50,8 +50,20 @@ const Tabs: React.FC<TabsProps> = ({
   label,
   labelledBy,
 }) => {
-  const [activeIndex, setActiveIndex] = useState(defaultIndex ?? 0);
-  const [focusIndex, setFocusIndex] = useState(defaultIndex ?? 0);
+  // A disabled tab must never end up selected -- not by interaction, and not by
+  // defaultIndex either. Selecting one would render a tab that is both
+  // aria-selected="true" and aria-disabled="true", with its panel showing: a
+  // state the component refuses through every other path.
+  const firstEnabled = tabs.findIndex((t) => !t.disabled);
+  const requested = defaultIndex ?? 0;
+  const initialIndex = tabs[requested]?.disabled
+    ? firstEnabled >= 0
+      ? firstEnabled
+      : 0
+    : requested;
+
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const [focusIndex, setFocusIndex] = useState(initialIndex);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const prefix = idPrefix || 'tabs';
 

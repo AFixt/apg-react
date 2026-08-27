@@ -246,4 +246,53 @@ describe('Tabs Component (APG tabs pattern)', () => {
       expect(screen.getByRole('tab', { name: 'Tab 2' })).toHaveAttribute('aria-selected', 'true');
     });
   });
+  describe('defaultIndex never selects a disabled tab (#212)', () => {
+    const tabs = [
+      { id: '1', label: 'Tab 1', content: 'Panel 1 content' },
+      { id: '2', label: 'Tab 2', content: 'Panel 2 content', disabled: true },
+      { id: '3', label: 'Tab 3', content: 'Panel 3 content' },
+    ];
+
+    test('a defaultIndex pointing at a disabled tab falls back', () => {
+      render(<Tabs tabs={tabs} label="T" defaultIndex={1} />);
+
+      // aria-selected="true" on an aria-disabled="true" tab is a state the
+      // component refuses through every interactive path; the prop must not be
+      // a back door into it.
+      expect(screen.getByRole('tab', { name: 'Tab 2' })).toHaveAttribute('aria-selected', 'false');
+      expect(screen.getByRole('tab', { name: 'Tab 1' })).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test("the disabled tab's panel stays hidden", () => {
+      render(<Tabs tabs={tabs} label="T" defaultIndex={1} />);
+
+      expect(screen.getByText('Panel 2 content')).not.toBeVisible();
+      expect(screen.getByText('Panel 1 content')).toBeVisible();
+    });
+
+    test('the fallback is the first enabled tab, not blindly index 0', () => {
+      const firstDisabled = [
+        { id: '1', label: 'Tab 1', content: 'Panel 1 content', disabled: true },
+        { id: '2', label: 'Tab 2', content: 'Panel 2 content' },
+      ];
+      render(<Tabs tabs={firstDisabled} label="T" defaultIndex={0} />);
+
+      expect(screen.getByRole('tab', { name: 'Tab 2' })).toHaveAttribute('aria-selected', 'true');
+      expect(screen.getByRole('tab', { name: 'Tab 1' })).toHaveAttribute('aria-selected', 'false');
+    });
+
+    test('a defaultIndex on an enabled tab is honoured', () => {
+      render(<Tabs tabs={tabs} label="T" defaultIndex={2} />);
+
+      expect(screen.getByRole('tab', { name: 'Tab 3' })).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('the tablist is still reachable when the fallback applies', () => {
+      render(<Tabs tabs={tabs} label="T" defaultIndex={1} />);
+
+      const tabbable = screen.getAllByRole('tab').filter((t) => t.getAttribute('tabindex') === '0');
+      expect(tabbable).toHaveLength(1);
+      expect(tabbable[0]).toHaveTextContent('Tab 1');
+    });
+  });
 });
