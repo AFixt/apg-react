@@ -17,6 +17,15 @@ interface TabDef {
   id: string;
   label: React.ReactNode;
   content: React.ReactNode;
+  /**
+   * Marks the tab unavailable, exposing aria-disabled="true".
+   *
+   * aria-disabled rather than the native disabled attribute: APG keeps a
+   * disabled tab in the tablist and in the roving tabindex, so arrow keys still
+   * reach it and a keyboard user can discover it exists. It simply never
+   * becomes the selected tab.
+   */
+  disabled?: boolean;
 }
 
 /** Props for the Tabs component. */
@@ -46,10 +55,14 @@ const Tabs: React.FC<TabsProps> = ({
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const prefix = idPrefix || 'tabs';
 
+  const isDisabled = (i: number) => tabs[i]?.disabled === true;
+
   const focusTab = (i: number) => {
     setFocusIndex(i);
     tabRefs.current[i]?.focus();
-    if (activation === 'automatic') setActiveIndex(i);
+    // Focus still lands on a disabled tab -- it stays in the roving tabindex so
+    // it is discoverable -- but selection never follows onto it.
+    if (activation === 'automatic' && !isDisabled(i)) setActiveIndex(i);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, i: number) => {
@@ -73,7 +86,7 @@ const Tabs: React.FC<TabsProps> = ({
         break;
       case 'Enter':
       case ' ':
-        setActiveIndex(i);
+        if (!isDisabled(i)) setActiveIndex(i);
         break;
       default:
         handled = false;
@@ -99,12 +112,13 @@ const Tabs: React.FC<TabsProps> = ({
               ref={(el) => (tabRefs.current[i] = el)}
               role="tab"
               type="button"
-              className={`tab${selected ? ' is-active' : ''}`}
+              className={`tab${selected ? ' is-active' : ''}${tab.disabled ? ' is-disabled' : ''}`}
               aria-selected={selected}
+              aria-disabled={tab.disabled || undefined}
               aria-controls={`${prefix}-panel-${tab.id}`}
               tabIndex={i === focusIndex ? 0 : -1}
               onClick={() => {
-                setActiveIndex(i);
+                if (!tab.disabled) setActiveIndex(i);
                 setFocusIndex(i);
               }}
               onKeyDown={(e) => handleKeyDown(e, i)}
