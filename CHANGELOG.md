@@ -7,6 +7,24 @@ This project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- **`Menubar` menu items gain `disabled`.** A disabled item carries
+  `aria-disabled="true"` rather than the native `disabled` attribute, so APG's
+  requirement that it stay discoverable holds: arrow keys, `Home` / `End` and
+  type-ahead still reach it, and it still takes the roving `tabindex`.
+  Activation is a genuine no-op — `onSelect` is not called and, unlike an
+  enabled item, the submenu stays open, so nothing reads as "that did something"
+  to a user who cannot see that nothing happened. (#227)
+
+- **Disabled states on the `menubar` and `switch` demo pages**, which the QA
+  suite's `menubar-error` and `switch-error` cases had nothing to assert
+  against. `menubar.html` marks File > Save As `aria-disabled`; `switch.html`
+  gains a second switch, "Airplane Mode", that is `aria-disabled` and does not
+  toggle. Both sit on the existing page rather than a per-state page of their
+  own: the cases address them by accessible name, so the pages' other cases are
+  undisturbed. (#227, #228)
+
 ## [2.2.0] — 2026-08-27
 
 ### Added
