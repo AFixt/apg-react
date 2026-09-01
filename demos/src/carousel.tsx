@@ -1,33 +1,7 @@
 import React from 'react';
 import Carousel from '../../components/Carousel/Carousel';
+import { slides } from './carousel-slides';
 import { mount } from './mount';
-
-const parks = [
-  { id: 'grand-canyon', name: 'Grand Canyon', color: '#d1ecf1' },
-  { id: 'yellowstone', name: 'Yellowstone', color: '#fff3cd' },
-  { id: 'yosemite', name: 'Yosemite', color: '#f8d7da' },
-  { id: 'zion', name: 'Zion', color: '#d4edda' },
-  { id: 'glacier', name: 'Glacier', color: '#e2d9f3' },
-];
-
-const slides = parks.map((park) => ({
-  id: park.id,
-  label: `${park.name} National Park`,
-  content: (
-    <div
-      style={{
-        height: 240,
-        backgroundColor: park.color,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '1.5rem',
-      }}
-    >
-      {park.name} National Park
-    </div>
-  ),
-}));
 
 /**
  * Carousel demo: five auto-rotating slides with previous/next, a play/pause
