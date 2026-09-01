@@ -48,6 +48,7 @@ a change here is a one-line edit in its `data/urls.yaml`.
 | `tabs-disabled-tab.html`     | `tabs_disabled_tab_url`     | Tab 3 `aria-disabled`, reachable but never selected   |
 | `toolbar-vertical.html`      | `toolbar_vertical_url`      | `orientation="vertical"`; Up/Down move roving focus   |
 | `listbox-multiselect.html`   | `listbox_multiselect_url`   | `aria-multiselectable="true"`                         |
+| `switch-disabled.html`       | `switch_disabled_url`       | `aria-disabled` switch, focusable but never toggles   |
 
 The default page for each of these patterns keeps its existing behaviour on
 purpose, because its own cases depend on it:
@@ -67,6 +68,19 @@ purpose, because its own cases depend on it:
 - `listbox.html` keeps a **single** listbox. apg-qa's option counts and locators
   run unscoped against the whole page, so a second listbox's options would
   inflate the count `listbox-aria-state` asserts.
+- `switch.html` keeps a **single** switch, for the same reason and more sharply:
+  the six runner repos address it by unscoped selector — `[role=switch]`,
+  `.switch-label-text`, `.switch-control .switch` — not by accessible name. A
+  second switch of _any_ name breaks them, so naming it distinctly does not
+  help. Measured: adding one took apg-playwright from 8/8 to 2/8 (strict mode
+  throws on the two matches) and apg-cypress to 6/8 (`.switch-label-text` reads
+  as the concatenation `"NotificationsAirplane Mode"`). The disabled state is
+  `switch-disabled.html` instead.
+- `menubar.html` keeps File > Save As **`aria-disabled`** — `menubar-error`
+  depends on it. Unlike the switch case this one is safe to carry on the default
+  page: a disabled menuitem stays focusable and in the roving tabindex, so every
+  case that walks or wraps the File submenu is unaffected, and the runner repos'
+  menubar specs activate "New" rather than the last item. Verified at 21/21.
 
 ## Page naming
 

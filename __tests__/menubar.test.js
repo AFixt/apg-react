@@ -183,4 +183,88 @@ describe('Menubar Component (APG menubar pattern)', () => {
       expect(screen.getByRole('menu')).toBeInTheDocument();
     });
   });
+
+  describe('disabled items (#227)', () => {
+    // Save As is deliberately last: the wrap and End cases have to land on it.
+    const makeMenus = (onSaveAs, onNew) => [
+      {
+        id: 'file',
+        label: 'File',
+        items: [
+          { id: 'new', label: 'New', onSelect: onNew },
+          { id: 'save-as', label: 'Save As', disabled: true, onSelect: onSaveAs },
+        ],
+      },
+      { id: 'edit', label: 'Edit', items: [{ id: 'undo', label: 'Undo' }] },
+    ];
+
+    /** Renders, opens the File submenu, and hands back its two menuitems. */
+    const openFile = () => {
+      const onSaveAs = jest.fn();
+      const onNew = jest.fn();
+      render(<Menubar label="Main" menus={makeMenus(onSaveAs, onNew)} />);
+      const file = screen.getByRole('menuitem', { name: 'File' });
+      fireEvent.keyDown(file, { key: 'ArrowDown' });
+      const [enabled, disabled] = within(screen.getByRole('menu')).getAllByRole('menuitem');
+      return { file, enabled, disabled, onSaveAs, onNew };
+    };
+
+    test('a disabled item exposes aria-disabled and its siblings do not', () => {
+      const { enabled, disabled } = openFile();
+      expect(enabled).not.toHaveAttribute('aria-disabled');
+      expect(disabled).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    test('aria-disabled, not the native disabled attribute, so it stays focusable', () => {
+      const { disabled } = openFile();
+      expect(disabled).not.toBeDisabled();
+      disabled.focus();
+      expect(disabled).toHaveFocus();
+    });
+
+    test('ArrowUp still wraps onto the disabled item, which takes the roving tabindex', () => {
+      const { enabled, disabled } = openFile();
+      fireEvent.keyDown(enabled, { key: 'ArrowUp' });
+      expect(disabled).toHaveFocus();
+      expect(disabled).toHaveAttribute('tabindex', '0');
+    });
+
+    test('End still reaches the disabled item', () => {
+      const { enabled, disabled } = openFile();
+      fireEvent.keyDown(enabled, { key: 'End' });
+      expect(disabled).toHaveFocus();
+    });
+
+    test('Enter on a disabled item calls nothing and leaves the submenu open', () => {
+      const { file, disabled, onSaveAs } = openFile();
+      fireEvent.keyDown(disabled, { key: 'Enter' });
+      expect(onSaveAs).not.toHaveBeenCalled();
+      expect(file).toHaveAttribute('aria-expanded', 'true');
+      expect(screen.getByRole('menu')).toBeInTheDocument();
+    });
+
+    test('Space on a disabled item calls nothing and leaves the submenu open', () => {
+      const { file, disabled, onSaveAs } = openFile();
+      fireEvent.keyDown(disabled, { key: ' ' });
+      expect(onSaveAs).not.toHaveBeenCalled();
+      expect(file).toHaveAttribute('aria-expanded', 'true');
+      expect(screen.getByRole('menu')).toBeInTheDocument();
+    });
+
+    test('clicking a disabled item calls nothing and leaves the submenu open', () => {
+      const { file, disabled, onSaveAs } = openFile();
+      fireEvent.click(disabled);
+      expect(onSaveAs).not.toHaveBeenCalled();
+      expect(file).toHaveAttribute('aria-expanded', 'true');
+      expect(screen.getByRole('menu')).toBeInTheDocument();
+    });
+
+    test('an enabled sibling in the same menu still activates and closes it', () => {
+      // The guard belongs to the item, not to any menu that contains one.
+      const { file, enabled, onNew } = openFile();
+      fireEvent.keyDown(enabled, { key: 'Enter' });
+      expect(onNew).toHaveBeenCalledTimes(1);
+      expect(file).toHaveAttribute('aria-expanded', 'false');
+    });
+  });
 });

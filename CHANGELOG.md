@@ -7,6 +7,30 @@ This project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- **`Menubar` menu items gain `disabled`.** A disabled item carries
+  `aria-disabled="true"` rather than the native `disabled` attribute, so APG's
+  requirement that it stay discoverable holds: arrow keys, `Home` / `End` and
+  type-ahead still reach it, and it still takes the roving `tabindex`.
+  Activation is a genuine no-op — `onSelect` is not called and, unlike an
+  enabled item, the submenu stays open, so nothing reads as "that did something"
+  to a user who cannot see that nothing happened. (#227)
+
+- **Disabled states for the `menubar` and `switch` demos**, which the QA suite's
+  `menubar-error` and `switch-error` cases had nothing to assert against.
+  `menubar.html` marks File > Save As `aria-disabled`, which is safe on the
+  default page because a disabled menuitem stays focusable and in the roving
+  tabindex, leaving every case that walks the File submenu unaffected.
+
+  The disabled switch gets a page of its own, **`switch-disabled.html`**
+  (`switch_disabled_url`), rather than joining `switch.html`. The six APG runner
+  repos address that page by unscoped selector — `[role=switch]`,
+  `.switch-label-text`, `.switch-control .switch` — not by accessible name, so a
+  second switch of any name breaks them; a trial run took apg-playwright from
+  8/8 to 2/8 and apg-cypress to 6/8. Both constraints are now recorded in
+  `demos/README.md`. (#227, #228)
+
 ## [2.2.0] — 2026-08-27
 
 ### Added
