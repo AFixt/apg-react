@@ -33,10 +33,17 @@ const slides = parks.map((park) => ({
  * Carousel demo: five auto-rotating slides with previous/next, a play/pause
  * rotation control, and slide-picker buttons.
  *
- * The component owns rotation and active-slide state internally and exposes
- * neither to the parent, so this demo cannot surface a "slide X of Y" status
- * or disable "Previous" at the first slide without reimplementing state the
- * component already tracks privately — both are left to the component as-is.
+ * This is the **looping** variant, and stays that way on purpose: apg-playwright
+ * and apg-cypress both assert against this page that "Next from the last slide
+ * wraps forward and Previous from the first wraps back". The disabled control it
+ * does expose is the current slide's picker, which is `aria-disabled` while its
+ * slide is on screen.
+ *
+ * The bounded variant — `loop={false}`, so Previous at the first slide and Next
+ * at the last are `aria-disabled` no-ops — plus the "Slide N of M" status lives
+ * on `carousel-non-looping.html`. The two states contradict each other, so they
+ * cannot share a URL. Both are options the component now takes as props rather
+ * than behaviour a demo reimplements.
  */
 function CarouselDemo(): React.ReactElement {
   return (

@@ -10,6 +10,8 @@
  * @param {string} slides[].id - The unique identifier of the slide.
  * @param {string} slides[].label - The label or title of the slide.
  * @param {ReactNode} slides[].content - The content to be displayed in the slide.
+ * @param {boolean} [loop=true] - Whether the ends of the sequence wrap around.
+ * @param {boolean} [showSlideStatus=false] - Whether to render a "Slide N of M" status.
  * @returns {JSX.Element} The Carousel component.
  */
 import React, { useEffect, useRef, useState } from 'react';
@@ -29,6 +31,7 @@ interface CarouselLabels {
   pauseRotation?: string;
   startRotation?: string;
   selectSlide?: (i: number) => string;
+  slideStatus?: (current: number, total: number) => string;
 }
 
 /** Props for the Carousel component. */
@@ -38,6 +41,29 @@ interface CarouselProps {
   ariaLabel: string;
   /** Whether auto-rotation is on at first render. Defaults to true. */
   initiallyRotating?: boolean;
+  /**
+   * Whether Next past the last slide wraps to the first, and Previous past the
+   * first wraps to the last. Defaults to true.
+   *
+   * With `loop={false}` the carousel is a bounded sequence rather than a ring:
+   * Previous at the first slide and Next at the last are `aria-disabled="true"`
+   * and do nothing when activated, and auto-rotation stops on arrival at the
+   * last slide rather than starting over. Both variants are APG-conformant.
+   *
+   * The controls are marked with `aria-disabled` rather than the native
+   * `disabled` attribute on purpose: APG keeps an unavailable control focusable
+   * so a keyboard user can reach it and discover why it is unavailable.
+   */
+  loop?: boolean;
+  /**
+   * Whether to render a "Slide N of M" status. Defaults to false.
+   *
+   * The status is a live region, so it announces every slide change. That is
+   * useful when the user drives the carousel and noise when a timer does, which
+   * is why it is opt-in rather than always present -- turn it on together with
+   * `initiallyRotating={false}`, or on a carousel that does not rotate at all.
+   */
+  showSlideStatus?: boolean;
   labels?: CarouselLabels;
 }
 
@@ -45,6 +71,8 @@ const Carousel: React.FC<CarouselProps> = ({
   slides,
   ariaLabel,
   initiallyRotating = true,
+  loop = true,
+  showSlideStatus = false,
   labels,
 }) => {
   const defaultLabels: CarouselLabels = {
@@ -53,6 +81,7 @@ const Carousel: React.FC<CarouselProps> = ({
     pauseRotation: 'Pause rotation',
     startRotation: 'Start rotation',
     selectSlide: (i: number) => `Select slide ${i}`,
+    slideStatus: (current: number, total: number) => `Slide ${current} of ${total}`,
   };
   const l = { ...defaultLabels, ...labels };
   const [activeIndex, setActiveIndex] = useState(0);
@@ -65,17 +94,33 @@ const Carousel: React.FC<CarouselProps> = ({
   const carouselRef = useRef<HTMLDivElement>(null);
   const rotationBtnRef = useRef<HTMLButtonElement>(null);
 
+  // Ends of the sequence. They only constrain anything when `loop` is false;
+  // a looping carousel has no first or last slide in the operative sense.
+  const atFirstSlide = activeIndex === 0;
+  const atLastSlide = activeIndex === slides.length - 1;
+  const previousDisabled = !loop && atFirstSlide;
+  const nextDisabled = !loop && atLastSlide;
+
   /** Advance one slide without touching rotation state. Used by the timer. */
   const advance = () => {
-    setActiveIndex((prevIndex) => (prevIndex + 1) % slides.length);
+    setActiveIndex((prevIndex) => {
+      const next = prevIndex + 1;
+      if (next < slides.length) return next;
+      // Non-looping: the last slide is the end of the sequence, so stay put.
+      return loop ? 0 : prevIndex;
+    });
   };
 
   const nextSlide = () => {
+    // Activating an aria-disabled control does nothing at all, including to
+    // rotation state -- the same contract the current slide's picker keeps.
+    if (nextDisabled) return;
     advance();
     stopRotation();
   };
 
   const prevSlide = () => {
+    if (previousDisabled) return;
     setActiveIndex((prevIndex) => (prevIndex - 1 + slides.length) % slides.length);
     stopRotation();
   };
@@ -110,6 +155,17 @@ const Carousel: React.FC<CarouselProps> = ({
     if (rotationBtnRef.current?.contains(e.target as Node)) return;
     stopRotation();
   };
+
+  /**
+   * A non-looping carousel has run out of slides once it reaches the last one,
+   * so rotation ends there rather than leaving a timer waking up forever to
+   * recompute the index it is already on. The control relabels itself to offer
+   * a restart, which the user can still take -- from the last slide, "start"
+   * means the pickers and Previous, not another lap.
+   */
+  useEffect(() => {
+    if (!loop && isRotating && atLastSlide) setIsRotating(false);
+  }, [loop, isRotating, atLastSlide]);
 
   useEffect(() => {
     // A single-slide carousel has nowhere to advance to, so an interval would
@@ -146,6 +202,7 @@ const Carousel: React.FC<CarouselProps> = ({
         className="carousel-control carousel-control-prev"
         onClick={prevSlide}
         aria-label={l.previousSlide}
+        aria-disabled={previousDisabled ? 'true' : undefined}
       >
         <span aria-hidden="true">&#x2039;</span>
       </button>
@@ -153,9 +210,15 @@ const Carousel: React.FC<CarouselProps> = ({
         className="carousel-control carousel-control-next"
         onClick={nextSlide}
         aria-label={l.nextSlide}
+        aria-disabled={nextDisabled ? 'true' : undefined}
       >
         <span aria-hidden="true">&#x203A;</span>
       </button>
+      {showSlideStatus && (
+        <div className="carousel-status" role="status">
+          {l.slideStatus!(activeIndex + 1, slides.length)}
+        </div>
+      )}
       <div className="slides">
         {slides.map((slide, index) => (
           <div

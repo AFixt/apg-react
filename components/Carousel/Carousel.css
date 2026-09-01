@@ -123,6 +123,38 @@
   background-color: rgb(0 0 0 / 80%);
 }
 
+/*
+ * "Slide N of M", rendered only when `showSlideStatus` is set. Sits opposite
+ * the rotation control in the top corner, clear of the previous/next controls
+ * on the vertical midline and the pickers along the bottom.
+ *
+ * No transition and no focus styling here on purpose: the status is not
+ * interactive and never takes focus, so it has nothing for the reduced-motion
+ * or forced-colors stylesheet contracts to pair with.
+ */
+.carousel .carousel-status {
+  position: absolute;
+  inset: var(--apg-space-sm) var(--apg-space-sm) auto auto;
+  z-index: calc(var(--apg-z-dropdown) + 1);
+  padding: var(--apg-space-xs) var(--apg-space-sm);
+  border-radius: var(--apg-radius-full);
+  background-color: rgb(0 0 0 / 55%);
+  color: var(--apg-color-white);
+  font-size: var(--apg-font-size-sm);
+  line-height: 1;
+}
+
+/*
+ * An aria-disabled control stays focusable and in the Tab ring -- APG keeps it
+ * reachable so a keyboard user can discover why it is unavailable -- so it
+ * needs a visual state that reads as "here but not available" rather than
+ * disappearing. Dimmed, with the pointer cursor dropped.
+ */
+.carousel .carousel-control[aria-disabled='true'] {
+  opacity: 45%;
+  cursor: default;
+}
+
 .carousel .slide-selectors {
   position: absolute;
   bottom: var(--apg-space-lg);

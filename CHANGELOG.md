@@ -31,6 +31,33 @@ This project adheres to
   8/8 to 2/8 and apg-cypress to 6/8. Both constraints are now recorded in
   `demos/README.md`. (#227, #228)
 
+- **`Carousel` gains `loop` and `showSlideStatus`.** The APG's carousel pattern
+  admits two conformant variants and the component previously implemented only
+  one. `loop={false}` makes the slides a bounded sequence rather than a ring:
+  `Previous` at the first slide and `Next` at the last carry
+  `aria-disabled="true"` and do nothing when activated, and auto-rotation stops
+  on arrival at the last slide instead of starting over. As with the disabled
+  menuitem, the marker is `aria-disabled` rather than the native `disabled`
+  attribute, so the control stays focusable and a keyboard user can reach it to
+  discover why it is unavailable.
+
+  `showSlideStatus` renders a "Slide N of M" status, with a `slideStatus` entry
+  added to `labels` for translation. It is opt-in because the status is a live
+  region: it announces every slide change, which is useful when the user is
+  driving and noise when a timer is.
+
+  Both default to the existing behaviour, so `carousel.html` and every spec
+  addressing it are untouched — the snapshots confirm it.
+
+- **`carousel-non-looping.html`** (`carousel_non_looping_url`), the per-state
+  page for that variant, with the status turned on and rotation starting
+  stopped. It cannot live on `carousel.html`: apg-playwright and apg-cypress
+  both assert against that page that "Next from the last slide wraps forward and
+  Previous from the first wraps back", which is precisely what this state
+  inverts, so the two contradict each other and cannot share a URL. A second
+  carousel on the page fails the same way the second switch did — those specs
+  address it by unscoped selector too. (AFixt/apg-qa#26)
+
 ## [2.2.0] — 2026-08-27
 
 ### Added
