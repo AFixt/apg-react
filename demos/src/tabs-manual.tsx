@@ -15,8 +15,10 @@ const tabs = [
  * activates. That is the opposite of the default page, whose cases assert
  * selection follows focus, so the two genuinely cannot share a URL.
  *
- * The tablist is named "Sample Tabs" -- APG requires a name once a page has
- * more than one tablist, and the QA case locates it by that name.
+ * The tablist is named "Sample Tabs" -- APG's Tabs pattern asks for a labelled
+ * tablist, and it is the name the QA cases locate it by. The default and
+ * disabled-tab pages carry the same name, so a case that locates the tablist by
+ * name holds against whichever tabs page it is pointed at.
  *
  * Addressed by `apg-qa` as `tabs_manual_url`.
  */
