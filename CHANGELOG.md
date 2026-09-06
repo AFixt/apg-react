@@ -14,9 +14,11 @@ This project adheres to
   roving focus, so apg-qa's `toolbar-error` has a page to run against. It gets a
   page of its own for the same reason the disabled switch did: on
   `toolbar.html`, `toolbar-keyboard-nav` expects `End` to land on Strikethrough,
-  and the six runner repos assert the roving tabindex as a four-element array
-  and read the buttons by `:nth-child`, so neither a disabled Strikethrough nor
-  a fifth control can live there. (AFixt/apg-qa#13)
+  and all six runner repos assert the roving tabindex as a four-element array
+  (two of them also reading the buttons by `:nth-child`), so neither a disabled
+  Strikethrough nor a fifth control can live there.
+  `__tests__/demoToolbar.test.js` pins both sides of that line.
+  (AFixt/apg-qa#13)
 
 - **`Menubar` menu items gain `disabled`.** A disabled item carries
   `aria-disabled="true"` rather than the native `disabled` attribute, so APG's

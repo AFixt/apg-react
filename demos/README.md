@@ -67,10 +67,13 @@ purpose, because its own cases depend on it:
 - `toolbar.html` stays **horizontal** for `toolbar-keyboard-nav`'s Left/Right
   roving; `Toolbar` binds one axis per orientation. It also keeps all **four**
   controls enabled: `toolbar-keyboard-nav` presses `End` and expects focus on
-  Strikethrough, which a skipped Strikethrough breaks, and the six runner repos
+  Strikethrough, which a skipped Strikethrough breaks, and all six runner repos
   assert this page's roving tabindex as a four-element array
-  (`['0', '-1', '-1', '-1']`) and read its buttons by `:nth-child`, so a fifth,
-  disabled control breaks all six. The disabled state is `toolbar-disabled.html`
+  (`['0', '-1', '-1', '-1']`) — two of them, `apg-cypress` and `apg-nightwatch`,
+  also read its buttons by `:nth-child` — so a fifth, disabled control breaks
+  all six. Measured against apg-playwright: marking Strikethrough
+  `aria-disabled` here fails 3 of its 12 toolbar tests, and appending a fifth
+  disabled control fails 4. The disabled state is `toolbar-disabled.html`
   instead.
 - `listbox.html` keeps a **single** listbox. apg-qa's option counts and locators
   run unscoped against the whole page, so a second listbox's options would

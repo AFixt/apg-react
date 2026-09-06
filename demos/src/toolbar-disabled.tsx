@@ -17,9 +17,10 @@ type ControlName = (typeof controls)[number];
  * This cannot be a second state of `toolbar.html`. `toolbar-keyboard-nav`
  * presses `End` and expects focus on Strikethrough, which a skipped
  * Strikethrough breaks; and a fifth, disabled control after it is no better,
- * because the six runner repos assert the page's roving tabindex as a
- * four-element array (`['0', '-1', '-1', '-1']`) and read the toolbar's
- * buttons by position (`:nth-child(4)`), so any extra button breaks them.
+ * because all six runner repos assert the page's roving tabindex as a
+ * four-element array (`['0', '-1', '-1', '-1']`) — and two of them,
+ * `apg-cypress` and `apg-nightwatch`, also address the toolbar's buttons by
+ * position (`:nth-child(4)`) — so any extra button breaks them.
  * See `demos/README.md`.
  *
  * Addressed by `apg-qa` as `toolbar_disabled_url`.
@@ -43,6 +44,11 @@ function ToolbarDisabledDemo(): React.ReactElement {
               key={name}
               type="button"
               aria-pressed={pressed[name]}
+              // `|| undefined` rather than the bare boolean, so the attribute
+              // is omitted on the enabled controls: React renders
+              // `aria-disabled={false}` as the string "false", and `Toolbar`
+              // treats any `aria-disabled` value as disabled, so the bare
+              // boolean would make roving focus skip every control.
               aria-disabled={isDisabled || undefined}
               onClick={() => {
                 if (isDisabled) return;
