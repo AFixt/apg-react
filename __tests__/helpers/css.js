@@ -141,11 +141,6 @@ const readStylesheets = (dir) =>
   }));
 
 module.exports = {
-  findStylesheets,
-  splitBlocks,
-  parseDeclarations,
-  parseRules,
-  normaliseSelector,
   declares,
   readStylesheets,
 };

@@ -71,6 +71,9 @@ jobs:
       - name: Lint (ESLint)
         run: npm run lint
 
+      - name: Unused files, exports and dependencies (Knip)
+        run: npm run knip
+
       - name: Lint CSS (Stylelint)
         run: npm run stylelint
 
