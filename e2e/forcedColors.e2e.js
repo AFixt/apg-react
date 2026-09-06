@@ -48,10 +48,12 @@ const openMenuThen = (trigger, item) => async (page) => {
 };
 
 /**
- * One case per element that a keyboard user can focus and whose stylesheet
- * removes the outline. `shadowInNormalMode` records whether the component's
- * ordinary indicator is a box-shadow — where it is, the suppressed shadow is
- * asserted on as corroboration that emulation is really in effect.
+ * One case per element a keyboard user can focus whose indicator forced colors
+ * could plausibly take away: every element whose stylesheet removes the
+ * outline, plus the few that once did and now draw a real one, which still
+ * have to be seen rendering it. `shadowInNormalMode` records whether the
+ * component's ordinary indicator is a box-shadow — where it is, the suppressed
+ * shadow is asserted on as corroboration that emulation is really in effect.
  */
 const CASES = [
   {
