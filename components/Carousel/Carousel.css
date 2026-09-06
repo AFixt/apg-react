@@ -37,7 +37,6 @@
   border: 0;
   padding: var(--apg-space-md);
   cursor: pointer;
-  opacity: 100%;
   z-index: var(--apg-z-dropdown);
   font-size: var(--apg-font-size-2xl);
   line-height: 1;
@@ -60,25 +59,24 @@
   background-color: rgb(0 0 0 / 80%);
 }
 
+/*
+ * A real outline, not the library's usual `outline: none` plus box-shadow
+ * ring. These controls are overlaid on whatever the slide shows, so a
+ * translucent ring (`--apg-focus-ring-color` is 25% alpha) has no guaranteed
+ * contrast against it. A solid white outline sits on the control's own dark
+ * backing instead, which keeps it at 3:1 or better whatever the slide colour
+ * (WCAG 1.4.11), and an outline is the one indicator forced colors preserves,
+ * so no `forced-colors` guard is needed. Drawn inset, via the negative offset,
+ * so it stays on the control rather than on top of the slide image.
+ *
+ * No `opacity` here either: the base rule already renders the control fully
+ * opaque, and a `:hover`/`:focus` rule that toggles opacity reads as content
+ * revealed on hover (WCAG 1.4.13) to an audit even when nothing is revealed.
+ */
 .carousel-control:focus,
 .carousel-control:focus-visible {
-  outline: none;
-  opacity: 100%;
-  box-shadow: inset 0 0 0 3px var(--apg-focus-ring-color);
-}
-
-/*
- * Inset to match the 3px inset ring above; the control is overlaid on the
- * slide, where an outward outline would sit on top of the image.
- * An outline is all forced colors preserves; see Link.css for the long-form
- * rationale, including why stylelint's a11y/no-outline-none stays silent.
- */
-@media (forced-colors: active) {
-  .carousel-control:focus,
-  .carousel-control:focus-visible {
-    outline: 2px solid CanvasText;
-    outline-offset: -3px;
-  }
+  outline: var(--apg-focus-outline-width) solid var(--apg-color-white);
+  outline-offset: calc(-1 * var(--apg-focus-outline-width));
 }
 
 .carousel-control-prev {
@@ -145,14 +143,11 @@
   background-color: rgb(255 255 255 / 50%);
   color: var(--apg-color-black);
   border: 0;
-  opacity: 80%;
   border-radius: var(--apg-radius-full);
   cursor: pointer;
   font-size: var(--apg-font-size-sm);
   line-height: 1;
-  transition:
-    opacity var(--apg-transition-fast),
-    background-color var(--apg-transition-fast);
+  transition: background-color var(--apg-transition-fast);
 }
 
 /*
@@ -165,35 +160,31 @@
   }
 }
 
+/*
+ * Hover and focus swap the background only. The pickers used to fade to 80%
+ * at rest and back to 100% here, which dimmed the digit's contrast for no
+ * reason and read as hover-revealed content (WCAG 1.4.13) to an audit.
+ */
 .carousel .slide-selectors button:hover,
 .carousel .slide-selectors button:focus {
-  opacity: 100%;
   background-color: var(--apg-color-white);
 }
 
 .carousel .slide-selectors button[aria-current='true'] {
-  opacity: 100%;
   background-color: var(--apg-color-white);
   color: var(--apg-color-primary);
   font-weight: var(--apg-font-weight-semibold);
   cursor: default;
 }
 
-.carousel .slide-selectors button:focus-visible {
-  outline: none;
-  box-shadow: var(--apg-focus-ring);
-}
-
 /*
- * Forced colors suppresses box-shadow, so the ring above renders nothing there,
- * and the `outline: none` it pairs with removed the UA outline that would
- * otherwise have covered for it.
- * An outline is all forced colors preserves; see Link.css for the long-form
- * rationale, including why stylelint's a11y/no-outline-none stays silent.
+ * A real outline for the same reason as the controls above: the pickers sit
+ * on the slide, where the translucent box-shadow ring has no guaranteed
+ * contrast. The library's outline token is 3px of the primary colour, drawn
+ * just outside the picker's own white backing; on the demo's slide colours
+ * that is 3.3:1 or better. Forced colors preserves an outline, so no guard.
  */
-@media (forced-colors: active) {
-  .carousel .slide-selectors button:focus-visible {
-    outline: 2px solid CanvasText;
-    outline-offset: 2px;
-  }
+.carousel .slide-selectors button:focus-visible {
+  outline: var(--apg-focus-outline);
+  outline-offset: var(--apg-focus-outline-offset);
 }

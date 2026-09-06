@@ -103,14 +103,16 @@ const CASES = [
     element: 'control',
     story: 'components-carousel--default-bare',
     selector: '.carousel-control-play',
-    shadowInNormalMode: true,
+    // Draws a real outline in every mode since #234, so there is no shadow to
+    // see suppressed; the case stays because the outline still has to render.
+    shadowInNormalMode: false,
   },
   {
     component: 'Carousel',
     element: 'slide selector',
     story: 'components-carousel--default-bare',
     selector: '.slide-selectors button',
-    shadowInNormalMode: true,
+    shadowInNormalMode: false,
   },
   {
     component: 'Checkbox',

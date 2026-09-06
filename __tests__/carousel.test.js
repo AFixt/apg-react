@@ -260,4 +260,48 @@ describe('Carousel Component', () => {
       expect(pickers[1]).toHaveAttribute('aria-current', 'true');
     });
   });
+
+  describe('control names (#234)', () => {
+    /*
+     * An audit of the demo page flagged the rotation control's glyph as a
+     * visible label missing from its name (2.5.3 Label in Name) and as a
+     * second labelling strategy beside the aria-label. The glyph is decoration,
+     * so it is hidden from assistive technology the same way the previous/next
+     * chevrons always were.
+     *
+     * The slide pickers are the deliberate exception: their digit is real
+     * visible text, and hiding it would hide visible content from assistive
+     * technology, so it stays exposed beside the aria-label. The label ends
+     * with the digit, which is what keeps the visible label in the name.
+     */
+    test('the rotation control exposes its glyph only as decoration', () => {
+      render(<Carousel slides={slides} />);
+      const control = screen.getByRole('button', { name: 'Pause rotation' });
+      const glyph = control.querySelector('[aria-hidden="true"]');
+      expect(glyph).toHaveTextContent('\u2016');
+      expect(
+        Array.from(control.childNodes).filter(
+          (node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '',
+        ),
+      ).toHaveLength(0);
+
+      act(() => {
+        fireEvent.click(control);
+      });
+      const paused = screen.getByRole('button', { name: 'Start rotation' });
+      expect(paused.querySelector('[aria-hidden="true"]')).toHaveTextContent('\u25B6');
+    });
+
+    test('each slide picker keeps its digit as visible text and at the end of its name', () => {
+      render(<Carousel slides={slides} />);
+      const pickers = screen.getAllByRole('button', { name: /^Select slide \d$/ });
+      expect(pickers).toHaveLength(slides.length);
+      pickers.forEach((picker, index) => {
+        const digit = String(index + 1);
+        expect(picker.querySelector('[aria-hidden="true"]')).toBeNull();
+        expect(picker).toHaveTextContent(digit);
+        expect(picker.getAttribute('aria-label').endsWith(digit)).toBe(true);
+      });
+    });
+  });
 });

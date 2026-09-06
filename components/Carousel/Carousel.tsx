@@ -140,7 +140,8 @@ const Carousel: React.FC<CarouselProps> = ({
         onClick={toggleRotation}
         aria-label={isRotating ? l.pauseRotation : l.startRotation}
       >
-        {isRotating ? '\u2016' : '\u25B6'}
+        {/* The glyph is decoration for the aria-label, like the chevrons below; exposing it as text alongside the label would make it a second, conflicting name. */}
+        <span aria-hidden="true">{isRotating ? '\u2016' : '\u25B6'}</span>
       </button>
       <button
         className="carousel-control carousel-control-prev"
@@ -178,6 +179,15 @@ const Carousel: React.FC<CarouselProps> = ({
             aria-current={index === activeIndex ? 'true' : undefined}
             aria-disabled={index === activeIndex ? 'true' : undefined}
           >
+            {/*
+              Deliberately both an aria-label and visible text (#234). The digit
+              is real visible text, so it cannot be aria-hidden without hiding
+              visible content from assistive technology; the aria-label stays
+              because "1" alone is no name, and because the downstream APG
+              runner suites address these pickers by `[aria-label="Select slide
+              N"]`. The label ends with the digit, so the visible label is in
+              the name (WCAG 2.5.3).
+            */}
             {index + 1}
           </button>
         ))}
