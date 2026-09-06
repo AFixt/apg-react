@@ -9,6 +9,17 @@ This project adheres to
 
 ### Added
 
+- **`toolbar-disabled.html`**, a per-state toolbar demo (`toolbar_disabled_url`
+  in apg-qa) whose Strikethrough control is `aria-disabled` and skipped by
+  roving focus, so apg-qa's `toolbar-error` has a page to run against. It gets a
+  page of its own for the same reason the disabled switch did: on
+  `toolbar.html`, `toolbar-keyboard-nav` expects `End` to land on Strikethrough,
+  and all six runner repos assert the roving tabindex as a four-element array
+  (two of them also reading the buttons by `:nth-child`), so neither a disabled
+  Strikethrough nor a fifth control can live there.
+  `__tests__/demoToolbar.test.js` pins both sides of that line.
+  (AFixt/apg-qa#13)
+
 - **`Menubar` menu items gain `disabled`.** A disabled item carries
   `aria-disabled="true"` rather than the native `disabled` attribute, so APG's
   requirement that it stay discoverable holds: arrow keys, `Home` / `End` and
@@ -31,7 +42,76 @@ This project adheres to
   8/8 to 2/8 and apg-cypress to 6/8. Both constraints are now recorded in
   `demos/README.md`. (#227, #228)
 
+- **`Carousel` gains `loop` and `showSlideStatus`.** The APG's carousel pattern
+  admits two conformant variants and the component previously implemented only
+  one. `loop={false}` makes the slides a bounded sequence rather than a ring:
+  `Previous` at the first slide and `Next` at the last carry
+  `aria-disabled="true"` and do nothing when activated, and auto-rotation stops
+  on arrival at the last slide instead of starting over — at which point the
+  rotation control is `aria-disabled` too, since there is no further slide for
+  it to rotate to. As with the disabled menuitem, the marker is `aria-disabled`
+  rather than the native `disabled` attribute, so the control stays focusable
+  and a keyboard user can reach it to discover why it is unavailable.
+
+  `showSlideStatus` renders a "Slide N of M" status, with a `slideStatus` entry
+  added to `labels` for translation. It is opt-in because the status is a live
+  region: it announces every slide change, which is useful when the user is
+  driving and noise when a timer is.
+
+  Both default to the existing behaviour, so `carousel.html` and every spec
+  addressing it are untouched — the snapshots confirm it.
+
+- **`carousel-non-looping.html`** (`carousel_non_looping_url`), the per-state
+  page for that variant, with the status turned on and rotation starting
+  stopped. It cannot live on `carousel.html`: apg-playwright and apg-cypress
+  both assert against that page that "Next from the last slide wraps forward and
+  Previous from the first wraps back", which is precisely what this state
+  inverts, so the two contradict each other and cannot share a URL. A second
+  carousel on the page fails the same way the second switch did — those specs
+  address it by unscoped selector too. (AFixt/apg-qa#26)
+
+- **Knip runs as a quality gate.** `npm run knip` reports unused files, unused
+  exports and unused, unlisted or misplaced dependencies, and it now sits in
+  `npm run check` (so also in the pre-push hook) and in the CI `test` job, so
+  the report stays at zero rather than being a one-off clean-up. The
+  configuration is `knip.jsonc`, and every rule in it carries a comment saying
+  why it exists: the `demos/src/*.tsx` modules are entry points because the demo
+  HTML shells load them and Knip does not read HTML, and the four
+  `ignoreBinaries` are system tools installed by `scripts/bootstrap.sh`, not npm
+  packages.
+
+  The first pass found, and this change removes: two orphaned `example.js` usage
+  sketches under `components/` that nothing built, linted or published (the
+  ModalDialog one named an `ariaLabel` prop the component does not have); the
+  `@storybook/blocks` and `prop-types` devDependencies, which no file imports
+  (`prop-types` has been a leftover since the PropTypes-to-TypeScript rewrite,
+  and both remain installed transitively where tooling needs them); and a
+  handful of test-helper and internal exports that no other module read.
+  `@commitlint/types`, which `commitlint.config.mjs` imports for its JSDoc type
+  but was never declared, is now a devDependency. (#236)
+
+### Changed
+
+- **`validate:usecases` is pinned to `@afixt/usecase-runner` 3.0.0.** The
+  previous pin, 2.0.2, was tagged and GitHub-released but never reached the
+  registry — npm carries 2.0.0, 2.0.1 and 2.1.0, but no 2.0.2 — so the job could
+  only ever fail, never validate anything. All 216 `.uc.yaml` files validate
+  against 3.0.0.
+
+  The pin is exact rather than a range on purpose. `@^3` would let an unattended
+  CI run pull a freshly published parser, and a parser change flips this gate
+  with no code change here. 4.0.0 and 5.0.0 are published but are both breaking
+  parser majors, so moving to them is its own change. (#235)
+
 ### Fixed
+
+- **The tabs demo's tablist is now named "Sample Tabs".** APG's Tabs pattern
+  asks for a labelled tablist, so an unnamed one was the demo failing to render
+  the pattern faithfully rather than a QA-only gap; `tabs-aria-state` could not
+  locate the tablist and timed out. The two per-state pages, `tabs-manual.html`
+  and `tabs-disabled-tab.html`, already carried the name, so all three tabs
+  pages now agree and a case tightened to locate the tablist by name holds
+  against every one of them. (#229)
 
 - **`Carousel` controls no longer trip an accessibility audit of the demo
   page.** An `audit: page` step against `demos/carousel.html` reported 18
@@ -65,6 +145,20 @@ This project adheres to
   which still holds `:hover` opacity rules from other components. Both need one
   page-set-wide answer rather than a per-pattern fix, so they stay recorded in
   #234 rather than half-solved here. (#234)
+
+### Security
+
+- **Cleared the eight OSV advisories the dependency gate was reporting.**
+  `browserslist` 4.28.2 → 4.28.8 (GHSA-73wf-gq98-2v4g, GHSA-c83g-rgw3-j3cx),
+  `fast-uri` 3.1.5 → 3.1.7 (four 7.5 advisories) and `postcss-selector-parser`
+  6.1.2 → 6.1.4 and 7.1.1 → 7.1.6 (GHSA-w9m9-85wc-3x92 at both lockfile
+  versions).
+
+  All dev-only, and all lockfile-only — no declared range moved. Raising
+  `browserslist` raised its own dependency floor, so `baseline-browser-mapping`,
+  `caniuse-lite`, `electron-to-chromium`, `node-releases` and
+  `update-browserslist-db` moved with it. `osv-scanner` now reports no issues,
+  with `osv-scanner.toml`'s single dated `extract-zip` ignore unchanged. (#235)
 
 ## [2.2.0] — 2026-08-27
 
