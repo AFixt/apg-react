@@ -59,6 +59,30 @@ This project adheres to
   carousel on the page fails the same way the second switch did — those specs
   address it by unscoped selector too. (AFixt/apg-qa#26)
 
+### Added
+
+- **`carousel.html` now carries a "Slide N of 5" status**, and the `Carousel`'s
+  status is safe to use on a carousel that rotates by itself. Its politeness
+  follows the rotation state, the way APG's own carousel guidance couples the
+  two: `aria-live="off"` while auto-rotation is driving, `polite` as soon as it
+  stops — which every user-initiated path already does, whether that is a
+  control, a picker, or keyboard focus entering the carousel. So a slide change
+  the user asked for is announced, and one a timer produced is not.
+
+  React commits the new slide index and the new politeness in the same update,
+  so the region is already `polite` in the DOM at the instant the text it
+  announces changes; there is no window in which a hand-driven change is
+  swallowed.
+
+  `showSlideStatus` stays opt-in, but for a different reason than before: the
+  status is visible content, so turning it on by default would change what every
+  existing consumer's carousel renders. The old reason — that a live region on a
+  rotating page is noise — is what this change removes.
+
+  The status element is not focusable, so Tab order is unchanged, and the
+  downstream runner suites are unaffected: apg-playwright's carousel spec
+  reports the same 21 passed / 6 failed with and without it. (#233)
+
 ## [2.2.0] — 2026-08-27
 
 ### Added

@@ -38,18 +38,18 @@ that is expanded cannot be the same URL. Those states get their own page rather
 than a query parameter, so `apg-qa` can address each by a named URL variable and
 a change here is a one-line edit in its `data/urls.yaml`.
 
-| Page                         | `apg-qa` variable           | State                                                 |
-| ---------------------------- | --------------------------- | ----------------------------------------------------- |
-| `disclosure-expanded.html`   | `disclosure_expanded_url`   | expanded on load                                      |
-| `disclosure-lazy.html`       | `disclosure_lazy_url`       | content absent from the DOM until first expanded      |
-| `alert-severities.html`      | `alert_severities_url`      | one info, one warning and one error alert at once     |
-| `accordion-always-open.html` | `accordion_always_open_url` | at-least-one-open; the open header is `aria-disabled` |
-| `tabs-manual.html`           | `tabs_manual_url`           | manual activation; tablist named "Sample Tabs"        |
-| `tabs-disabled-tab.html`     | `tabs_disabled_tab_url`     | Tab 3 `aria-disabled`, reachable but never selected   |
-| `toolbar-vertical.html`      | `toolbar_vertical_url`      | `orientation="vertical"`; Up/Down move roving focus   |
-| `listbox-multiselect.html`   | `listbox_multiselect_url`   | `aria-multiselectable="true"`                         |
-| `switch-disabled.html`       | `switch_disabled_url`       | `aria-disabled` switch, focusable but never toggles   |
-| `carousel-non-looping.html`  | `carousel_non_looping_url`  | `loop={false}`; bounded ends, plus a slide status     |
+| Page                         | `apg-qa` variable           | State                                                  |
+| ---------------------------- | --------------------------- | ------------------------------------------------------ |
+| `disclosure-expanded.html`   | `disclosure_expanded_url`   | expanded on load                                       |
+| `disclosure-lazy.html`       | `disclosure_lazy_url`       | content absent from the DOM until first expanded       |
+| `alert-severities.html`      | `alert_severities_url`      | one info, one warning and one error alert at once      |
+| `accordion-always-open.html` | `accordion_always_open_url` | at-least-one-open; the open header is `aria-disabled`  |
+| `tabs-manual.html`           | `tabs_manual_url`           | manual activation; tablist named "Sample Tabs"         |
+| `tabs-disabled-tab.html`     | `tabs_disabled_tab_url`     | Tab 3 `aria-disabled`, reachable but never selected    |
+| `toolbar-vertical.html`      | `toolbar_vertical_url`      | `orientation="vertical"`; Up/Down move roving focus    |
+| `listbox-multiselect.html`   | `listbox_multiselect_url`   | `aria-multiselectable="true"`                          |
+| `switch-disabled.html`       | `switch_disabled_url`       | `aria-disabled` switch, focusable but never toggles    |
+| `carousel-non-looping.html`  | `carousel_non_looping_url`  | `loop={false}`; bounded ends, rotation stopped on load |
 
 The default page for each of these patterns keeps its existing behaviour on
 purpose, because its own cases depend on it:
@@ -77,17 +77,25 @@ purpose, because its own cases depend on it:
   throws on the two matches) and apg-cypress to 6/8 (`.switch-label-text` reads
   as the concatenation `"NotificationsAirplane Mode"`). The disabled state is
   `switch-disabled.html` instead.
-- `carousel.html` stays **looping**, and keeps its slide status **off**. The two
-  are one decision: apg-playwright and apg-cypress both assert on this page that
-  "Next from the last slide wraps forward and Previous from the first wraps
-  back", which is the exact behaviour the non-looping page inverts, so those two
-  states contradict each other and cannot share a URL. A second carousel on the
-  page is no better than a second switch — the runner specs address this one by
-  unscoped selector too (`[role="region"][aria-roledescription="carousel"]`,
+- `carousel.html` stays **looping**: apg-playwright and apg-cypress both assert
+  on this page that "Next from the last slide wraps forward and Previous from
+  the first wraps back", which is the exact behaviour the non-looping page
+  inverts, so those two states contradict each other and cannot share a URL. A
+  second carousel on the page is no better than a second switch — the runner
+  specs address this one by unscoped selector too
+  (`[role="region"][aria-roledescription="carousel"]`,
   `[aria-label="Previous slide"]`, `[aria-label="Select slide N"]`), so a second
-  carousel of any name gives each of them two matches. The status stays off
-  because it is a live region and this page auto-rotates, which would make it
-  announce slide changes nobody asked for.
+  carousel of any name gives each of them two matches.
+
+  It does now carry the **slide status**, which the two `carousel-behavior` and
+  `carousel-keyboard-nav` cases read. The status is safe on an auto-rotating
+  page because its politeness follows the rotation state — `aria-live="off"`
+  while the timer is driving, `polite` the moment the user is — so a slide the
+  user asked for is announced and one the timer produced is not. The element is
+  not focusable, so Tab order is unchanged; measured against apg-playwright's
+  carousel spec, which reports 21 passed / 6 failed both with and without it
+  (the six are pre-existing and fail identically on the page without a status).
+
 - `menubar.html` keeps File > Save As **`aria-disabled`** — `menubar-error`
   depends on it. Unlike the switch case this one is safe to carry on the default
   page: a disabled menuitem stays focusable and in the roving tabindex, so every

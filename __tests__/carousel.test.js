@@ -424,6 +424,98 @@ describe('Carousel Component', () => {
       expect(status).toHaveTextContent('Slide 2 of 3');
     });
 
+    describe('live-region politeness follows the rotation state (#233)', () => {
+      /*
+       * The decision this pins: a slide change is either something the user
+       * asked for or something the timer did, and only the first should be
+       * announced. Permanently polite interrupts a screen-reader user every few
+       * seconds on an auto-rotating carousel; permanently off silences the
+       * status exactly when the user is the one navigating.
+       */
+      test('is off while auto-rotation is running', () => {
+        render(<Carousel slides={slides} showSlideStatus />);
+
+        expect(screen.getByRole('status', { hidden: true })).toHaveAttribute('aria-live', 'off');
+      });
+
+      test('is polite when the carousel is not rotating', () => {
+        render(<Carousel slides={slides} showSlideStatus initiallyRotating={false} />);
+
+        expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite');
+      });
+
+      test('a timer-driven advance leaves it off, so nothing is announced', async () => {
+        render(<Carousel slides={slides} showSlideStatus />);
+        const status = screen.getByRole('status', { hidden: true });
+        expect(status).toHaveTextContent('Slide 1 of 3');
+
+        await act(async () => {
+          jest.advanceTimersByTime(3000);
+        });
+
+        expect(status).toHaveTextContent('Slide 2 of 3');
+        expect(status).toHaveAttribute('aria-live', 'off');
+      });
+
+      test('turns polite in the same update that a user-initiated change lands', async () => {
+        render(<Carousel slides={slides} showSlideStatus />);
+        const status = screen.getByRole('status', { hidden: true });
+        expect(status).toHaveAttribute('aria-live', 'off');
+
+        await act(async () => {
+          fireEvent.click(screen.getByLabelText(/next/i));
+        });
+
+        // Both in one commit: the region is already polite in the DOM by the
+        // time the new text is there to be announced.
+        expect(status).toHaveTextContent('Slide 2 of 3');
+        expect(status).toHaveAttribute('aria-live', 'polite');
+      });
+
+      test('pausing rotation makes it polite without changing the slide', () => {
+        render(<Carousel slides={slides} showSlideStatus />);
+        const status = screen.getByRole('status', { hidden: true });
+
+        act(() => {
+          fireEvent.click(screen.getByLabelText(/pause rotation/i));
+        });
+
+        expect(status).toHaveAttribute('aria-live', 'polite');
+        expect(status).toHaveTextContent('Slide 1 of 3');
+      });
+
+      test('resuming rotation returns it to off', () => {
+        render(<Carousel slides={slides} showSlideStatus initiallyRotating={false} />);
+        const status = screen.getByRole('status');
+        expect(status).toHaveAttribute('aria-live', 'polite');
+
+        act(() => {
+          fireEvent.click(screen.getByLabelText(/start rotation/i));
+        });
+
+        expect(status).toHaveAttribute('aria-live', 'off');
+      });
+
+      test('focus entering the carousel makes it polite before the user navigates', async () => {
+        render(<Carousel slides={slides} showSlideStatus />);
+        const status = screen.getByRole('status', { hidden: true });
+        expect(status).toHaveAttribute('aria-live', 'off');
+
+        await act(async () => {
+          screen.getByLabelText(/next/i).focus();
+        });
+
+        expect(status).toHaveAttribute('aria-live', 'polite');
+        expect(status).toHaveTextContent('Slide 1 of 3');
+      });
+
+      test('a single-slide carousel is polite, since no timer can run', () => {
+        render(<Carousel slides={[slides[0]]} showSlideStatus />);
+
+        expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite');
+      });
+    });
+
     test('honours a supplied slideStatus label', () => {
       render(
         <Carousel

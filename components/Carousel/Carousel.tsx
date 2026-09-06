@@ -60,10 +60,15 @@ interface CarouselProps {
   /**
    * Whether to render a "Slide N of M" status. Defaults to false.
    *
-   * The status is a live region, so it announces every slide change. That is
-   * useful when the user drives the carousel and noise when a timer does, which
-   * is why it is opt-in rather than always present -- turn it on together with
-   * `initiallyRotating={false}`, or on a carousel that does not rotate at all.
+   * The status is a live region whose politeness follows the rotation state:
+   * `aria-live="off"` while auto-rotation is running, `polite` as soon as it
+   * stops. A user-initiated slide change is therefore announced and a
+   * timer-driven one is not, which is what makes the status safe to turn on
+   * even on a carousel that rotates by itself.
+   *
+   * It stays opt-in because it is visible content, not only an announcement:
+   * turning it on by default would change what every existing consumer's
+   * carousel renders.
    */
   showSlideStatus?: boolean;
   labels?: CarouselLabels;
@@ -182,16 +187,26 @@ const Carousel: React.FC<CarouselProps> = ({
     if (!loop && isRotating && atLastSlide) setIsRotating(false);
   }, [loop, isRotating, atLastSlide]);
 
+  /**
+   * Whether the timer is what is advancing the carousel right now.
+   *
+   * This is the condition the rotation effect runs under, named because the
+   * slide status's politeness turns on it as well: a slide change is either
+   * something the user asked for or something a timer did, and the two want
+   * opposite announcement behaviour.
+   */
+  const isAutoRotating = isRotating && !isHoverPaused && slides.length > 1;
+
   useEffect(() => {
     // A single-slide carousel has nowhere to advance to, so an interval would
     // just wake up forever to compute the index it is already on.
-    if (!isRotating || isHoverPaused || slides.length < 2) return undefined;
+    if (!isAutoRotating) return undefined;
     const rotation = setInterval(advance, 3000);
     return () => clearInterval(rotation);
     // `activeIndex` is deliberately absent: including it tore down and rebuilt
     // the interval on every advance.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isRotating, isHoverPaused, slides.length]);
+  }, [isAutoRotating]);
 
   return (
     <div
@@ -231,7 +246,25 @@ const Carousel: React.FC<CarouselProps> = ({
         <span aria-hidden="true">&#x203A;</span>
       </button>
       {showSlideStatus && (
-        <div className="carousel-status" role="status">
+        /*
+         * APG couples the status's politeness to the rotation state, and so
+         * does this: `off` while the timer is driving, `polite` the moment the
+         * user is. Left permanently polite, an auto-rotating carousel
+         * interrupts a screen-reader user every few seconds with a slide they
+         * did not ask for; left permanently off, the status is invisible to
+         * them exactly when they are the one navigating.
+         *
+         * The switch is safe against races because React commits the new index
+         * and the new politeness together: every path that changes the slide by
+         * hand -- the controls, the pickers, focus entering the carousel --
+         * stops rotation in the same update, so the region is already `polite`
+         * in the DOM the instant the text changes.
+         */
+        <div
+          className="carousel-status"
+          role="status"
+          aria-live={isAutoRotating ? 'off' : 'polite'}
+        >
           {l.slideStatus!(activeIndex + 1, slides.length)}
         </div>
       )}
