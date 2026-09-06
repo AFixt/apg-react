@@ -327,6 +327,80 @@ describe('Carousel Component', () => {
 
       expect(screen.getByText(`Content ${slides.length}`)).toBeVisible();
       expect(screen.getByLabelText(/start rotation/i)).toBeInTheDocument();
+      // ...and says it cannot start again, rather than offering a lap it has
+      // no slides left for.
+      expect(screen.getByLabelText(/start rotation/i)).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    test('the rotation control is aria-disabled at the last slide and activating it is a no-op', async () => {
+      renderBounded();
+      const pickers = screen.getAllByRole('button', { name: /select slide/i });
+
+      await act(async () => {
+        fireEvent.click(pickers[slides.length - 1]);
+      });
+
+      const rotation = screen.getByLabelText(/start rotation/i);
+      expect(rotation).toHaveAttribute('aria-disabled', 'true');
+      // Still focusable, so a keyboard user can reach it and find out why.
+      expect(rotation).not.toBeDisabled();
+
+      await act(async () => {
+        fireEvent.click(rotation);
+      });
+
+      // Nothing happened at all: not even the relabel to "Pause rotation" that
+      // a control which had actually started rotating would show.
+      expect(screen.getByLabelText(/start rotation/i)).toBeInTheDocument();
+      expect(screen.queryByLabelText(/pause rotation/i)).not.toBeInTheDocument();
+      expect(screen.getByText(`Content ${slides.length}`)).toBeVisible();
+    });
+
+    test('activating it does not even transiently report the carousel as rotating', async () => {
+      renderBounded();
+      const pickers = screen.getAllByRole('button', { name: /select slide/i });
+
+      await act(async () => {
+        fireEvent.click(pickers[slides.length - 1]);
+      });
+
+      // Settling back to "start" is not enough. Without the guard in
+      // `toggleRotation` the control starts rotating, the stop-at-the-end
+      // effect immediately undoes it, and the accessible name flips to "Pause"
+      // and back within the one click -- a state change a screen reader can
+      // announce for a state the carousel never actually entered. Only
+      // watching the attribute as it changes can tell the two apart; asserting
+      // after the fact cannot, because both end in the same place.
+      const rotation = screen.getByLabelText(/start rotation/i);
+      const namesSeen = [rotation.getAttribute('aria-label')];
+      const observer = new MutationObserver(() =>
+        namesSeen.push(rotation.getAttribute('aria-label')),
+      );
+      observer.observe(rotation, { attributes: true, attributeFilter: ['aria-label'] });
+
+      await act(async () => {
+        fireEvent.click(rotation);
+      });
+      observer.disconnect();
+
+      expect(namesSeen).toEqual(['Start rotation']);
+    });
+
+    test('the rotation control is never disabled when the carousel loops', async () => {
+      render(<Carousel slides={slides} initiallyRotating={false} />);
+      const pickers = screen.getAllByRole('button', { name: /select slide/i });
+
+      await act(async () => {
+        fireEvent.click(pickers[slides.length - 1]);
+      });
+
+      const rotation = screen.getByLabelText(/start rotation/i);
+      expect(rotation).not.toHaveAttribute('aria-disabled');
+
+      await act(async () => {
+        fireEvent.click(rotation);
+      });
+      expect(screen.getByLabelText(/pause rotation/i)).toBeInTheDocument();
     });
   });
 

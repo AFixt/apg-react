@@ -48,7 +48,9 @@ interface CarouselProps {
    * With `loop={false}` the carousel is a bounded sequence rather than a ring:
    * Previous at the first slide and Next at the last are `aria-disabled="true"`
    * and do nothing when activated, and auto-rotation stops on arrival at the
-   * last slide rather than starting over. Both variants are APG-conformant.
+   * last slide rather than starting over -- at which point the rotation control
+   * is `aria-disabled` too, because there is no further slide to rotate to.
+   * Both variants are APG-conformant.
    *
    * The controls are marked with `aria-disabled` rather than the native
    * `disabled` attribute on purpose: APG keeps an unavailable control focusable
@@ -100,6 +102,15 @@ const Carousel: React.FC<CarouselProps> = ({
   const atLastSlide = activeIndex === slides.length - 1;
   const previousDisabled = !loop && atFirstSlide;
   const nextDisabled = !loop && atLastSlide;
+  // The last slide of a bounded sequence is also the end of rotation: there is
+  // nothing left to advance to, and the effect below has already stopped the
+  // timer by the time the user can act. So the rotation control is unavailable
+  // rather than merely idle, and it says so the same way Previous and Next do
+  // -- aria-disabled, still focusable -- instead of quietly doing nothing when
+  // its label still offers to start. `isRotating` is in the condition so that
+  // the single frame between arriving at the last slide and the effect firing
+  // cannot present a "Pause rotation" control that refuses to pause.
+  const rotationDisabled = !loop && atLastSlide && !isRotating;
 
   /** Advance one slide without touching rotation state. Used by the timer. */
   const advance = () => {
@@ -134,6 +145,9 @@ const Carousel: React.FC<CarouselProps> = ({
   };
 
   const toggleRotation = () => {
+    // Activating an aria-disabled control does nothing at all -- the same
+    // contract Previous, Next and the current slide's picker keep.
+    if (rotationDisabled) return;
     const next = !isRotating;
     setIsRotating(next);
     // An explicit request to start clears any lingering hover pause, so the
@@ -159,9 +173,10 @@ const Carousel: React.FC<CarouselProps> = ({
   /**
    * A non-looping carousel has run out of slides once it reaches the last one,
    * so rotation ends there rather than leaving a timer waking up forever to
-   * recompute the index it is already on. The control relabels itself to offer
-   * a restart, which the user can still take -- from the last slide, "start"
-   * means the pickers and Previous, not another lap.
+   * recompute the index it is already on. The control relabels itself to
+   * "start", but there is no lap left to start, so it is aria-disabled too --
+   * see `rotationDisabled`. Getting back to a slide the carousel can rotate
+   * from is what Previous and the pickers are for.
    */
   useEffect(() => {
     if (!loop && isRotating && atLastSlide) setIsRotating(false);
@@ -195,6 +210,7 @@ const Carousel: React.FC<CarouselProps> = ({
         className="carousel-control carousel-control-play"
         onClick={toggleRotation}
         aria-label={isRotating ? l.pauseRotation : l.startRotation}
+        aria-disabled={rotationDisabled ? 'true' : undefined}
       >
         {isRotating ? '\u2016' : '\u25B6'}
       </button>

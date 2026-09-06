@@ -11,8 +11,9 @@ import { mount } from './mount';
  * slide wraps to the first and Previous from the first wraps to the last. This
  * page is the bounded one -- `loop={false}` -- where the sequence has a real
  * first and last slide. Previous at slide 1 is `aria-disabled="true"` and does
- * nothing when activated, and Next at slide 5 likewise. Both are conformant;
- * they are just different carousels.
+ * nothing when activated, and Next at slide 5 likewise -- as does the rotation
+ * control once slide 5 is reached, there being no further slide to rotate to.
+ * Both are conformant; they are just different carousels.
  *
  * It also turns on the "Slide N of M" status, which the looping page leaves
  * off. The status is a live region, so it announces on every slide change --

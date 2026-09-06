@@ -36,10 +36,11 @@ This project adheres to
   one. `loop={false}` makes the slides a bounded sequence rather than a ring:
   `Previous` at the first slide and `Next` at the last carry
   `aria-disabled="true"` and do nothing when activated, and auto-rotation stops
-  on arrival at the last slide instead of starting over. As with the disabled
-  menuitem, the marker is `aria-disabled` rather than the native `disabled`
-  attribute, so the control stays focusable and a keyboard user can reach it to
-  discover why it is unavailable.
+  on arrival at the last slide instead of starting over — at which point the
+  rotation control is `aria-disabled` too, since there is no further slide for
+  it to rotate to. As with the disabled menuitem, the marker is `aria-disabled`
+  rather than the native `disabled` attribute, so the control stays focusable
+  and a keyboard user can reach it to discover why it is unavailable.
 
   `showSlideStatus` renders a "Slide N of M" status, with a `slideStatus` entry
   added to `labels` for translation. It is opt-in because the status is a live
