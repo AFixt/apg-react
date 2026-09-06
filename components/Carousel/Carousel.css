@@ -148,11 +148,17 @@
  * An aria-disabled control stays focusable and in the Tab ring -- APG keeps it
  * reachable so a keyboard user can discover why it is unavailable -- so it
  * needs a visual state that reads as "here but not available" rather than
- * disappearing. Dimmed, with the pointer cursor dropped.
+ * disappearing.
+ *
+ * 65% and `not-allowed` are the library's existing treatment for exactly this
+ * (Listbox.css, Menubar.css, Switch.css), so it stays that rather than picking
+ * a dimmer value of its own: these controls are white-on-translucent-black over
+ * whatever the slide shows, and every extra point of transparency costs the
+ * chevron contrast it has left.
  */
 .carousel .carousel-control[aria-disabled='true'] {
-  opacity: 45%;
-  cursor: default;
+  opacity: 65%;
+  cursor: not-allowed;
 }
 
 .carousel .slide-selectors {
