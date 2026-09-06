@@ -31,6 +31,26 @@ This project adheres to
   8/8 to 2/8 and apg-cypress to 6/8. Both constraints are now recorded in
   `demos/README.md`. (#227, #228)
 
+- **Knip runs as a quality gate.** `npm run knip` reports unused files, unused
+  exports and unused, unlisted or misplaced dependencies, and it now sits in
+  `npm run check` (so also in the pre-push hook) and in the CI `test` job, so
+  the report stays at zero rather than being a one-off clean-up. The
+  configuration is `knip.jsonc`, and every rule in it carries a comment saying
+  why it exists: the `demos/src/*.tsx` modules are entry points because the demo
+  HTML shells load them and Knip does not read HTML, and the four
+  `ignoreBinaries` are system tools installed by `scripts/bootstrap.sh`, not npm
+  packages.
+
+  The first pass found, and this change removes: two orphaned `example.js` usage
+  sketches under `components/` that nothing built, linted or published (the
+  ModalDialog one named an `ariaLabel` prop the component does not have); the
+  `@storybook/blocks` and `prop-types` devDependencies, which no file imports
+  (`prop-types` has been a leftover since the PropTypes-to-TypeScript rewrite,
+  and both remain installed transitively where tooling needs them); and a
+  handful of test-helper and internal exports that no other module read.
+  `@commitlint/types`, which `commitlint.config.mjs` imports for its JSDoc type
+  but was never declared, is now a devDependency. (#236)
+
 ## [2.2.0] — 2026-08-27
 
 ### Added

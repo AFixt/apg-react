@@ -1,0 +1,18 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema-jsonc.json",
+  "entry": [
+    // The demo pages. Each demos/<slug>.html is a plain shell whose only
+    // <script type="module"> points at demos/src/<slug>.tsx, and
+    // vite.demos.config.mjs discovers those HTML files from disk rather than
+    // listing them. Knip does not parse HTML, so the modules behind the pages
+    // have to be declared here or every one of them reports as unused.
+    "demos/src/*.tsx",
+    // mount.tsx is imported by every demo rather than loaded by a page, so it
+    // stays a regular project file and its exports are still checked.
+    "!demos/src/mount.tsx",
+  ],
+  // Native binaries that package.json scripts call (`links`, `security:*`).
+  // They are installed system-wide by scripts/bootstrap.sh or Homebrew, not
+  // from npm, so Knip cannot resolve them from node_modules.
+  "ignoreBinaries": ["lychee", "osv-scanner", "semgrep", "trufflehog"],
+}
