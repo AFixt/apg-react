@@ -31,6 +31,19 @@ This project adheres to
   8/8 to 2/8 and apg-cypress to 6/8. Both constraints are now recorded in
   `demos/README.md`. (#227, #228)
 
+### Changed
+
+- **`validate:usecases` is pinned to `@afixt/usecase-runner` 3.0.0.** The
+  previous pin, 2.0.2, was tagged and GitHub-released but never reached the
+  registry — npm carries 2.0.0, 2.0.1 and 2.1.0, but no 2.0.2 — so the job could
+  only ever fail, never validate anything. All 216 `.uc.yaml` files validate
+  against 3.0.0.
+
+  The pin is exact rather than a range on purpose. `@^3` would let an unattended
+  CI run pull a freshly published parser, and a parser change flips this gate
+  with no code change here. 4.0.0 and 5.0.0 are published but are both breaking
+  parser majors, so moving to them is its own change. (#235)
+
 ### Fixed
 
 - **The tabs demo's tablist is now named "Sample Tabs".** APG's Tabs pattern
@@ -40,6 +53,20 @@ This project adheres to
   and `tabs-disabled-tab.html`, already carried the name, so all three tabs
   pages now agree and a case tightened to locate the tablist by name holds
   against every one of them. (#229)
+
+### Security
+
+- **Cleared the eight OSV advisories the dependency gate was reporting.**
+  `browserslist` 4.28.2 → 4.28.8 (GHSA-73wf-gq98-2v4g, GHSA-c83g-rgw3-j3cx),
+  `fast-uri` 3.1.5 → 3.1.7 (four 7.5 advisories) and `postcss-selector-parser`
+  6.1.2 → 6.1.4 and 7.1.1 → 7.1.6 (GHSA-w9m9-85wc-3x92 at both lockfile
+  versions).
+
+  All dev-only, and all lockfile-only — no declared range moved. Raising
+  `browserslist` raised its own dependency floor, so `baseline-browser-mapping`,
+  `caniuse-lite`, `electron-to-chromium`, `node-releases` and
+  `update-browserslist-db` moved with it. `osv-scanner` now reports no issues,
+  with `osv-scanner.toml`'s single dated `extract-zip` ignore unchanged. (#235)
 
 ## [2.2.0] — 2026-08-27
 
