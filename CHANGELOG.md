@@ -54,21 +54,44 @@ This project adheres to
   and a keyboard user can reach it to discover why it is unavailable.
 
   `showSlideStatus` renders a "Slide N of M" status, with a `slideStatus` entry
-  added to `labels` for translation. It is opt-in because the status is a live
-  region: it announces every slide change, which is useful when the user is
-  driving and noise when a timer is.
+  added to `labels` for translation. It is opt-in because the status is visible
+  content: turning it on by default would change what every existing consumer's
+  carousel renders.
 
-  Both default to the existing behaviour, so `carousel.html` and every spec
-  addressing it are untouched — the snapshots confirm it.
+  Both default to the existing behaviour, so every spec addressing
+  `carousel.html` is untouched — the snapshots confirm it.
 
 - **`carousel-non-looping.html`** (`carousel_non_looping_url`), the per-state
-  page for that variant, with the status turned on and rotation starting
-  stopped. It cannot live on `carousel.html`: apg-playwright and apg-cypress
-  both assert against that page that "Next from the last slide wraps forward and
-  Previous from the first wraps back", which is precisely what this state
-  inverts, so the two contradict each other and cannot share a URL. A second
-  carousel on the page fails the same way the second switch did — those specs
-  address it by unscoped selector too. (AFixt/apg-qa#26)
+  page for that variant, with the status turned on and rotation starting stopped
+  so the page is deterministic for the QA suite. It cannot live on
+  `carousel.html`: apg-playwright and apg-cypress both assert against that page
+  that "Next from the last slide wraps forward and Previous from the first wraps
+  back", which is precisely what this state inverts, so the two contradict each
+  other and cannot share a URL. A second carousel on the page fails the same way
+  the second switch did — those specs address it by unscoped selector too.
+  (AFixt/apg-qa#26)
+
+- **`carousel.html` now carries a "Slide N of 5" status**, and the `Carousel`'s
+  status is safe to use on a carousel that rotates by itself. Its politeness
+  follows the rotation state, the way APG's own carousel guidance couples the
+  two: `aria-live="off"` while auto-rotation is driving, `polite` as soon as it
+  stops — which every user-initiated path already does, whether that is a
+  control, a picker, or keyboard focus entering the carousel. So a slide change
+  the user asked for is announced, and one a timer produced is not.
+
+  React commits the new slide index and the new politeness in the same update,
+  so the region is already `polite` in the DOM at the instant the text it
+  announces changes; there is no window in which a hand-driven change is
+  swallowed.
+
+  `showSlideStatus` stays opt-in, but for a different reason than before: the
+  status is visible content, so turning it on by default would change what every
+  existing consumer's carousel renders. The old reason — that a live region on a
+  rotating page is noise — is what this change removes.
+
+  The status element is not focusable, so Tab order is unchanged, and the
+  downstream runner suites are unaffected: apg-playwright's carousel spec
+  reports the same 21 passed / 6 failed with and without it. (#233)
 
 - **Knip runs as a quality gate.** `npm run knip` reports unused files, unused
   exports and unused, unlisted or misplaced dependencies, and it now sits in

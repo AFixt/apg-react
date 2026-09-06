@@ -5,7 +5,7 @@ import { mount } from './mount';
 
 /**
  * Carousel demo: five auto-rotating slides with previous/next, a play/pause
- * rotation control, and slide-picker buttons.
+ * rotation control, slide-picker buttons and a "Slide N of 5" status.
  *
  * This is the **looping** variant, and stays that way on purpose: apg-playwright
  * and apg-cypress both assert against this page that "Next from the last slide
@@ -14,10 +14,14 @@ import { mount } from './mount';
  * slide is on screen.
  *
  * The bounded variant — `loop={false}`, so Previous at the first slide and Next
- * at the last are `aria-disabled` no-ops — plus the "Slide N of M" status lives
- * on `carousel-non-looping.html`. The two states contradict each other, so they
- * cannot share a URL. Both are options the component now takes as props rather
- * than behaviour a demo reimplements.
+ * at the last are `aria-disabled` no-ops — lives on
+ * `carousel-non-looping.html`. The two states contradict each other, so they
+ * cannot share a URL. Both are options the component takes as props rather than
+ * behaviour a demo reimplements.
+ *
+ * The status is safe on a page that rotates by itself because its politeness
+ * follows the rotation state: `aria-live="off"` while the timer is driving,
+ * `polite` the moment the user is.
  */
 function CarouselDemo(): React.ReactElement {
   return (
@@ -26,6 +30,7 @@ function CarouselDemo(): React.ReactElement {
       <Carousel
         slides={slides}
         ariaLabel="Featured Products"
+        showSlideStatus
         labels={{
           pauseRotation: 'Pause auto-rotation',
           startRotation: 'Resume auto-rotation',
