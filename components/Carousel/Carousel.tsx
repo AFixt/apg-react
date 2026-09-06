@@ -77,7 +77,7 @@ const Carousel: React.FC<CarouselProps> = ({
   showSlideStatus = false,
   labels,
 }) => {
-  const defaultLabels: CarouselLabels = {
+  const defaultLabels: Required<CarouselLabels> = {
     previousSlide: 'Previous slide',
     nextSlide: 'Next slide',
     pauseRotation: 'Pause rotation',
@@ -232,7 +232,7 @@ const Carousel: React.FC<CarouselProps> = ({
       </button>
       {showSlideStatus && (
         <div className="carousel-status" role="status">
-          {l.slideStatus!(activeIndex + 1, slides.length)}
+          {l.slideStatus(activeIndex + 1, slides.length)}
         </div>
       )}
       <div className="slides">
@@ -253,7 +253,7 @@ const Carousel: React.FC<CarouselProps> = ({
           <button
             key={index}
             onClick={() => selectSlide(index)}
-            aria-label={l.selectSlide!(index + 1)}
+            aria-label={l.selectSlide(index + 1)}
             aria-current={index === activeIndex ? 'true' : undefined}
             aria-disabled={index === activeIndex ? 'true' : undefined}
           >
