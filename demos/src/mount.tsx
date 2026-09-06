@@ -25,5 +25,36 @@ export function mount(node: React.ReactNode): void {
     throw new Error('Demo page is missing its #demo-root container.');
   }
 
-  createRoot(container).render(node);
+  createRoot(container).render(
+    <>
+      {node}
+      <DemoSetNav />
+    </>,
+  );
+}
+
+/**
+ * A link back to the demo index, on every page.
+ *
+ * WCAG 2.4.5 Multiple Ways asks that a page in a set be reachable more than one
+ * way. `demos/index.html` enumerates all of them, but nothing linked back to
+ * it, so every demo page was a dead end: arriving at one, the only route to
+ * another was editing the URL.
+ *
+ * It renders after the demo and is the last thing in the tab order, so it
+ * cannot displace anything the pattern under test owns.
+ *
+ * Note for anyone reading an audit of these pages: an automated `2.4.5` check
+ * looks for a search field or an href containing "sitemap", and this link is
+ * neither, so the check still reports a candidate. That check is
+ * `auto_assisted` -- it asks a human to confirm the mechanism exists somewhere
+ * in the page set. It does, and this is it. Renaming the index to match a
+ * substring would satisfy the scanner without helping anyone.
+ */
+function DemoSetNav(): React.ReactElement {
+  return (
+    <nav className="demo-set-nav" aria-label="Demo set">
+      <a href="./index.html">All APG pattern demos</a>
+    </nav>
+  );
 }

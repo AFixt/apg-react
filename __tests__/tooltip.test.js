@@ -49,6 +49,78 @@ describe('Tooltip Component (APG tooltip pattern)', () => {
     });
   });
 
+  test('the tooltip id can be used in a selector', async () => {
+    /*
+     * `useId` returns ":r0:", and `querySelector('#tooltip-:r0:')` throws on
+     * those colons. Anything that resolves `aria-describedby` by building a
+     * selector from it then cannot find the tooltip and reports it missing --
+     * which is exactly what an audit of the demo page did.
+     */
+    renderTooltip();
+    fireEvent.mouseEnter(screen.getByText(title));
+    await waitFor(() => expect(screen.getByRole('tooltip')).toBeInTheDocument());
+
+    const id = screen.getByRole('tooltip').id;
+    expect(id).not.toMatch(/:/);
+    expect(document.querySelector(`#${id}`)).toBe(screen.getByRole('tooltip'));
+
+    const describedby = screen.getByText(title).getAttribute('aria-describedby');
+    expect(document.querySelector(`#${describedby}`)).toBe(screen.getByRole('tooltip'));
+  });
+
+  describe('hoverable: the pointer can reach the tooltip (WCAG 1.4.13)', () => {
+    /*
+     * The tooltip sits beside its trigger, so reaching it means leaving the
+     * trigger. Hiding on the trigger's own leave made it unreachable -- the
+     * pointer never arrived, because the tooltip was gone by the time it got
+     * there. That is failure technique F95, and it was compounded by
+     * `pointer-events: none`, which meant the element could not take a pointer
+     * at all.
+     *
+     * `relatedTarget` is what distinguishes the two cases: the tooltip when the
+     * pointer moves onto it, null when it leaves for nowhere.
+     */
+    test('stays open when the pointer moves from the trigger onto the tooltip', async () => {
+      renderTooltip();
+      const trigger = screen.getByText(title);
+
+      fireEvent.mouseEnter(trigger);
+      await waitFor(() => expect(screen.getByRole('tooltip')).toBeInTheDocument());
+      const tooltip = screen.getByRole('tooltip');
+
+      fireEvent.mouseLeave(trigger, { relatedTarget: tooltip });
+      fireEvent.mouseEnter(tooltip);
+
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    });
+
+    test('hides once the pointer leaves the trigger and the tooltip together', async () => {
+      const { container } = renderTooltip();
+      const trigger = screen.getByText(title);
+
+      fireEvent.mouseEnter(trigger);
+      await waitFor(() => expect(screen.getByRole('tooltip')).toBeInTheDocument());
+
+      fireEvent.mouseLeave(container.querySelector('.tooltip-container'));
+
+      await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+    });
+
+    test('the tooltip does not opt out of pointer events', async () => {
+      // `pointer-events: none` is what made the element unreachable. jsdom does
+      // not resolve stylesheets, so this reads the rule as text -- the same
+      // approach the stylesheet contract suites take.
+      const fs = require('fs');
+      const path = require('path');
+      const css = fs.readFileSync(
+        path.join(__dirname, '..', 'components', 'Tooltip', 'Tooltip.css'),
+        'utf8',
+      );
+      const withoutComments = css.replace(/\/\*[\s\S]*?\*\//g, '');
+      expect(withoutComments).not.toMatch(/pointer-events\s*:\s*none/);
+    });
+  });
+
   test('shows on keyboard focus', async () => {
     renderTooltip();
     const trigger = screen.getByText(title);

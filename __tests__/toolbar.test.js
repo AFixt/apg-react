@@ -134,4 +134,54 @@ describe('Toolbar Component (APG toolbar pattern)', () => {
     );
     expect(screen.getByRole('toolbar')).toHaveAttribute('aria-orientation', 'vertical');
   });
+
+  describe('aria-disabled is read as a value, not a presence (#237 review)', () => {
+    const tabIndexes = () => screen.getAllByRole('button').map((b) => b.getAttribute('tabindex'));
+
+    test('aria-disabled={false} keeps an item in arrow-key traversal', () => {
+      render(
+        <Toolbar label="Formatting">
+          <button>Bold</button>
+          <button aria-disabled={false}>Italic</button>
+          <button>Underline</button>
+        </Toolbar>,
+      );
+      const [bold, italic] = screen.getAllByRole('button');
+
+      // React renders aria-disabled={false} as the string "false". Testing the
+      // attribute for presence read that as disabled and skipped the control.
+      expect(italic).toHaveAttribute('aria-disabled', 'false');
+      bold.focus();
+      fireEvent.keyDown(bold, { key: 'ArrowRight' });
+
+      expect(italic).toHaveFocus();
+    });
+
+    test('the tab stop starts past an aria-disabled first item', () => {
+      render(
+        <Toolbar label="Formatting">
+          <button aria-disabled="true">Bold</button>
+          <button>Italic</button>
+        </Toolbar>,
+      );
+
+      expect(tabIndexes()).toEqual(['-1', '0']);
+    });
+
+    test('focusing an aria-disabled item does not move the tab stop onto it', () => {
+      render(
+        <Toolbar label="Formatting">
+          <button>Bold</button>
+          <button aria-disabled="true">Italic</button>
+        </Toolbar>,
+      );
+      const [, italic] = screen.getAllByRole('button');
+
+      // Reachable on purpose -- that is what aria-disabled buys -- but Tab must
+      // not later land on it, so the roving stop stays where it was.
+      fireEvent.focus(italic);
+
+      expect(tabIndexes()).toEqual(['0', '-1']);
+    });
+  });
 });
