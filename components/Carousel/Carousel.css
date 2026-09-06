@@ -40,9 +40,7 @@
   z-index: var(--apg-z-dropdown);
   font-size: var(--apg-font-size-2xl);
   line-height: 1;
-  transition:
-    background-color var(--apg-transition-fast),
-    box-shadow var(--apg-transition-fast);
+  transition: background-color var(--apg-transition-fast);
 }
 
 /*

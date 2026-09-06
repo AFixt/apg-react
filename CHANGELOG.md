@@ -62,8 +62,9 @@ This project adheres to
   The remaining two findings are not the Carousel's: a `2.4.5 Multiple Ways`
   check that fires on every demo page (there is no search or sitemap link on any
   of them) and a `1.4.13` candidate on `styles.css`, which every page loads and
-  which still holds `:hover` opacity rules from other components. Both need a
-  page-set-wide answer and are tracked separately. (#234)
+  which still holds `:hover` opacity rules from other components. Both need one
+  page-set-wide answer rather than a per-pattern fix, so they stay recorded in
+  #234 rather than half-solved here. (#234)
 
 ## [2.2.0] — 2026-08-27
 
