@@ -38,17 +38,19 @@ that is expanded cannot be the same URL. Those states get their own page rather
 than a query parameter, so `apg-qa` can address each by a named URL variable and
 a change here is a one-line edit in its `data/urls.yaml`.
 
-| Page                         | `apg-qa` variable           | State                                                 |
-| ---------------------------- | --------------------------- | ----------------------------------------------------- |
-| `disclosure-expanded.html`   | `disclosure_expanded_url`   | expanded on load                                      |
-| `disclosure-lazy.html`       | `disclosure_lazy_url`       | content absent from the DOM until first expanded      |
-| `alert-severities.html`      | `alert_severities_url`      | one info, one warning and one error alert at once     |
-| `accordion-always-open.html` | `accordion_always_open_url` | at-least-one-open; the open header is `aria-disabled` |
-| `tabs-manual.html`           | `tabs_manual_url`           | manual activation; tablist named "Sample Tabs"        |
-| `tabs-disabled-tab.html`     | `tabs_disabled_tab_url`     | Tab 3 `aria-disabled`, reachable but never selected   |
-| `toolbar-vertical.html`      | `toolbar_vertical_url`      | `orientation="vertical"`; Up/Down move roving focus   |
-| `listbox-multiselect.html`   | `listbox_multiselect_url`   | `aria-multiselectable="true"`                         |
-| `switch-disabled.html`       | `switch_disabled_url`       | `aria-disabled` switch, focusable but never toggles   |
+| Page                         | `apg-qa` variable           | State                                                  |
+| ---------------------------- | --------------------------- | ------------------------------------------------------ |
+| `disclosure-expanded.html`   | `disclosure_expanded_url`   | expanded on load                                       |
+| `disclosure-lazy.html`       | `disclosure_lazy_url`       | content absent from the DOM until first expanded       |
+| `alert-severities.html`      | `alert_severities_url`      | one info, one warning and one error alert at once      |
+| `accordion-always-open.html` | `accordion_always_open_url` | at-least-one-open; the open header is `aria-disabled`  |
+| `tabs-manual.html`           | `tabs_manual_url`           | manual activation; Enter/Space activates               |
+| `tabs-disabled-tab.html`     | `tabs_disabled_tab_url`     | Tab 3 `aria-disabled`, reachable but never selected    |
+| `toolbar-vertical.html`      | `toolbar_vertical_url`      | `orientation="vertical"`; Up/Down move roving focus    |
+| `listbox-multiselect.html`   | `listbox_multiselect_url`   | `aria-multiselectable="true"`                          |
+| `switch-disabled.html`       | `switch_disabled_url`       | `aria-disabled` switch, focusable but never toggles    |
+| `carousel-non-looping.html`  | `carousel_non_looping_url`  | `loop={false}`; bounded ends, plus a slide status      |
+| `toolbar-disabled.html`      | `toolbar_disabled_url`      | Strikethrough `aria-disabled`, skipped by roving focus |
 
 The default page for each of these patterns keeps its existing behaviour on
 purpose, because its own cases depend on it:
@@ -62,9 +64,21 @@ purpose, because its own cases depend on it:
 - `tabs.html` stays on **automatic** activation — its cases assert selection
   follows focus, which is the opposite of the manual page — and keeps **three**
   tabs, because `tabs-keyboard-nav` arrows onto Tab 3, wraps past it and
-  activates it, so a fourth tab breaks the wrap.
+  activates it, so a fourth tab breaks the wrap. All three tabs pages name the
+  tablist **"Sample Tabs"**: APG asks for a labelled tablist, and keeping the
+  name identical across them means a case that locates the tablist by name works
+  against whichever page it is pointed at.
 - `toolbar.html` stays **horizontal** for `toolbar-keyboard-nav`'s Left/Right
-  roving; `Toolbar` binds one axis per orientation.
+  roving; `Toolbar` binds one axis per orientation. It also keeps all **four**
+  controls enabled: `toolbar-keyboard-nav` presses `End` and expects focus on
+  Strikethrough, which a skipped Strikethrough breaks, and all six runner repos
+  assert this page's roving tabindex as a four-element array
+  (`['0', '-1', '-1', '-1']`) — two of them, `apg-cypress` and `apg-nightwatch`,
+  also read its buttons by `:nth-child` — so a fifth, disabled control breaks
+  all six. Measured against apg-playwright: marking Strikethrough
+  `aria-disabled` here fails 3 of its 12 toolbar tests, and appending a fifth
+  disabled control fails 4. The disabled state is `toolbar-disabled.html`
+  instead.
 - `listbox.html` keeps a **single** listbox. apg-qa's option counts and locators
   run unscoped against the whole page, so a second listbox's options would
   inflate the count `listbox-aria-state` asserts.
@@ -76,6 +90,17 @@ purpose, because its own cases depend on it:
   throws on the two matches) and apg-cypress to 6/8 (`.switch-label-text` reads
   as the concatenation `"NotificationsAirplane Mode"`). The disabled state is
   `switch-disabled.html` instead.
+- `carousel.html` stays **looping**, and keeps its slide status **off**. The two
+  are one decision: apg-playwright and apg-cypress both assert on this page that
+  "Next from the last slide wraps forward and Previous from the first wraps
+  back", which is the exact behaviour the non-looping page inverts, so those two
+  states contradict each other and cannot share a URL. A second carousel on the
+  page is no better than a second switch — the runner specs address this one by
+  unscoped selector too (`[role="region"][aria-roledescription="carousel"]`,
+  `[aria-label="Previous slide"]`, `[aria-label="Select slide N"]`), so a second
+  carousel of any name gives each of them two matches. The status stays off
+  because it is a live region and this page auto-rotates, which would make it
+  announce slide changes nobody asked for.
 - `menubar.html` keeps File > Save As **`aria-disabled`** — `menubar-error`
   depends on it. Unlike the switch case this one is safe to carry on the default
   page: a disabled menuitem stays focusable and in the roving tabindex, so every

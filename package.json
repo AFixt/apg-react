@@ -65,7 +65,7 @@
     "test:e2e": "jest --config e2e/jest.config.js --runInBand",
     "test:e2e:build": "npm run build-storybook && npm run test:e2e",
     "test:all": "npm test && npm run test:e2e:build",
-    "validate:usecases": "npx --yes @afixt/usecase-runner@2.0.2 validate usecases/",
+    "validate:usecases": "npx --yes @afixt/usecase-runner@3.0.0 validate usecases/",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.demos.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
