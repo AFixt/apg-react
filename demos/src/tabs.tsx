@@ -11,12 +11,17 @@ const tabs = [
 /**
  * Tabs demo: three tabs using the component's default automatic-activation
  * mode, with labels and panel text matching apg-qa's tabs use cases.
+ *
+ * The tablist is named "Sample Tabs" -- APG's Tabs pattern asks for a labelled
+ * tablist, and it is the name `tabs-aria-state` locates it by. The two
+ * per-state tabs pages carry the same name, so a case tightened to locate the
+ * tablist by name works against every tabs page rather than only one.
  */
 function TabsDemo(): React.ReactElement {
   return (
     <main className="demo-page">
       <h1>Tabs</h1>
-      <Tabs tabs={tabs} idPrefix="tabs" />
+      <Tabs tabs={tabs} idPrefix="tabs" label="Sample Tabs" />
     </main>
   );
 }

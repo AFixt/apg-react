@@ -82,7 +82,7 @@ const Carousel: React.FC<CarouselProps> = ({
   showSlideStatus = false,
   labels,
 }) => {
-  const defaultLabels: CarouselLabels = {
+  const defaultLabels: Required<CarouselLabels> = {
     previousSlide: 'Previous slide',
     nextSlide: 'Next slide',
     pauseRotation: 'Pause rotation',
@@ -238,7 +238,8 @@ const Carousel: React.FC<CarouselProps> = ({
         aria-label={isRotating ? l.pauseRotation : l.startRotation}
         aria-disabled={rotationDisabled ? 'true' : undefined}
       >
-        {isRotating ? '\u2016' : '\u25B6'}
+        {/* The glyph is decoration for the aria-label, like the chevrons below; exposing it as text alongside the label would make it a second, conflicting name. */}
+        <span aria-hidden="true">{isRotating ? '\u2016' : '\u25B6'}</span>
       </button>
       <button
         className="carousel-control carousel-control-prev"
@@ -282,7 +283,7 @@ const Carousel: React.FC<CarouselProps> = ({
           role="status"
           aria-live={isAutoRotating ? 'off' : 'polite'}
         >
-          {l.slideStatus!(activeIndex + 1, slides.length)}
+          {l.slideStatus(activeIndex + 1, slides.length)}
         </div>
       )}
       <div className="slides">
@@ -303,10 +304,19 @@ const Carousel: React.FC<CarouselProps> = ({
           <button
             key={index}
             onClick={() => selectSlide(index)}
-            aria-label={l.selectSlide!(index + 1)}
+            aria-label={l.selectSlide(index + 1)}
             aria-current={index === activeIndex ? 'true' : undefined}
             aria-disabled={index === activeIndex ? 'true' : undefined}
           >
+            {/*
+              Deliberately both an aria-label and visible text (#234). The digit
+              is real visible text, so it cannot be aria-hidden without hiding
+              visible content from assistive technology; the aria-label stays
+              because "1" alone is no name, and because the downstream APG
+              runner suites address these pickers by `[aria-label="Select slide
+              N"]`. The label ends with the digit, so the visible label is in
+              the name (WCAG 2.5.3).
+            */}
             {index + 1}
           </button>
         ))}
