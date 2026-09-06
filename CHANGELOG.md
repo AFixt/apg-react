@@ -44,6 +44,16 @@ This project adheres to
   with no code change here. 4.0.0 and 5.0.0 are published but are both breaking
   parser majors, so moving to them is its own change. (#235)
 
+### Fixed
+
+- **The tabs demo's tablist is now named "Sample Tabs".** APG's Tabs pattern
+  asks for a labelled tablist, so an unnamed one was the demo failing to render
+  the pattern faithfully rather than a QA-only gap; `tabs-aria-state` could not
+  locate the tablist and timed out. The two per-state pages, `tabs-manual.html`
+  and `tabs-disabled-tab.html`, already carried the name, so all three tabs
+  pages now agree and a case tightened to locate the tablist by name holds
+  against every one of them. (#229)
+
 ### Security
 
 - **Cleared the eight OSV advisories the dependency gate was reporting.**

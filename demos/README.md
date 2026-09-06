@@ -44,7 +44,7 @@ a change here is a one-line edit in its `data/urls.yaml`.
 | `disclosure-lazy.html`       | `disclosure_lazy_url`       | content absent from the DOM until first expanded      |
 | `alert-severities.html`      | `alert_severities_url`      | one info, one warning and one error alert at once     |
 | `accordion-always-open.html` | `accordion_always_open_url` | at-least-one-open; the open header is `aria-disabled` |
-| `tabs-manual.html`           | `tabs_manual_url`           | manual activation; tablist named "Sample Tabs"        |
+| `tabs-manual.html`           | `tabs_manual_url`           | manual activation; Enter/Space activates              |
 | `tabs-disabled-tab.html`     | `tabs_disabled_tab_url`     | Tab 3 `aria-disabled`, reachable but never selected   |
 | `toolbar-vertical.html`      | `toolbar_vertical_url`      | `orientation="vertical"`; Up/Down move roving focus   |
 | `listbox-multiselect.html`   | `listbox_multiselect_url`   | `aria-multiselectable="true"`                         |
@@ -62,7 +62,10 @@ purpose, because its own cases depend on it:
 - `tabs.html` stays on **automatic** activation — its cases assert selection
   follows focus, which is the opposite of the manual page — and keeps **three**
   tabs, because `tabs-keyboard-nav` arrows onto Tab 3, wraps past it and
-  activates it, so a fourth tab breaks the wrap.
+  activates it, so a fourth tab breaks the wrap. All three tabs pages name the
+  tablist **"Sample Tabs"**: APG asks for a labelled tablist, and keeping the
+  name identical across them means a case that locates the tablist by name works
+  against whichever page it is pointed at.
 - `toolbar.html` stays **horizontal** for `toolbar-keyboard-nav`'s Left/Right
   roving; `Toolbar` binds one axis per orientation.
 - `listbox.html` keeps a **single** listbox. apg-qa's option counts and locators
