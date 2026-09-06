@@ -113,6 +113,39 @@ This project adheres to
   pages now agree and a case tightened to locate the tablist by name holds
   against every one of them. (#229)
 
+- **`Carousel` controls no longer trip an accessibility audit of the demo
+  page.** An `audit: page` step against `demos/carousel.html` reported 18
+  findings. Eleven came from the component and are resolved here, five more are
+  a documented trade-off, and the last two are page-set-wide:
+  - The rotation control and the five slide pickers removed the UA focus outline
+    in favour of a translucent box-shadow ring (8 × 2.4.7 / 1.4.11). Overlaid on
+    arbitrary slide content that ring has no guaranteed contrast, so the
+    Carousel now draws a real outline: white and inset on the dark control
+    backing, the library's primary outline token on the pickers. An outline is
+    also the one indicator forced colors preserves, so the `forced-colors`
+    guards those rules needed are gone with them.
+  - The rotation glyph sat beside the control's `aria-label` as bare text, so it
+    read as a visible label missing from the name (2.5.3) and as a second
+    labelling strategy. It is now `aria-hidden`, as the previous/next chevrons
+    always were; what sighted users see is unchanged.
+  - `:hover`/`:focus` rules toggled `opacity`, which an audit reads as content
+    revealed on hover (1.4.13) even though nothing was; the pickers also faded
+    to 80% at rest, dimming their digits for no reason. Hover and focus now swap
+    the background only.
+
+  The five slide pickers keep their visible digit beside the `aria-label` on
+  purpose, and stay as Low "two labelling strategies" findings. The digit is
+  real text, so hiding it hides visible content from assistive technology, which
+  the same audit flags as a High; and the label ends with the digit, so the
+  visible label is in the name.
+
+  The remaining two findings are not the Carousel's: a `2.4.5 Multiple Ways`
+  check that fires on every demo page (there is no search or sitemap link on any
+  of them) and a `1.4.13` candidate on `styles.css`, which every page loads and
+  which still holds `:hover` opacity rules from other components. Both need one
+  page-set-wide answer rather than a per-pattern fix, so they stay recorded in
+  #234 rather than half-solved here. (#234)
+
 ### Security
 
 - **Cleared the eight OSV advisories the dependency gate was reporting.**
