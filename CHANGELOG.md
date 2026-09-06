@@ -31,6 +31,55 @@ This project adheres to
   8/8 to 2/8 and apg-cypress to 6/8. Both constraints are now recorded in
   `demos/README.md`. (#227, #228)
 
+### Fixed
+
+- **`Tooltip` was unreachable by pointer.** It set `pointer-events: none` and
+  hid on its trigger's own `mouseleave`, so moving the pointer toward the
+  tooltip counted as leaving the trigger and the tooltip disappeared on the way.
+  That is WCAG 1.4.13's Hoverable requirement, failure technique F95. The
+  container now owns the pointer enter and leave, so moving from the trigger
+  onto the tooltip keeps it open, and the element no longer opts out of pointer
+  events. Escape dismissal and focus behaviour are unchanged.
+
+  The measured effect is larger than the CSS suggests: apg-qa's `tooltip` cases
+  could not previously focus the trigger or locate the bubble at all, and time
+  out on `develop`. All four now pass every interaction step.
+
+  The bubble is also no longer faded in and out by CSS. It is mounted only while
+  it is shown, so presence was already the whole of the state, and the `:hover`
+  opacity rule it carried was what an audit reads as content revealed on hover.
+
+- **`Tooltip` ids can be used in a selector.** `useId` returns `":r0:"`, and the
+  colons make `querySelector('#tooltip-:r0:')` throw, so anything resolving
+  `aria-describedby` by building a selector from it could not find the tooltip.
+  Stripped, keeping the per-instance uniqueness.
+
+- **`Toolbar` read `aria-disabled` as a presence rather than a value**, so a
+  control marked `aria-disabled={false}` — which React renders as the string
+  `"false"` — was treated as unavailable and dropped out of arrow-key traversal.
+  It now compares against `"true"`.
+
+- **`Toolbar` let focus move the tab stop onto an unavailable control.**
+  Clicking an `aria-disabled` item put `tabindex="0"` on it, so the next Tab
+  into the toolbar landed on a control that does nothing. The roving stop now
+  stays where the keyboard left it. The initial stop also honours
+  `aria-disabled`, not just the native `disabled` prop, so a toolbar whose first
+  control is unavailable no longer starts pointing at it.
+
+- **The `Alert` and `ModalDialog` close buttons no longer sit dimmed at 60%**
+  and brighten on hover. The dim lowered the glyph's own contrast for
+  decoration, and the rules that undid it read as content revealed on hover when
+  nothing was. Hover changes the background instead.
+
+### Added
+
+- **A link back to the demo index on every demo page**, rendered by
+  `demos/src/mount.tsx` after the demo so it is last in the tab order. The pages
+  were dead ends: `demos/index.html` lists all of them, but nothing led back to
+  it, so the only route from one demo to another was editing the URL (WCAG 2.4.5
+  Multiple Ways). Measured against apg-playwright's full Chromium suite: 295
+  passed, 0 failed, so the extra link disturbs none of the downstream specs.
+
 ## [2.2.0] — 2026-08-27
 
 ### Added
