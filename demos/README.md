@@ -49,6 +49,7 @@ a change here is a one-line edit in its `data/urls.yaml`.
 | `toolbar-vertical.html`      | `toolbar_vertical_url`      | `orientation="vertical"`; Up/Down move roving focus   |
 | `listbox-multiselect.html`   | `listbox_multiselect_url`   | `aria-multiselectable="true"`                         |
 | `switch-disabled.html`       | `switch_disabled_url`       | `aria-disabled` switch, focusable but never toggles   |
+| `carousel-non-looping.html`  | `carousel_non_looping_url`  | `loop={false}`; bounded ends, plus a slide status     |
 
 The default page for each of these patterns keeps its existing behaviour on
 purpose, because its own cases depend on it:
@@ -79,6 +80,17 @@ purpose, because its own cases depend on it:
   throws on the two matches) and apg-cypress to 6/8 (`.switch-label-text` reads
   as the concatenation `"NotificationsAirplane Mode"`). The disabled state is
   `switch-disabled.html` instead.
+- `carousel.html` stays **looping**, and keeps its slide status **off**. The two
+  are one decision: apg-playwright and apg-cypress both assert on this page that
+  "Next from the last slide wraps forward and Previous from the first wraps
+  back", which is the exact behaviour the non-looping page inverts, so those two
+  states contradict each other and cannot share a URL. A second carousel on the
+  page is no better than a second switch — the runner specs address this one by
+  unscoped selector too (`[role="region"][aria-roledescription="carousel"]`,
+  `[aria-label="Previous slide"]`, `[aria-label="Select slide N"]`), so a second
+  carousel of any name gives each of them two matches. The status stays off
+  because it is a live region and this page auto-rotates, which would make it
+  announce slide changes nobody asked for.
 - `menubar.html` keeps File > Save As **`aria-disabled`** — `menubar-error`
   depends on it. Unlike the switch case this one is safe to carry on the default
   page: a disabled menuitem stays focusable and in the roving tabindex, so every

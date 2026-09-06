@@ -260,4 +260,181 @@ describe('Carousel Component', () => {
       expect(pickers[1]).toHaveAttribute('aria-current', 'true');
     });
   });
+
+  describe('non-looping variant (loop={false})', () => {
+    /** The bounded carousel, with rotation off so assertions are about the controls alone. */
+    const renderBounded = (props) =>
+      render(<Carousel slides={slides} loop={false} initiallyRotating={false} {...props} />);
+
+    test('looping is the default, so neither end control is disabled', () => {
+      render(<Carousel slides={slides} initiallyRotating={false} />);
+
+      expect(screen.getByLabelText(/previous/i)).not.toHaveAttribute('aria-disabled');
+      expect(screen.getByLabelText(/next/i)).not.toHaveAttribute('aria-disabled');
+    });
+
+    test('Previous is aria-disabled at the first slide and enabled once away from it', async () => {
+      renderBounded();
+      const prev = screen.getByLabelText(/previous/i);
+      const next = screen.getByLabelText(/next/i);
+
+      expect(prev).toHaveAttribute('aria-disabled', 'true');
+      // Only the end the carousel is sitting on is disabled.
+      expect(next).not.toHaveAttribute('aria-disabled');
+
+      await act(async () => {
+        fireEvent.click(next);
+      });
+      expect(prev).not.toHaveAttribute('aria-disabled');
+    });
+
+    test('activating Previous at the first slide is a no-op', async () => {
+      renderBounded();
+      const prev = screen.getByLabelText(/previous/i);
+
+      await act(async () => {
+        fireEvent.click(prev);
+      });
+
+      // Still on slide 1 rather than wrapped round to the last slide.
+      expect(screen.getByText('Content 1')).toBeVisible();
+      expect(prev).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    test('Next is aria-disabled at the last slide and activating it is a no-op', async () => {
+      renderBounded();
+      const next = screen.getByLabelText(/next/i);
+      const pickers = screen.getAllByRole('button', { name: /select slide/i });
+
+      await act(async () => {
+        fireEvent.click(pickers[slides.length - 1]);
+      });
+      expect(next).toHaveAttribute('aria-disabled', 'true');
+
+      await act(async () => {
+        fireEvent.click(next);
+      });
+      expect(screen.getByText(`Content ${slides.length}`)).toBeVisible();
+    });
+
+    test('auto-rotation stops at the last slide instead of starting over', async () => {
+      render(<Carousel slides={slides} loop={false} />);
+
+      // Three slides, so two ticks reach the end; a third would wrap if it looped.
+      await act(async () => {
+        jest.advanceTimersByTime(9000);
+      });
+
+      expect(screen.getByText(`Content ${slides.length}`)).toBeVisible();
+      expect(screen.getByLabelText(/start rotation/i)).toBeInTheDocument();
+      // ...and says it cannot start again, rather than offering a lap it has
+      // no slides left for.
+      expect(screen.getByLabelText(/start rotation/i)).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    test('the rotation control is aria-disabled at the last slide and activating it is a no-op', async () => {
+      renderBounded();
+      const pickers = screen.getAllByRole('button', { name: /select slide/i });
+
+      await act(async () => {
+        fireEvent.click(pickers[slides.length - 1]);
+      });
+
+      const rotation = screen.getByLabelText(/start rotation/i);
+      expect(rotation).toHaveAttribute('aria-disabled', 'true');
+      // Still focusable, so a keyboard user can reach it and find out why.
+      expect(rotation).not.toBeDisabled();
+
+      await act(async () => {
+        fireEvent.click(rotation);
+      });
+
+      // Nothing happened at all: not even the relabel to "Pause rotation" that
+      // a control which had actually started rotating would show.
+      expect(screen.getByLabelText(/start rotation/i)).toBeInTheDocument();
+      expect(screen.queryByLabelText(/pause rotation/i)).not.toBeInTheDocument();
+      expect(screen.getByText(`Content ${slides.length}`)).toBeVisible();
+    });
+
+    test('activating it does not even transiently report the carousel as rotating', async () => {
+      renderBounded();
+      const pickers = screen.getAllByRole('button', { name: /select slide/i });
+
+      await act(async () => {
+        fireEvent.click(pickers[slides.length - 1]);
+      });
+
+      // Settling back to "start" is not enough. Without the guard in
+      // `toggleRotation` the control starts rotating, the stop-at-the-end
+      // effect immediately undoes it, and the accessible name flips to "Pause"
+      // and back within the one click -- a state change a screen reader can
+      // announce for a state the carousel never actually entered. Only
+      // watching the attribute as it changes can tell the two apart; asserting
+      // after the fact cannot, because both end in the same place.
+      const rotation = screen.getByLabelText(/start rotation/i);
+      const namesSeen = [rotation.getAttribute('aria-label')];
+      const observer = new MutationObserver(() =>
+        namesSeen.push(rotation.getAttribute('aria-label')),
+      );
+      observer.observe(rotation, { attributes: true, attributeFilter: ['aria-label'] });
+
+      await act(async () => {
+        fireEvent.click(rotation);
+      });
+      observer.disconnect();
+
+      expect(namesSeen).toEqual(['Start rotation']);
+    });
+
+    test('the rotation control is never disabled when the carousel loops', async () => {
+      render(<Carousel slides={slides} initiallyRotating={false} />);
+      const pickers = screen.getAllByRole('button', { name: /select slide/i });
+
+      await act(async () => {
+        fireEvent.click(pickers[slides.length - 1]);
+      });
+
+      const rotation = screen.getByLabelText(/start rotation/i);
+      expect(rotation).not.toHaveAttribute('aria-disabled');
+
+      await act(async () => {
+        fireEvent.click(rotation);
+      });
+      expect(screen.getByLabelText(/pause rotation/i)).toBeInTheDocument();
+    });
+  });
+
+  describe('slide status (showSlideStatus)', () => {
+    test('is absent by default', () => {
+      render(<Carousel slides={slides} initiallyRotating={false} />);
+
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+      expect(screen.queryByText(/slide 1 of 3/i)).not.toBeInTheDocument();
+    });
+
+    test('reports the current slide and tracks navigation', async () => {
+      render(<Carousel slides={slides} showSlideStatus initiallyRotating={false} />);
+
+      const status = screen.getByRole('status');
+      expect(status).toHaveTextContent('Slide 1 of 3');
+
+      await act(async () => {
+        fireEvent.click(screen.getByLabelText(/next/i));
+      });
+      expect(status).toHaveTextContent('Slide 2 of 3');
+    });
+
+    test('honours a supplied slideStatus label', () => {
+      render(
+        <Carousel
+          slides={slides}
+          showSlideStatus
+          initiallyRotating={false}
+          labels={{ slideStatus: (current, total) => `${current}/${total}` }}
+        />,
+      );
+
+      expect(screen.getByRole('status')).toHaveTextContent('1/3');
+    });
+  });
 });
