@@ -213,9 +213,12 @@ const Carousel: React.FC<CarouselProps> = ({
     //
     // `slides.length` is deliberately present even though `isAutoRotating`
     // already reads it. That flag only says whether the length is above one, so
-    // depending on it alone would hold the interval across a change from three
-    // slides to five: `advance` would keep the `slides.length` it closed over
-    // and step the index past the end of the new array, hiding every slide.
+    // depending on it alone would hold one interval across any change in
+    // length, leaving `advance` with the `slides.length` it closed over. Both
+    // directions break, differently: on a shorter array it steps `activeIndex`
+    // past the end, where every slide is `hidden` and the carousel renders
+    // blank; on a longer one it keeps wrapping at the old last slide, so the
+    // added slides are never reached.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAutoRotating, slides.length]);
 
