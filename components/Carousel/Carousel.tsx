@@ -194,6 +194,11 @@ const Carousel: React.FC<CarouselProps> = ({
    * slide status's politeness turns on it as well: a slide change is either
    * something the user asked for or something a timer did, and the two want
    * opposite announcement behaviour.
+   *
+   * `isHoverPaused` belongs here as much as `isRotating` does. A pointer
+   * resting on the carousel tears the interval down, so no timer-driven change
+   * can happen while it is held -- and a click made without moving that pointer
+   * is still the user driving, so it should announce.
    */
   const isAutoRotating = isRotating && !isHoverPaused && slides.length > 1;
 
@@ -205,8 +210,14 @@ const Carousel: React.FC<CarouselProps> = ({
     return () => clearInterval(rotation);
     // `activeIndex` is deliberately absent: including it tore down and rebuilt
     // the interval on every advance.
+    //
+    // `slides.length` is deliberately present even though `isAutoRotating`
+    // already reads it. That flag only says whether the length is above one, so
+    // depending on it alone would hold the interval across a change from three
+    // slides to five: `advance` would keep the `slides.length` it closed over
+    // and step the index past the end of the new array, hiding every slide.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAutoRotating]);
+  }, [isAutoRotating, slides.length]);
 
   return (
     <div
@@ -255,10 +266,16 @@ const Carousel: React.FC<CarouselProps> = ({
          * them exactly when they are the one navigating.
          *
          * The switch is safe against races because React commits the new index
-         * and the new politeness together: every path that changes the slide by
-         * hand -- the controls, the pickers, focus entering the carousel --
-         * stops rotation in the same update, so the region is already `polite`
-         * in the DOM the instant the text changes.
+         * and the new politeness together on every *user-initiated* path -- the
+         * controls, the pickers, a pointer resting on the carousel, and focus
+         * entering it all stop rotation in the same update, so the region is
+         * already `polite` in the DOM the instant the text changes.
+         *
+         * One timer-driven path does split across two commits: with
+         * `loop={false}`, arriving at the last slide commits the index while
+         * the region is still `off`, and the effect below flips it to `polite`
+         * afterwards. That order is the harmless one -- the text has already
+         * settled before the region starts listening.
          */
         <div
           className="carousel-status"

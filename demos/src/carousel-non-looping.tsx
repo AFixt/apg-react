@@ -15,12 +15,12 @@ import { mount } from './mount';
  * control once slide 5 is reached, there being no further slide to rotate to.
  * Both are conformant; they are just different carousels.
  *
- * It also turns on the "Slide N of M" status, which the looping page leaves
- * off. The status is a live region, so it announces on every slide change --
- * welcome when the user is driving, noise when a timer is. That is why this
- * page also starts with rotation stopped: the pairing only makes sense when
- * slide changes are user-initiated, and it keeps the page's state deterministic
- * for the QA suite rather than moving under its assertions.
+ * It also turns on the "Slide N of M" status, as the looping page now does.
+ * The status is a live region whose politeness follows the rotation state, so
+ * it announces a slide change the user asked for and stays silent for one a
+ * timer produced. This page starts with rotation stopped for a different
+ * reason: it keeps the page deterministic for the QA suite rather than moving
+ * under its assertions.
  *
  * This cannot be a second carousel on `carousel.html`. That page's downstream
  * specs address it with unscoped selectors -- `[role="region"]

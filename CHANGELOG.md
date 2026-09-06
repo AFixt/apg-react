@@ -43,23 +43,22 @@ This project adheres to
   and a keyboard user can reach it to discover why it is unavailable.
 
   `showSlideStatus` renders a "Slide N of M" status, with a `slideStatus` entry
-  added to `labels` for translation. It is opt-in because the status is a live
-  region: it announces every slide change, which is useful when the user is
-  driving and noise when a timer is.
+  added to `labels` for translation. It is opt-in because the status is visible
+  content: turning it on by default would change what every existing consumer's
+  carousel renders.
 
-  Both default to the existing behaviour, so `carousel.html` and every spec
-  addressing it are untouched — the snapshots confirm it.
+  Both default to the existing behaviour, so every spec addressing
+  `carousel.html` is untouched — the snapshots confirm it.
 
 - **`carousel-non-looping.html`** (`carousel_non_looping_url`), the per-state
-  page for that variant, with the status turned on and rotation starting
-  stopped. It cannot live on `carousel.html`: apg-playwright and apg-cypress
-  both assert against that page that "Next from the last slide wraps forward and
-  Previous from the first wraps back", which is precisely what this state
-  inverts, so the two contradict each other and cannot share a URL. A second
-  carousel on the page fails the same way the second switch did — those specs
-  address it by unscoped selector too. (AFixt/apg-qa#26)
-
-### Added
+  page for that variant, with the status turned on and rotation starting stopped
+  so the page is deterministic for the QA suite. It cannot live on
+  `carousel.html`: apg-playwright and apg-cypress both assert against that page
+  that "Next from the last slide wraps forward and Previous from the first wraps
+  back", which is precisely what this state inverts, so the two contradict each
+  other and cannot share a URL. A second carousel on the page fails the same way
+  the second switch did — those specs address it by unscoped selector too.
+  (AFixt/apg-qa#26)
 
 - **`carousel.html` now carries a "Slide N of 5" status**, and the `Carousel`'s
   status is safe to use on a carousel that rotates by itself. Its politeness
