@@ -287,15 +287,16 @@ Every PR runs the same gates locally and in CI. Run them all with one command:
 npm run check:all
 ```
 
-which runs, in order: `typecheck` → `lint` → `stylelint` → `format:check` →
-`markdownlint` → `test` → `dupes` → `license:check` → `build` → `size` →
-`security:audit`.
+which runs, in order: `typecheck` → `lint` → `knip` → `stylelint` →
+`format:check` → `markdownlint` → `test` → `dupes` → `license:check` → `build` →
+`size` → `security:audit`.
 
 Individual gates:
 
 ```sh
 npm run typecheck     # tsc --noEmit with strict + noUncheckedIndexedAccess
 npm run lint          # ESLint flat config (components + tests + stories)
+npm run knip          # Knip: unused files, exports and dependencies
 npm run stylelint     # Stylelint on all CSS (incl. a11y rules)
 npm run format        # Prettier --write
 npm run format:check  # Prettier --check (CI gate)

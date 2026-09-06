@@ -260,4 +260,387 @@ describe('Carousel Component', () => {
       expect(pickers[1]).toHaveAttribute('aria-current', 'true');
     });
   });
+
+  describe('control names (#234)', () => {
+    /*
+     * An audit of the demo page flagged the rotation control's glyph as a
+     * visible label missing from its name (2.5.3 Label in Name) and as a
+     * second labelling strategy beside the aria-label. The glyph is decoration,
+     * so it is hidden from assistive technology the same way the previous/next
+     * chevrons always were.
+     *
+     * The slide pickers are the deliberate exception: their digit is real
+     * visible text, and hiding it would hide visible content from assistive
+     * technology, so it stays exposed beside the aria-label. The label ends
+     * with the digit, which is what keeps the visible label in the name.
+     */
+    test('the rotation control exposes its glyph only as decoration', () => {
+      render(<Carousel slides={slides} />);
+      const control = screen.getByRole('button', { name: 'Pause rotation' });
+      const glyph = control.querySelector('[aria-hidden="true"]');
+      expect(glyph).toHaveTextContent('\u2016');
+      expect(
+        Array.from(control.childNodes).filter(
+          (node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '',
+        ),
+      ).toHaveLength(0);
+
+      act(() => {
+        fireEvent.click(control);
+      });
+      const paused = screen.getByRole('button', { name: 'Start rotation' });
+      expect(paused.querySelector('[aria-hidden="true"]')).toHaveTextContent('\u25B6');
+    });
+
+    test('each slide picker keeps its digit as visible text and at the end of its name', () => {
+      render(<Carousel slides={slides} />);
+      const pickers = screen.getAllByRole('button', { name: /^Select slide \d$/ });
+      expect(pickers).toHaveLength(slides.length);
+      pickers.forEach((picker, index) => {
+        const digit = String(index + 1);
+        expect(picker.querySelector('[aria-hidden="true"]')).toBeNull();
+        expect(picker).toHaveTextContent(digit);
+        expect(picker.getAttribute('aria-label').endsWith(digit)).toBe(true);
+      });
+    });
+  });
+
+  describe('non-looping variant (loop={false})', () => {
+    /** The bounded carousel, with rotation off so assertions are about the controls alone. */
+    const renderBounded = (props) =>
+      render(<Carousel slides={slides} loop={false} initiallyRotating={false} {...props} />);
+
+    test('looping is the default, so neither end control is disabled', () => {
+      render(<Carousel slides={slides} initiallyRotating={false} />);
+
+      expect(screen.getByLabelText(/previous/i)).not.toHaveAttribute('aria-disabled');
+      expect(screen.getByLabelText(/next/i)).not.toHaveAttribute('aria-disabled');
+    });
+
+    test('Previous is aria-disabled at the first slide and enabled once away from it', async () => {
+      renderBounded();
+      const prev = screen.getByLabelText(/previous/i);
+      const next = screen.getByLabelText(/next/i);
+
+      expect(prev).toHaveAttribute('aria-disabled', 'true');
+      // Only the end the carousel is sitting on is disabled.
+      expect(next).not.toHaveAttribute('aria-disabled');
+
+      await act(async () => {
+        fireEvent.click(next);
+      });
+      expect(prev).not.toHaveAttribute('aria-disabled');
+    });
+
+    test('activating Previous at the first slide is a no-op', async () => {
+      renderBounded();
+      const prev = screen.getByLabelText(/previous/i);
+
+      await act(async () => {
+        fireEvent.click(prev);
+      });
+
+      // Still on slide 1 rather than wrapped round to the last slide.
+      expect(screen.getByText('Content 1')).toBeVisible();
+      expect(prev).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    test('Next is aria-disabled at the last slide and activating it is a no-op', async () => {
+      renderBounded();
+      const next = screen.getByLabelText(/next/i);
+      const pickers = screen.getAllByRole('button', { name: /select slide/i });
+
+      await act(async () => {
+        fireEvent.click(pickers[slides.length - 1]);
+      });
+      expect(next).toHaveAttribute('aria-disabled', 'true');
+
+      await act(async () => {
+        fireEvent.click(next);
+      });
+      expect(screen.getByText(`Content ${slides.length}`)).toBeVisible();
+    });
+
+    test('auto-rotation stops at the last slide instead of starting over', async () => {
+      render(<Carousel slides={slides} loop={false} />);
+
+      // Three slides, so two ticks reach the end; a third would wrap if it looped.
+      await act(async () => {
+        jest.advanceTimersByTime(9000);
+      });
+
+      expect(screen.getByText(`Content ${slides.length}`)).toBeVisible();
+      expect(screen.getByLabelText(/start rotation/i)).toBeInTheDocument();
+      // ...and says it cannot start again, rather than offering a lap it has
+      // no slides left for.
+      expect(screen.getByLabelText(/start rotation/i)).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    test('the rotation control is aria-disabled at the last slide and activating it is a no-op', async () => {
+      renderBounded();
+      const pickers = screen.getAllByRole('button', { name: /select slide/i });
+
+      await act(async () => {
+        fireEvent.click(pickers[slides.length - 1]);
+      });
+
+      const rotation = screen.getByLabelText(/start rotation/i);
+      expect(rotation).toHaveAttribute('aria-disabled', 'true');
+      // Still focusable, so a keyboard user can reach it and find out why.
+      expect(rotation).not.toBeDisabled();
+
+      await act(async () => {
+        fireEvent.click(rotation);
+      });
+
+      // Nothing happened at all: not even the relabel to "Pause rotation" that
+      // a control which had actually started rotating would show.
+      expect(screen.getByLabelText(/start rotation/i)).toBeInTheDocument();
+      expect(screen.queryByLabelText(/pause rotation/i)).not.toBeInTheDocument();
+      expect(screen.getByText(`Content ${slides.length}`)).toBeVisible();
+    });
+
+    test('activating it does not even transiently report the carousel as rotating', async () => {
+      renderBounded();
+      const pickers = screen.getAllByRole('button', { name: /select slide/i });
+
+      await act(async () => {
+        fireEvent.click(pickers[slides.length - 1]);
+      });
+
+      // Settling back to "start" is not enough. Without the guard in
+      // `toggleRotation` the control starts rotating, the stop-at-the-end
+      // effect immediately undoes it, and the accessible name flips to "Pause"
+      // and back within the one click -- a state change a screen reader can
+      // announce for a state the carousel never actually entered. Only
+      // watching the attribute as it changes can tell the two apart; asserting
+      // after the fact cannot, because both end in the same place.
+      const rotation = screen.getByLabelText(/start rotation/i);
+      const namesSeen = [rotation.getAttribute('aria-label')];
+      const observer = new MutationObserver(() =>
+        namesSeen.push(rotation.getAttribute('aria-label')),
+      );
+      observer.observe(rotation, { attributes: true, attributeFilter: ['aria-label'] });
+
+      await act(async () => {
+        fireEvent.click(rotation);
+      });
+      observer.disconnect();
+
+      expect(namesSeen).toEqual(['Start rotation']);
+    });
+
+    test('the rotation control is never disabled when the carousel loops', async () => {
+      render(<Carousel slides={slides} initiallyRotating={false} />);
+      const pickers = screen.getAllByRole('button', { name: /select slide/i });
+
+      await act(async () => {
+        fireEvent.click(pickers[slides.length - 1]);
+      });
+
+      const rotation = screen.getByLabelText(/start rotation/i);
+      expect(rotation).not.toHaveAttribute('aria-disabled');
+
+      await act(async () => {
+        fireEvent.click(rotation);
+      });
+      expect(screen.getByLabelText(/pause rotation/i)).toBeInTheDocument();
+    });
+  });
+
+  describe('rotation across a changing slide count (#240)', () => {
+    /*
+     * The rotation effect depends on `slides.length` as well as on whether it
+     * is rotating at all. Depending only on the latter would hold one interval
+     * across a change in length: `advance` would keep the `slides.length` it
+     * closed over, and on a shorter array it steps `activeIndex` past the end,
+     * where every slide is `hidden` and the carousel renders blank.
+     */
+    const five = [
+      ...slides,
+      { id: 'slide4', label: 'Slide 4', content: <div>Content 4</div> },
+      { id: 'slide5', label: 'Slide 5', content: <div>Content 5</div> },
+    ];
+
+    const visibleSlides = (container) =>
+      Array.from(container.querySelectorAll('[aria-roledescription="slide"]')).filter(
+        (el) => !el.hasAttribute('hidden'),
+      );
+
+    test('keeps exactly one slide visible when the count grows mid-rotation', async () => {
+      const { container, rerender } = render(<Carousel slides={slides} showSlideStatus />);
+
+      rerender(<Carousel slides={five} showSlideStatus />);
+
+      for (let tick = 0; tick < 4; tick += 1) {
+        await act(async () => {
+          jest.advanceTimersByTime(3000);
+        });
+        expect(visibleSlides(container)).toHaveLength(1);
+      }
+      expect(screen.getByRole('status')).toHaveTextContent('Slide 5 of 5');
+    });
+
+    test('keeps exactly one slide visible when the count shrinks mid-rotation', async () => {
+      const { container, rerender } = render(<Carousel slides={five} showSlideStatus />);
+
+      await act(async () => {
+        jest.advanceTimersByTime(6000);
+      });
+      rerender(<Carousel slides={slides} showSlideStatus />);
+
+      for (let tick = 0; tick < 3; tick += 1) {
+        await act(async () => {
+          jest.advanceTimersByTime(3000);
+        });
+        expect(visibleSlides(container)).toHaveLength(1);
+      }
+    });
+  });
+
+  describe('slide status (showSlideStatus)', () => {
+    test('is absent by default', () => {
+      render(<Carousel slides={slides} initiallyRotating={false} />);
+
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+      expect(screen.queryByText(/slide 1 of 3/i)).not.toBeInTheDocument();
+    });
+
+    test('reports the current slide and tracks navigation', async () => {
+      render(<Carousel slides={slides} showSlideStatus initiallyRotating={false} />);
+
+      const status = screen.getByRole('status');
+      expect(status).toHaveTextContent('Slide 1 of 3');
+
+      await act(async () => {
+        fireEvent.click(screen.getByLabelText(/next/i));
+      });
+      expect(status).toHaveTextContent('Slide 2 of 3');
+    });
+
+    describe('live-region politeness follows the rotation state (#233)', () => {
+      /*
+       * The decision this pins: a slide change is either something the user
+       * asked for or something the timer did, and only the first should be
+       * announced. Permanently polite interrupts a screen-reader user every few
+       * seconds on an auto-rotating carousel; permanently off silences the
+       * status exactly when the user is the one navigating.
+       */
+      test('is off while auto-rotation is running', () => {
+        render(<Carousel slides={slides} showSlideStatus />);
+
+        expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'off');
+      });
+
+      test('is polite when the carousel is not rotating', () => {
+        render(<Carousel slides={slides} showSlideStatus initiallyRotating={false} />);
+
+        expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite');
+      });
+
+      test('a timer-driven advance leaves it off, so nothing is announced', async () => {
+        render(<Carousel slides={slides} showSlideStatus />);
+        const status = screen.getByRole('status');
+        expect(status).toHaveTextContent('Slide 1 of 3');
+
+        await act(async () => {
+          jest.advanceTimersByTime(3000);
+        });
+
+        expect(status).toHaveTextContent('Slide 2 of 3');
+        expect(status).toHaveAttribute('aria-live', 'off');
+      });
+
+      test('turns polite in the same update that a user-initiated change lands', async () => {
+        render(<Carousel slides={slides} showSlideStatus />);
+        const status = screen.getByRole('status');
+        expect(status).toHaveAttribute('aria-live', 'off');
+
+        await act(async () => {
+          fireEvent.click(screen.getByLabelText(/next/i));
+        });
+
+        // Both in one commit: the region is already polite in the DOM by the
+        // time the new text is there to be announced.
+        expect(status).toHaveTextContent('Slide 2 of 3');
+        expect(status).toHaveAttribute('aria-live', 'polite');
+      });
+
+      test('pausing rotation makes it polite without changing the slide', () => {
+        render(<Carousel slides={slides} showSlideStatus />);
+        const status = screen.getByRole('status');
+
+        act(() => {
+          fireEvent.click(screen.getByLabelText(/pause rotation/i));
+        });
+
+        expect(status).toHaveAttribute('aria-live', 'polite');
+        expect(status).toHaveTextContent('Slide 1 of 3');
+      });
+
+      test('resuming rotation returns it to off', () => {
+        render(<Carousel slides={slides} showSlideStatus initiallyRotating={false} />);
+        const status = screen.getByRole('status');
+        expect(status).toHaveAttribute('aria-live', 'polite');
+
+        act(() => {
+          fireEvent.click(screen.getByLabelText(/start rotation/i));
+        });
+
+        expect(status).toHaveAttribute('aria-live', 'off');
+      });
+
+      test('focus entering the carousel makes it polite before the user navigates', async () => {
+        render(<Carousel slides={slides} showSlideStatus />);
+        const status = screen.getByRole('status');
+        expect(status).toHaveAttribute('aria-live', 'off');
+
+        await act(async () => {
+          screen.getByLabelText(/next/i).focus();
+        });
+
+        expect(status).toHaveAttribute('aria-live', 'polite');
+        expect(status).toHaveTextContent('Slide 1 of 3');
+      });
+
+      test('a pointer resting on the carousel makes it polite', () => {
+        /*
+         * Hover tears the interval down, so no timer-driven change can happen
+         * while the pointer is held -- and a click made without moving that
+         * pointer is still the user driving. Both make `polite` the right
+         * state, so the hover term in `isAutoRotating` is load-bearing here
+         * and not just in the effect.
+         */
+        const { container } = render(<Carousel slides={slides} showSlideStatus />);
+        const status = screen.getByRole('status');
+        expect(status).toHaveAttribute('aria-live', 'off');
+
+        act(() => {
+          fireEvent.mouseEnter(container.querySelector('.carousel'));
+        });
+
+        expect(status).toHaveAttribute('aria-live', 'polite');
+        expect(status).toHaveTextContent('Slide 1 of 3');
+      });
+
+      test('a single-slide carousel is polite, since no timer can run', () => {
+        render(<Carousel slides={[slides[0]]} showSlideStatus />);
+
+        expect(screen.getByRole('status')).toHaveAttribute('aria-live', 'polite');
+      });
+    });
+
+    test('honours a supplied slideStatus label', () => {
+      render(
+        <Carousel
+          slides={slides}
+          showSlideStatus
+          initiallyRotating={false}
+          labels={{ slideStatus: (current, total) => `${current}/${total}` }}
+        />,
+      );
+
+      expect(screen.getByRole('status')).toHaveTextContent('1/3');
+    });
+  });
 });
