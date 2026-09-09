@@ -144,6 +144,22 @@ This project adheres to
 
 ### Changed
 
+- **Coverage is now enforced, not just collected.** `collectCoverage` was on and
+  nothing checked the result, which makes a report rather than a gate. A
+  `coverageThreshold` now sets a floor — 95% statements, 84% branches, 87%
+  functions, 95% lines, a little under the measured figures — and `npm test`
+  already runs inside `npm run check:all` and the CI `test` job, so no new gate
+  step was needed. Verified by raising the bar: the run fails with
+  `Coverage for statements (96.56%) does not meet "global" threshold (99%)`.
+
+  `collectCoverageFrom` is now named explicitly as `components/**/*.{ts,tsx}`.
+  Jest otherwise reports only on files some test happened to import, which
+  measures the tests' reach rather than the library's: a component nothing tests
+  is simply absent from the denominator, so coverage does not move and the gate
+  stays green. Measured both ways with a deliberately untested component added —
+  named, it appears at 0% and pulls the total from 96.56 to 96.36; unnamed, it
+  does not appear in the report at all and the total does not change. (#243)
+
 - **`validate:usecases` is pinned to `@afixt/usecase-runner` 3.0.0.** The
   previous pin, 2.0.2, was tagged and GitHub-released but never reached the
   registry — npm carries 2.0.0, 2.0.1 and 2.1.0, but no 2.0.2 — so the job could
