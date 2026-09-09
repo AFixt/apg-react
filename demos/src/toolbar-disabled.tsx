@@ -10,9 +10,9 @@ type ControlName = (typeof controls)[number];
  * Toolbar demo, disabled-control state.
  *
  * Same four toggle buttons as `toolbar.html`, but "Strikethrough" carries
- * `aria-disabled="true"`. `Toolbar` skips an `aria-disabled` item when roving
- * focus moves, so Right Arrow from Underline wraps to Bold, `End` lands on
- * Underline, and activating Strikethrough is a no-op.
+ * `aria-disabled="true"`. `Toolbar` skips an item marked `aria-disabled="true"`
+ * when roving focus moves, so Right Arrow from Underline wraps to Bold, `End`
+ * lands on Underline, and activating Strikethrough is a no-op.
  *
  * This cannot be a second state of `toolbar.html`. `toolbar-keyboard-nav`
  * presses `End` and expects focus on Strikethrough, which a skipped
@@ -46,9 +46,11 @@ function ToolbarDisabledDemo(): React.ReactElement {
               aria-pressed={pressed[name]}
               // `|| undefined` rather than the bare boolean, so the attribute
               // is omitted on the enabled controls: React renders
-              // `aria-disabled={false}` as the string "false", and `Toolbar`
-              // treats any `aria-disabled` value as disabled, so the bare
-              // boolean would make roving focus skip every control.
+              // `aria-disabled={false}` as the string "false", and spelling out
+              // "false" on a control that was never unavailable is noise in the
+              // accessibility tree. `Toolbar` compares the value against "true",
+              // so either form traverses correctly -- this is about what the
+              // page exposes, not a workaround for the component.
               aria-disabled={isDisabled || undefined}
               onClick={() => {
                 if (isDisabled) return;
