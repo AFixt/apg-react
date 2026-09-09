@@ -157,6 +157,26 @@ This project adheres to
 
 ### Fixed
 
+- **The local gate no longer walks gitignored directories.** `.gitignore` lists
+  `.claude/` and `release_announcement/`, but ESLint, markdownlint-cli2 and Jest
+  do not consult it, and a `.claude/worktrees/<agent>/` checkout is a whole
+  second copy of this repo — its own `node_modules/`, its own `__tests__/`.
+  Measured with one present: `npm run lint` reported errors from a file outside
+  the project, `npm run markdownlint` linted a vendored `node_modules/**/*.md`,
+  and Jest collected an extra test file. CI never saw any of it, because CI
+  checks out fresh — so the failure was one-directional, inventing problems on a
+  clean branch and eroding trust in the local gate in exactly the direction that
+  matters. All three now exclude those directories, and
+  `__tests__/toolingIgnores.test.js` pins each exclusion against the tool's own
+  predicate.
+
+  No nested-`node_modules` glob was added, which the issue raised as worth
+  considering. Measured rather than assumed: ESLint ignores `**/node_modules/`
+  by default whatever the config says, Jest's `testPathIgnorePatterns` entries
+  are regexes that already match at any depth, and excluding `.claude/` covers
+  markdownlint's vendored copies whole. Each of the three would have been
+  redundant. (#242)
+
 - **The tabs demo's tablist is now named "Sample Tabs".** APG's Tabs pattern
   asks for a labelled tablist, so an unnamed one was the demo failing to render
   the pattern faithfully rather than a QA-only gap; `tabs-aria-state` could not
