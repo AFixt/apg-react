@@ -117,8 +117,30 @@ This project adheres to
   `demos/src/mount.tsx` after the demo so it is last in the tab order. The pages
   were dead ends: `demos/index.html` lists all of them, but nothing led back to
   it, so the only route from one demo to another was editing the URL (WCAG 2.4.5
-  Multiple Ways). Measured against apg-playwright's full Chromium suite: 295
-  passed, 0 failed, so the extra link disturbs none of the downstream specs.
+  Multiple Ways).
+
+  A link on 41 pages is exactly the kind of change that moves a downstream
+  count, so it was measured rather than assumed. Against apg-playwright's full
+  Chromium suite, `demos-dist` rebuilt per side, it changes two results and both
+  are the suite's rather than this library's:
+  - `link.spec.js` asserted an unscoped `role=link` count of 3, so the nav link
+    made it 4. Fixed upstream in AFixt/apg-playwright#40, which scopes the count
+    to `.demo-page` — the links the _demo_ renders, not the page chrome around
+    it. apg-cypress and apg-nightwatch already scoped it that way. Tracked for
+    the remaining runners in AFixt/apg-jest#30, AFixt/apg-jasmine#23 and
+    AFixt/apg-mocha#15.
+  - `listbox.spec.js:112` flips from pass to fail, and passed before only by
+    accident. It calls `tabUntilFocused` on a listbox _option_, which can never
+    receive DOM focus here because the demo uses `focusModel="activedescendant"`
+    (#213). The helper gives up after 25 presses and returns -1; the spec
+    ignores that and sends `ArrowDown` to whatever focus reached. On `develop`
+    the tab ring's period is 4, so press 25 happens to land on the listbox and
+    the assertion passes; with one more tab stop the period is 5 and press 25
+    lands on the harness's own sentinel. Any change to the page's tab ring flips
+    it.
+
+  Nothing in this repository's own gate can see either: the full local gate is
+  green on this branch.
 
 ### Changed
 
