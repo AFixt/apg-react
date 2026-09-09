@@ -75,7 +75,13 @@ function resolveEslintIgnores() {
     });
   `;
   return JSON.parse(
-    execFileSync(process.execPath, ['-e', script], { cwd: ROOT, encoding: 'utf8' }),
+    execFileSync(process.execPath, ['-e', script], {
+      cwd: ROOT,
+      encoding: 'utf8',
+      // A hang here would otherwise sit until Jest's own timeout with nothing
+      // to show for it. Well clear of the measured cost (~1s warm, ~4s cold).
+      timeout: 60_000,
+    }),
   );
 }
 
@@ -84,9 +90,15 @@ describe('tooling ignores gitignored local directories (#242)', () => {
     /** @type {Record<string, boolean>} */
     let ignored;
 
+    // Spawning Node and letting ESLint load the whole flat config costs about
+    // a second warm and four cold -- measured, and the cold figure is the one
+    // CI hits on a fresh checkout. Jest's default hook timeout is 5s, close
+    // enough to that to flake, so it is raised rather than left to chance.
+    const SPAWN_TIMEOUT_MS = 60_000;
+
     beforeAll(() => {
       ignored = resolveEslintIgnores();
-    });
+    }, SPAWN_TIMEOUT_MS);
 
     it.each(IGNORED_PATHS)('ignores %s', (relative) => {
       expect(ignored[relative]).toBe(true);
