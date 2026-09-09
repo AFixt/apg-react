@@ -160,7 +160,13 @@ const config = {
 
   // The glob patterns Jest uses to detect test files
   testMatch: ['**/__tests__/**/*.test.[jt]s?(x)'],
-  testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
+  // `/node_modules/` and `/e2e/` are matched as regexes against the full path,
+  // so both already cover nested copies. `.claude/` does not go through
+  // node_modules at all: an agent worktree there is a second checkout of this
+  // repo, complete with its own `__tests__/`, and `testMatch` finds those
+  // exactly as readily as the real ones. Gitignored, so git agrees they are
+  // not part of the project; Jest simply does not consult it.
+  testPathIgnorePatterns: ['/node_modules/', '/e2e/', '/\\.claude/'],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
