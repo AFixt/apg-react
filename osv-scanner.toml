@@ -32,3 +32,25 @@
 id = "GHSA-jmr9-qjv8-65gv"
 ignoreUntil = 2026-11-26
 reason = "extract-zip via puppeteer's browser download; no fix published. Blocked on migrating the CommonJS E2E suite to ESM for puppeteer >= 25. See #137."
+
+# The same defect in the same package, re-reported under a second ID:
+# "extract-zip allows arbitrary file writes through symlink archive entries",
+# CVSS 8.1, published 2026-08-17, affecting <= 2.0.1 with `first_patched`
+# still null. Everything written above applies to it unchanged -- same
+# package, same single reachable path, same absent fix, same prerequisite.
+#
+# Worth being precise about why this entry is here, because the shape is easy
+# to misread: the entry above did not expire and did not stop working. A new
+# advisory was published against a package whose version had not moved, which
+# is the one way a clean scan turns red with no change to this repository.
+#
+# Deliberately a second entry rather than a widened one. An ignore keyed to
+# the package would also swallow the next advisory, including one that does
+# have a fix -- which is the failure this file's policy exists to prevent.
+#
+# Same review date on purpose: both disappear together when puppeteer >= 25
+# lands, and neither should be extended on its own.
+[[IgnoredVulns]]
+id = "GHSA-7pqw-9j4j-h8q3"
+ignoreUntil = 2026-11-26
+reason = "extract-zip symlink arbitrary file write; no fix published. Same package and same blocked puppeteer >= 25 upgrade as GHSA-jmr9-qjv8-65gv above. See #137."

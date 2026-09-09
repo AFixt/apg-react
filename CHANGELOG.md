@@ -274,6 +274,51 @@ This project adheres to
 
 ### Security
 
+- **Six dependency advisories cleared; the seventh has no fix and is recorded as
+  such.** All were transitive dev dependencies, and none reached anything this
+  package builds or publishes. `npm run security:osv` goes from 7 findings to
+  **No issues found**.
+
+  Five needed only a lockfile refresh — their parents' ranges already admitted
+  the patched version, so no declared range changed: `colord` 2.9.3 → 2.10.0,
+  `js-yaml` 3.15.1 → 3.15.2 and 4.3.1 → 4.3.2, `svgo` 2.8.3 → 2.8.4.
+
+  `smol-toml` 1.7.0 → 1.8.0 (DoS via malformed TOML, fixed in 1.7.1) could not
+  be: `markdownlint-cli2@0.23.2` pins it exactly, and 0.23.2 is the latest
+  published version, so there is no upstream fix to wait for. Resolved with an
+  `overrides` entry, the same mechanism already used for `uuid`.
+
+  `extract-zip` has no published fix — the package is unmaintained — and reaches
+  us only through puppeteer's browser download. It gains a second dated entry in
+  `osv-scanner.toml`. Worth being precise, because the shape is easy to misread:
+  the existing ignore did not expire and did not stop working. A **second
+  advisory** (`GHSA-7pqw-9j4j-h8q3`, published 2026-08-17) was filed against a
+  package whose version had not moved. Kept as its own entry rather than
+  widening the first to the package, so the next advisory — which may well have
+  a fix — still turns the job red.
+
+### Changed
+
+- **The Storybook packages are back on a single version.** `npm update` moved
+  ten `@storybook/addon-*` packages _backwards_, 8.6.18 → 8.6.14, because their
+  `latest` dist-tag still points at 8.6.14 while 8.6.18 is published. Left
+  alone, a dependency-hygiene change would have downgraded the tree and split
+  the family across two versions. `addon-essentials` and `addon-interactions`
+  now declare `^8.6.18` like their siblings, and all 25 Storybook packages
+  resolve to 8.6.18 — tidier than before, where `addon-interactions` alone sat
+  at 8.6.14.
+
+  Also refreshed within their existing ranges: `jest` and
+  `jest-environment-jsdom` 30.4.x → 30.5.1, `babel-jest` 30.4.1 → 30.5.1,
+  `react`, `react-dom` and `react-test-renderer` 18.2.0 → 18.3.1, `rollup`
+  4.60.4 → 4.63.1, `@rollup/plugin-commonjs` 29.0.2 → 29.0.3,
+  `@testing-library/react` 16.3.2 → 16.3.3, `eslint-plugin-jsdoc` 63.3.2 →
+  63.3.3, `react-router-dom` 7.18.2 → 7.18.3.
+
+  No major-version upgrade is included. ESLint 10, Storybook 10, React 19, Babel
+  8 and the rest each carry breaking changes and deserve their own change rather
+  than riding along with a security fix. (#243 follow-up)
+
 - **Cleared the eight OSV advisories the dependency gate was reporting.**
   `browserslist` 4.28.2 → 4.28.8 (GHSA-73wf-gq98-2v4g, GHSA-c83g-rgw3-j3cx),
   `fast-uri` 3.1.5 → 3.1.7 (four 7.5 advisories) and `postcss-selector-parser`
