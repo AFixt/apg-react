@@ -26,7 +26,13 @@ const Tooltip: React.FC<TooltipProps> = ({ children, text, position = 'top' }) =
   // and IDREF resolution then described both controls with the first one's
   // text.
   const uid = useId();
-  const tooltipId = `tooltip-${uid}`;
+  // `useId` returns something like ":r0:", and the colons are not incidental --
+  // React picks them precisely because they cannot appear in an author-written
+  // id. They also make the id unusable in a selector: `querySelector('#tooltip-:r0:')`
+  // throws. Anything that resolves `aria-describedby` by building a selector
+  // from it therefore fails to find this tooltip and reports it as missing.
+  // Stripping them keeps the per-instance uniqueness and costs nothing.
+  const tooltipId = `tooltip-${uid.replace(/:/g, '')}`;
 
   const showTooltip = () => setIsVisible(true);
   const hideTooltip = () => setIsVisible(false);
@@ -49,8 +55,11 @@ const Tooltip: React.FC<TooltipProps> = ({ children, text, position = 'top' }) =
   const enhanceChild = (child: React.ReactNode) => {
     if (isValidElement(child)) {
       return cloneElement(child as React.ReactElement<React.HTMLAttributes<HTMLElement>>, {
+        // Showing from the trigger as well as from the container costs nothing
+        // -- the state is already true by the time the container sees the
+        // pointer -- and it keeps the tooltip working for a trigger that
+        // overflows its container.
         'onMouseEnter': showTooltip,
-        'onMouseLeave': hideTooltip,
         'onFocus': showTooltip,
         'onBlur': hideTooltip,
         'tabIndex': 0,
@@ -61,7 +70,14 @@ const Tooltip: React.FC<TooltipProps> = ({ children, text, position = 'top' }) =
   };
 
   return (
-    <div className="tooltip-container">
+    /*
+     * WCAG 1.4.13 requires content shown on hover to stay put while the pointer
+     * moves onto it. Hiding on the trigger's own mouseleave breaks that: the
+     * tooltip sits beside the trigger, so reaching it means leaving the trigger
+     * and the tooltip vanishes on the way. The container wraps both, so leaving
+     * it is the real "pointer has gone" signal.
+     */
+    <div className="tooltip-container" onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
       {enhanceChild(children)}
       {isVisible && (
         <div

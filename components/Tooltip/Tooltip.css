@@ -11,29 +11,24 @@
   border-radius: var(--apg-radius-sm);
   z-index: var(--apg-z-tooltip);
   white-space: nowrap;
-  opacity: 0%;
-  pointer-events: none;
-  transition: opacity var(--apg-transition-normal);
   font-size: var(--apg-font-size-sm);
   line-height: var(--apg-line-height-normal);
   box-shadow: var(--apg-shadow-sm);
 }
 
 /*
- * After the rule it overrides, not before: a media query adds no specificity,
- * so an earlier block loses to it on source order.
+ * The tooltip is not styled in or out of view. It is mounted only while the
+ * component says it is visible, so presence is the whole of the state, and
+ * there is nothing here for a `:hover` rule to reveal.
+ *
+ * It used to fade from `opacity: 0%` to 90% on `:hover`, over a
+ * `pointer-events: none` base. That combination is what made the tooltip
+ * unreachable: the pointer passed straight through it, so moving onto it
+ * counted as leaving the trigger and the tooltip disappeared on the way --
+ * WCAG 1.4.13's Hoverable requirement, failure technique F95. The element now
+ * takes the pointer, and the container decides when the pointer has really
+ * gone.
  */
-@media screen and (prefers-reduced-motion: reduce) {
-  .tooltip-text {
-    transition: none;
-  }
-}
-
-.tooltip-container:hover .tooltip-text,
-.tooltip-container:focus .tooltip-text,
-.tooltip-container:focus-within .tooltip-text {
-  opacity: 90%;
-}
 
 .tooltip-container .tooltip-text[data-position='top'] {
   bottom: 100%;
