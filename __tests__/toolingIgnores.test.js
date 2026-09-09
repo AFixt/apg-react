@@ -105,6 +105,13 @@ describe('tooling ignores gitignored local directories (#242)', () => {
     });
 
     it.each(LINTED_PATHS)('still lints %s, so the exclusions are not over-broad', (relative) => {
+      // The existence check is load-bearing, not belt-and-braces.
+      // `isPathIgnored` answers false for *any* path that does not exist --
+      // measured: a made-up `components/RenamedAway/Nope.tsx` comes back
+      // false exactly like a real source file does. Without this line the
+      // assertion below would keep passing after a rename while pinning
+      // nothing at all, which is worse than not having it.
+      expect(fs.existsSync(path.join(ROOT, relative))).toBe(true);
       expect(ignored[relative]).toBe(false);
     });
   });
