@@ -7,7 +7,19 @@ This project adheres to
 
 ## [Unreleased]
 
+## [2.3.0] — 2026-09-09
+
 ### Added
+
+- **`docs/RELEASING.md`**, the release runbook, with **publish as a named step**
+  and a verification after it. The procedure previously existed only in the
+  Context section of ADR 0008 — a record of a decision rather than somewhere
+  anyone cutting a release would look, and immutable once merged, so it could
+  not serve as a living procedure either. The publish step was the casualty:
+  `v2.0.0`, `v2.1.0` and `v2.2.0` were each tagged and GitHub-released without
+  ever reaching the registry, because nothing in the process fails when
+  publishing is skipped. Every step carries a note on why its check exists
+  rather than restating the command. (#226)
 
 - **`toolbar-disabled.html`**, a per-state toolbar demo (`toolbar_disabled_url`
   in apg-qa) whose Strikethrough control is `aria-disabled` and skipped by
@@ -171,7 +183,39 @@ This project adheres to
   with no code change here. 4.0.0 and 5.0.0 are published but are both breaking
   parser majors, so moving to them is its own change. (#235)
 
+- **The Storybook packages are back on a single version.** `npm update` moved
+  ten `@storybook/addon-*` packages _backwards_, 8.6.18 → 8.6.14, because their
+  `latest` dist-tag still points at 8.6.14 while 8.6.18 is published. Left
+  alone, a dependency-hygiene change would have downgraded the tree and split
+  the family across two versions. `addon-essentials` and `addon-interactions`
+  now declare `^8.6.18` like their siblings, and all 25 Storybook packages
+  resolve to 8.6.18 — tidier than before, where `addon-interactions` alone sat
+  at 8.6.14.
+
+  Also refreshed within their existing ranges: `jest` and
+  `jest-environment-jsdom` 30.4.x → 30.5.1, `babel-jest` 30.4.1 → 30.5.1,
+  `react`, `react-dom` and `react-test-renderer` 18.2.0 → 18.3.1, `rollup`
+  4.60.4 → 4.63.1, `@rollup/plugin-commonjs` 29.0.2 → 29.0.3,
+  `@testing-library/react` 16.3.2 → 16.3.3, `eslint-plugin-jsdoc` 63.3.2 →
+  63.3.3, `react-router-dom` 7.18.2 → 7.18.3.
+
+  No major-version upgrade is included. ESLint 10, Storybook 10, React 19, Babel
+  8 and the rest each carry breaking changes and deserve their own change rather
+  than riding along with a security fix. (#243 follow-up)
+
 ### Fixed
+
+- **`npm run build` cleans `dist/` first, so a stale declaration cannot ship.**
+  `rollup -c` wrote into whatever `dist/` already existed and `files` ships
+  `dist` wholesale, so a renamed or deleted source left its old `.d.ts` behind
+  indefinitely and it went into the tarball — 51 files published where 49 were
+  correct, including one declaration from a directory renamed to `_internal/`
+  and another under an older camelCase name. Nothing imports them, so this was
+  cruft rather than breakage, but it is silent and cumulative, and stale
+  declarations can confuse editor type resolution. It only ever bit whoever
+  published from a long-lived working copy, which is why CI never saw it.
+  `__tests__/package-no-router.test.js` now fails on any `dist/` directory with
+  no matching source. (#225)
 
 - **The local gate no longer walks gitignored directories.** `.gitignore` lists
   `.claude/` and `release_announcement/`, but ESLint, markdownlint-cli2 and Jest
@@ -296,28 +340,6 @@ This project adheres to
   package whose version had not moved. Kept as its own entry rather than
   widening the first to the package, so the next advisory — which may well have
   a fix — still turns the job red.
-
-### Changed
-
-- **The Storybook packages are back on a single version.** `npm update` moved
-  ten `@storybook/addon-*` packages _backwards_, 8.6.18 → 8.6.14, because their
-  `latest` dist-tag still points at 8.6.14 while 8.6.18 is published. Left
-  alone, a dependency-hygiene change would have downgraded the tree and split
-  the family across two versions. `addon-essentials` and `addon-interactions`
-  now declare `^8.6.18` like their siblings, and all 25 Storybook packages
-  resolve to 8.6.18 — tidier than before, where `addon-interactions` alone sat
-  at 8.6.14.
-
-  Also refreshed within their existing ranges: `jest` and
-  `jest-environment-jsdom` 30.4.x → 30.5.1, `babel-jest` 30.4.1 → 30.5.1,
-  `react`, `react-dom` and `react-test-renderer` 18.2.0 → 18.3.1, `rollup`
-  4.60.4 → 4.63.1, `@rollup/plugin-commonjs` 29.0.2 → 29.0.3,
-  `@testing-library/react` 16.3.2 → 16.3.3, `eslint-plugin-jsdoc` 63.3.2 →
-  63.3.3, `react-router-dom` 7.18.2 → 7.18.3.
-
-  No major-version upgrade is included. ESLint 10, Storybook 10, React 19, Babel
-  8 and the rest each carry breaking changes and deserve their own change rather
-  than riding along with a security fix. (#243 follow-up)
 
 - **Cleared the eight OSV advisories the dependency gate was reporting.**
   `browserslist` 4.28.2 → 4.28.8 (GHSA-73wf-gq98-2v4g, GHSA-c83g-rgw3-j3cx),
