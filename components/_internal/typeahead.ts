@@ -14,7 +14,7 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 
 /** How long a typed sequence stays open before the next key starts a new one. */
-export const TYPEAHEAD_TIMEOUT_MS = 500;
+const TYPEAHEAD_TIMEOUT_MS = 500;
 
 /**
  * Whether a keydown is a printable character that should drive type-ahead.

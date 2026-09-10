@@ -20,8 +20,18 @@ const config = {
   // Indicates whether the coverage information should be collected while executing the test
   collectCoverage: true,
 
-  // An array of glob patterns indicating a set of files for which coverage information should be collected
-  // collectCoverageFrom: undefined,
+  // The library's own source, named explicitly rather than left to default.
+  // By default Jest reports only on files a test happened to import, which
+  // makes a threshold measure the tests' own reach rather than the library's:
+  // add a component nothing tests and it is absent from the denominator, so
+  // coverage does not move and the gate stays green. Named this way, an
+  // untested file shows up at 0% and pulls the number down, which is the
+  // behaviour a threshold is worth having for.
+  //
+  // Demos, stories and config are deliberately outside it. They are exercised
+  // by the E2E and stylesheet suites rather than by unit tests, and folding
+  // them in would measure something the threshold is not about.
+  collectCoverageFrom: ['components/**/*.{ts,tsx}'],
 
   // The directory where Jest should output its coverage files
   coverageDirectory: 'coverage',
@@ -42,8 +52,24 @@ const config = {
   //   "clover"
   // ],
 
-  // An object that configures minimum threshold enforcement for coverage results
-  // coverageThreshold: undefined,
+  // Enforced by `npm test`, which `npm run check:all` and the CI `test` job
+  // both already run -- so this needs no new gate step, only a threshold that
+  // exists. Until now `collectCoverage` was on and nothing checked the result,
+  // which is a report rather than a gate.
+  //
+  // Set a little under the measured figures at the time of writing
+  // (96.56 statements, 86.02 branches, 89.33 functions, 96.56 lines) so an
+  // ordinary change cannot trip it, but a real drop does. It is a floor to
+  // stop erosion, not a target: raise it when the true number rises, and do
+  // not lower it to make a red run green.
+  coverageThreshold: {
+    global: {
+      statements: 95,
+      branches: 84,
+      functions: 87,
+      lines: 95,
+    },
+  },
 
   // A path to a custom dependency extractor
   // dependencyExtractor: undefined,
@@ -160,7 +186,13 @@ const config = {
 
   // The glob patterns Jest uses to detect test files
   testMatch: ['**/__tests__/**/*.test.[jt]s?(x)'],
-  testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
+  // `/node_modules/` and `/e2e/` are matched as regexes against the full path,
+  // so both already cover nested copies. `.claude/` does not go through
+  // node_modules at all: an agent worktree there is a second checkout of this
+  // repo, complete with its own `__tests__/`, and `testMatch` finds those
+  // exactly as readily as the real ones. Gitignored, so git agrees they are
+  // not part of the project; Jest simply does not consult it.
+  testPathIgnorePatterns: ['/node_modules/', '/e2e/', '/\\.claude/'],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [

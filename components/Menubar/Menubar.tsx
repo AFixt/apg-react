@@ -22,6 +22,12 @@
  *   - ArrowRight: close submenu, move focus to next menubar item (and open its menu).
  *   - Enter / Space: activate item, close all.
  *   - Escape: close submenu, return focus to parent menubar item.
+ *
+ * Disabled submenu items:
+ *   - Carry aria-disabled="true" and stay focusable, in the roving tabindex and
+ *     in type-ahead, so arrow keys and Home/End still reach them.
+ *   - Enter, Space and click are no-ops: onSelect is not called and, unlike an
+ *     enabled item, the submenu stays open.
  */
 import React, { useEffect, useRef, useState } from 'react';
 import { isTypeaheadKey, nodeText, useTypeahead } from '../_internal/typeahead';
@@ -32,6 +38,14 @@ interface MenuItem {
   id: string;
   label: React.ReactNode;
   onSelect?: () => void;
+  /**
+   * Marks the item unavailable, exposing aria-disabled="true".
+   *
+   * aria-disabled rather than the native disabled attribute: APG keeps a
+   * disabled menuitem in the menu and in the roving tabindex, so a keyboard
+   * user can still reach it and discover why it is unavailable.
+   */
+  disabled?: boolean;
 }
 
 /** A single menu in a Menubar. */
@@ -86,7 +100,12 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
   };
 
   const activate = (mIdx: number, iIdx: number) => {
-    menus[mIdx]?.items[iIdx]?.onSelect?.();
+    const item = menus[mIdx]?.items[iIdx];
+    // A disabled item is inert, not merely unselectable: closing the submenu
+    // here would read as "that did something" to anyone who cannot see that
+    // nothing happened. The menu stays open and focus stays put.
+    if (item?.disabled) return;
+    item?.onSelect?.();
     closeMenu(true);
   };
 
@@ -240,7 +259,8 @@ const Menubar: React.FC<MenubarProps> = ({ label, menus }) => {
                       type="button"
                       role="menuitem"
                       tabIndex={iIdx === renderedItem(mIdx) ? 0 : -1}
-                      className="menubar-menuitem"
+                      aria-disabled={item.disabled || undefined}
+                      className={`menubar-menuitem${item.disabled ? ' is-disabled' : ''}`}
                       onClick={() => activate(mIdx, iIdx)}
                       onKeyDown={(e) => handleMenuKey(e, mIdx, iIdx)}
                       onFocus={() => setFocusItem(iIdx)}

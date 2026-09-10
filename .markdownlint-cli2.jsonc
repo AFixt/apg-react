@@ -19,8 +19,17 @@
     "MD050": { "style": "asterisk" },
     "MD053": true,
   },
+  // The authoritative exclusions, rather than the `#node_modules` glob on the
+  // command line -- keeping them here means `markdownlint:fix` and any direct
+  // invocation get the same treatment as `npm run markdownlint`.
   "ignores": [
     "node_modules/",
+    // Local and gitignored -- see the matching note in eslint.config.mjs.
+    // A `.claude/worktrees/` agent checkout carries both its own Markdown and
+    // a vendored `node_modules/` full of it; excluding the directory covers
+    // both, which is why no nested-`node_modules` glob is needed here.
+    ".claude/",
+    "release_announcement/",
     "dist/",
     "build/",
     "coverage/",

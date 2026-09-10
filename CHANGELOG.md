@@ -7,6 +7,352 @@ This project adheres to
 
 ## [Unreleased]
 
+## [2.3.0] — 2026-09-09
+
+### Added
+
+- **`docs/RELEASING.md`**, the release runbook, with **publish as a named step**
+  and a verification after it. The procedure previously existed only in the
+  Context section of ADR 0008 — a record of a decision rather than somewhere
+  anyone cutting a release would look, and immutable once merged, so it could
+  not serve as a living procedure either. The publish step was the casualty:
+  `v2.0.0`, `v2.1.0` and `v2.2.0` were each tagged and GitHub-released without
+  ever reaching the registry, because nothing in the process fails when
+  publishing is skipped. Every step carries a note on why its check exists
+  rather than restating the command. (#226)
+
+- **`toolbar-disabled.html`**, a per-state toolbar demo (`toolbar_disabled_url`
+  in apg-qa) whose Strikethrough control is `aria-disabled` and skipped by
+  roving focus, so apg-qa's `toolbar-error` has a page to run against. It gets a
+  page of its own for the same reason the disabled switch did: on
+  `toolbar.html`, `toolbar-keyboard-nav` expects `End` to land on Strikethrough,
+  and all six runner repos assert the roving tabindex as a four-element array
+  (two of them also reading the buttons by `:nth-child`), so neither a disabled
+  Strikethrough nor a fifth control can live there.
+  `__tests__/demoToolbar.test.js` pins both sides of that line.
+  (AFixt/apg-qa#13)
+
+- **`Menubar` menu items gain `disabled`.** A disabled item carries
+  `aria-disabled="true"` rather than the native `disabled` attribute, so APG's
+  requirement that it stay discoverable holds: arrow keys, `Home` / `End` and
+  type-ahead still reach it, and it still takes the roving `tabindex`.
+  Activation is a genuine no-op — `onSelect` is not called and, unlike an
+  enabled item, the submenu stays open, so nothing reads as "that did something"
+  to a user who cannot see that nothing happened. (#227)
+
+- **Disabled states for the `menubar` and `switch` demos**, which the QA suite's
+  `menubar-error` and `switch-error` cases had nothing to assert against.
+  `menubar.html` marks File > Save As `aria-disabled`, which is safe on the
+  default page because a disabled menuitem stays focusable and in the roving
+  tabindex, leaving every case that walks the File submenu unaffected.
+
+  The disabled switch gets a page of its own, **`switch-disabled.html`**
+  (`switch_disabled_url`), rather than joining `switch.html`. The six APG runner
+  repos address that page by unscoped selector — `[role=switch]`,
+  `.switch-label-text`, `.switch-control .switch` — not by accessible name, so a
+  second switch of any name breaks them; a trial run took apg-playwright from
+  8/8 to 2/8 and apg-cypress to 6/8. Both constraints are now recorded in
+  `demos/README.md`. (#227, #228)
+
+- **`Carousel` gains `loop` and `showSlideStatus`.** The APG's carousel pattern
+  admits two conformant variants and the component previously implemented only
+  one. `loop={false}` makes the slides a bounded sequence rather than a ring:
+  `Previous` at the first slide and `Next` at the last carry
+  `aria-disabled="true"` and do nothing when activated, and auto-rotation stops
+  on arrival at the last slide instead of starting over — at which point the
+  rotation control is `aria-disabled` too, since there is no further slide for
+  it to rotate to. As with the disabled menuitem, the marker is `aria-disabled`
+  rather than the native `disabled` attribute, so the control stays focusable
+  and a keyboard user can reach it to discover why it is unavailable.
+
+  `showSlideStatus` renders a "Slide N of M" status, with a `slideStatus` entry
+  added to `labels` for translation. It is opt-in because the status is visible
+  content: turning it on by default would change what every existing consumer's
+  carousel renders.
+
+  Both default to the existing behaviour, so every spec addressing
+  `carousel.html` is untouched — the snapshots confirm it.
+
+- **`carousel-non-looping.html`** (`carousel_non_looping_url`), the per-state
+  page for that variant, with the status turned on and rotation starting stopped
+  so the page is deterministic for the QA suite. It cannot live on
+  `carousel.html`: apg-playwright and apg-cypress both assert against that page
+  that "Next from the last slide wraps forward and Previous from the first wraps
+  back", which is precisely what this state inverts, so the two contradict each
+  other and cannot share a URL. A second carousel on the page fails the same way
+  the second switch did — those specs address it by unscoped selector too.
+  (AFixt/apg-qa#26)
+
+- **`carousel.html` now carries a "Slide N of 5" status**, and the `Carousel`'s
+  status is safe to use on a carousel that rotates by itself. Its politeness
+  follows the rotation state, the way APG's own carousel guidance couples the
+  two: `aria-live="off"` while auto-rotation is driving, `polite` as soon as it
+  stops — which every user-initiated path already does, whether that is a
+  control, a picker, or keyboard focus entering the carousel. So a slide change
+  the user asked for is announced, and one a timer produced is not.
+
+  React commits the new slide index and the new politeness in the same update,
+  so the region is already `polite` in the DOM at the instant the text it
+  announces changes; there is no window in which a hand-driven change is
+  swallowed.
+
+  `showSlideStatus` stays opt-in, but for a different reason than before: the
+  status is visible content, so turning it on by default would change what every
+  existing consumer's carousel renders. The old reason — that a live region on a
+  rotating page is noise — is what this change removes.
+
+  The status element is not focusable, so Tab order is unchanged, and the
+  downstream runner suites are unaffected: apg-playwright's carousel spec
+  reports the same 21 passed / 6 failed with and without it. (#233)
+
+- **Knip runs as a quality gate.** `npm run knip` reports unused files, unused
+  exports and unused, unlisted or misplaced dependencies, and it now sits in
+  `npm run check` (so also in the pre-push hook) and in the CI `test` job, so
+  the report stays at zero rather than being a one-off clean-up. The
+  configuration is `knip.jsonc`, and every rule in it carries a comment saying
+  why it exists: the `demos/src/*.tsx` modules are entry points because the demo
+  HTML shells load them and Knip does not read HTML, and the four
+  `ignoreBinaries` are system tools installed by `scripts/bootstrap.sh`, not npm
+  packages.
+
+  The first pass found, and this change removes: two orphaned `example.js` usage
+  sketches under `components/` that nothing built, linted or published (the
+  ModalDialog one named an `ariaLabel` prop the component does not have); the
+  `@storybook/blocks` and `prop-types` devDependencies, which no file imports
+  (`prop-types` has been a leftover since the PropTypes-to-TypeScript rewrite,
+  and both remain installed transitively where tooling needs them); and a
+  handful of test-helper and internal exports that no other module read.
+  `@commitlint/types`, which `commitlint.config.mjs` imports for its JSDoc type
+  but was never declared, is now a devDependency. (#236)
+
+- **A link back to the demo index on every demo page**, rendered by
+  `demos/src/mount.tsx` after the demo so it is last in the tab order. The pages
+  were dead ends: `demos/index.html` lists all of them, but nothing led back to
+  it, so the only route from one demo to another was editing the URL (WCAG 2.4.5
+  Multiple Ways).
+
+  A link on 41 pages is exactly the kind of change that moves a downstream
+  count, so it was measured rather than assumed. Against apg-playwright's full
+  Chromium suite, `demos-dist` rebuilt per side, it changes two results and both
+  are the suite's rather than this library's:
+  - `link.spec.js` asserted an unscoped `role=link` count of 3, so the nav link
+    made it 4. Fixed upstream in AFixt/apg-playwright#40, which scopes the count
+    to `.demo-page` — the links the _demo_ renders, not the page chrome around
+    it. apg-cypress and apg-nightwatch already scoped it that way. Tracked for
+    the remaining runners in AFixt/apg-jest#30, AFixt/apg-jasmine#23 and
+    AFixt/apg-mocha#15.
+  - `listbox.spec.js:112` flips from pass to fail, and passed before only by
+    accident. It calls `tabUntilFocused` on a listbox _option_, which can never
+    receive DOM focus here because the demo uses `focusModel="activedescendant"`
+    (#213). The helper gives up after 25 presses and returns -1; the spec
+    ignores that and sends `ArrowDown` to whatever focus reached. On `develop`
+    the tab ring's period is 4, so press 25 happens to land on the listbox and
+    the assertion passes; with one more tab stop the period is 5 and press 25
+    lands on the harness's own sentinel. Any change to the page's tab ring flips
+    it.
+
+  Nothing in this repository's own gate can see either: the full local gate is
+  green on this branch.
+
+### Changed
+
+- **Coverage is now enforced, not just collected.** `collectCoverage` was on and
+  nothing checked the result, which makes a report rather than a gate. A
+  `coverageThreshold` now sets a floor — 95% statements, 84% branches, 87%
+  functions, 95% lines, a little under the measured figures — and `npm test`
+  already runs inside `npm run check:all` and the CI `test` job, so no new gate
+  step was needed. Verified by raising the bar: the run fails with
+  `Coverage for statements (96.56%) does not meet "global" threshold (99%)`.
+
+  `collectCoverageFrom` is now named explicitly as `components/**/*.{ts,tsx}`.
+  Jest otherwise reports only on files some test happened to import, which
+  measures the tests' reach rather than the library's: a component nothing tests
+  is simply absent from the denominator, so coverage does not move and the gate
+  stays green. Measured both ways with a deliberately untested component added —
+  named, it appears at 0% and pulls the total from 96.56 to 96.36; unnamed, it
+  does not appear in the report at all and the total does not change. (#243)
+
+- **`validate:usecases` is pinned to `@afixt/usecase-runner` 3.0.0.** The
+  previous pin, 2.0.2, was tagged and GitHub-released but never reached the
+  registry — npm carries 2.0.0, 2.0.1 and 2.1.0, but no 2.0.2 — so the job could
+  only ever fail, never validate anything. All 216 `.uc.yaml` files validate
+  against 3.0.0.
+
+  The pin is exact rather than a range on purpose. `@^3` would let an unattended
+  CI run pull a freshly published parser, and a parser change flips this gate
+  with no code change here. 4.0.0 and 5.0.0 are published but are both breaking
+  parser majors, so moving to them is its own change. (#235)
+
+- **The Storybook packages are back on a single version.** `npm update` moved
+  ten `@storybook/addon-*` packages _backwards_, 8.6.18 → 8.6.14, because their
+  `latest` dist-tag still points at 8.6.14 while 8.6.18 is published. Left
+  alone, a dependency-hygiene change would have downgraded the tree and split
+  the family across two versions. `addon-essentials` and `addon-interactions`
+  now declare `^8.6.18` like their siblings, and all 25 Storybook packages
+  resolve to 8.6.18 — tidier than before, where `addon-interactions` alone sat
+  at 8.6.14.
+
+  Also refreshed within their existing ranges: `jest` and
+  `jest-environment-jsdom` 30.4.x → 30.5.1, `babel-jest` 30.4.1 → 30.5.1,
+  `react`, `react-dom` and `react-test-renderer` 18.2.0 → 18.3.1, `rollup`
+  4.60.4 → 4.63.1, `@rollup/plugin-commonjs` 29.0.2 → 29.0.3,
+  `@testing-library/react` 16.3.2 → 16.3.3, `eslint-plugin-jsdoc` 63.3.2 →
+  63.3.3, `react-router-dom` 7.18.2 → 7.18.3.
+
+  No major-version upgrade is included. ESLint 10, Storybook 10, React 19, Babel
+  8 and the rest each carry breaking changes and deserve their own change rather
+  than riding along with a security fix. (#243 follow-up)
+
+### Fixed
+
+- **`npm run build` cleans `dist/` first, so a stale declaration cannot ship.**
+  `rollup -c` wrote into whatever `dist/` already existed and `files` ships
+  `dist` wholesale, so a renamed or deleted source left its old `.d.ts` behind
+  indefinitely and it went into the tarball — 51 files published where 49 were
+  correct, including one declaration from a directory renamed to `_internal/`
+  and another under an older camelCase name. Nothing imports them, so this was
+  cruft rather than breakage, but it is silent and cumulative, and stale
+  declarations can confuse editor type resolution. It only ever bit whoever
+  published from a long-lived working copy, which is why CI never saw it.
+  `__tests__/package-no-router.test.js` now fails on any `dist/` directory with
+  no matching source. (#225)
+
+- **The local gate no longer walks gitignored directories.** `.gitignore` lists
+  `.claude/` and `release_announcement/`, but ESLint, markdownlint-cli2 and Jest
+  do not consult it, and a `.claude/worktrees/<agent>/` checkout is a whole
+  second copy of this repo — its own `node_modules/`, its own `__tests__/`.
+  Measured with one present: `npm run lint` reported errors from a file outside
+  the project, `npm run markdownlint` linted a vendored `node_modules/**/*.md`,
+  and Jest collected an extra test file. CI never saw any of it, because CI
+  checks out fresh — so the failure was one-directional, inventing problems on a
+  clean branch and eroding trust in the local gate in exactly the direction that
+  matters. All three now exclude those directories, and
+  `__tests__/toolingIgnores.test.js` pins each exclusion against the tool's own
+  predicate.
+
+  No nested-`node_modules` glob was added, which the issue raised as worth
+  considering. Measured rather than assumed: ESLint ignores `**/node_modules/`
+  by default whatever the config says, Jest's `testPathIgnorePatterns` entries
+  are regexes that already match at any depth, and excluding `.claude/` covers
+  markdownlint's vendored copies whole. Each of the three would have been
+  redundant. (#242)
+
+- **The tabs demo's tablist is now named "Sample Tabs".** APG's Tabs pattern
+  asks for a labelled tablist, so an unnamed one was the demo failing to render
+  the pattern faithfully rather than a QA-only gap; `tabs-aria-state` could not
+  locate the tablist and timed out. The two per-state pages, `tabs-manual.html`
+  and `tabs-disabled-tab.html`, already carried the name, so all three tabs
+  pages now agree and a case tightened to locate the tablist by name holds
+  against every one of them. (#229)
+
+- **`Carousel` controls no longer trip an accessibility audit of the demo
+  page.** An `audit: page` step against `demos/carousel.html` reported 18
+  findings. Eleven came from the component and are resolved here, five more are
+  a documented trade-off, and the last two are page-set-wide:
+  - The rotation control and the five slide pickers removed the UA focus outline
+    in favour of a translucent box-shadow ring (8 × 2.4.7 / 1.4.11). Overlaid on
+    arbitrary slide content that ring has no guaranteed contrast, so the
+    Carousel now draws a real outline: white and inset on the dark control
+    backing, the library's primary outline token on the pickers. An outline is
+    also the one indicator forced colors preserves, so the `forced-colors`
+    guards those rules needed are gone with them.
+  - The rotation glyph sat beside the control's `aria-label` as bare text, so it
+    read as a visible label missing from the name (2.5.3) and as a second
+    labelling strategy. It is now `aria-hidden`, as the previous/next chevrons
+    always were; what sighted users see is unchanged.
+  - `:hover`/`:focus` rules toggled `opacity`, which an audit reads as content
+    revealed on hover (1.4.13) even though nothing was; the pickers also faded
+    to 80% at rest, dimming their digits for no reason. Hover and focus now swap
+    the background only.
+
+  The five slide pickers keep their visible digit beside the `aria-label` on
+  purpose, and stay as Low "two labelling strategies" findings. The digit is
+  real text, so hiding it hides visible content from assistive technology, which
+  the same audit flags as a High; and the label ends with the digit, so the
+  visible label is in the name.
+
+  The remaining two findings are not the Carousel's: a `2.4.5 Multiple Ways`
+  check that fires on every demo page (there is no search or sitemap link on any
+  of them) and a `1.4.13` candidate on `styles.css`, which every page loads and
+  which still holds `:hover` opacity rules from other components. Both need one
+  page-set-wide answer rather than a per-pattern fix, so they stay recorded in
+  #234 rather than half-solved here. (#234)
+
+- **`Tooltip` was unreachable by pointer.** It set `pointer-events: none` and
+  hid on its trigger's own `mouseleave`, so moving the pointer toward the
+  tooltip counted as leaving the trigger and the tooltip disappeared on the way.
+  That is WCAG 1.4.13's Hoverable requirement, failure technique F95. The
+  container now owns the pointer enter and leave, so moving from the trigger
+  onto the tooltip keeps it open, and the element no longer opts out of pointer
+  events. Escape dismissal and focus behaviour are unchanged.
+
+  The measured effect is larger than the CSS suggests: apg-qa's `tooltip` cases
+  could not previously focus the trigger or locate the bubble at all, and time
+  out on `develop`. All four now pass every interaction step.
+
+  The bubble is also no longer faded in and out by CSS. It is mounted only while
+  it is shown, so presence was already the whole of the state, and the `:hover`
+  opacity rule it carried was what an audit reads as content revealed on hover.
+
+- **`Tooltip` ids can be used in a selector.** `useId` returns `":r0:"`, and the
+  colons make `querySelector('#tooltip-:r0:')` throw, so anything resolving
+  `aria-describedby` by building a selector from it could not find the tooltip.
+  Stripped, keeping the per-instance uniqueness.
+
+- **`Toolbar` read `aria-disabled` as a presence rather than a value**, so a
+  control marked `aria-disabled={false}` — which React renders as the string
+  `"false"` — was treated as unavailable and dropped out of arrow-key traversal.
+  It now compares against `"true"`.
+
+- **`Toolbar` let focus move the tab stop onto an unavailable control.**
+  Clicking an `aria-disabled` item put `tabindex="0"` on it, so the next Tab
+  into the toolbar landed on a control that does nothing. The roving stop now
+  stays where the keyboard left it. The initial stop also honours
+  `aria-disabled`, not just the native `disabled` prop, so a toolbar whose first
+  control is unavailable no longer starts pointing at it.
+
+- **The `Alert` and `ModalDialog` close buttons no longer sit dimmed at 60%**
+  and brighten on hover. The dim lowered the glyph's own contrast for
+  decoration, and the rules that undid it read as content revealed on hover when
+  nothing was. Hover changes the background instead.
+
+### Security
+
+- **Six dependency advisories cleared; the seventh has no fix and is recorded as
+  such.** All were transitive dev dependencies, and none reached anything this
+  package builds or publishes. `npm run security:osv` goes from 7 findings to
+  **No issues found**.
+
+  Five needed only a lockfile refresh — their parents' ranges already admitted
+  the patched version, so no declared range changed: `colord` 2.9.3 → 2.10.0,
+  `js-yaml` 3.15.1 → 3.15.2 and 4.3.1 → 4.3.2, `svgo` 2.8.3 → 2.8.4.
+
+  `smol-toml` 1.7.0 → 1.8.0 (DoS via malformed TOML, fixed in 1.7.1) could not
+  be: `markdownlint-cli2@0.23.2` pins it exactly, and 0.23.2 is the latest
+  published version, so there is no upstream fix to wait for. Resolved with an
+  `overrides` entry, the same mechanism already used for `uuid`.
+
+  `extract-zip` has no published fix — the package is unmaintained — and reaches
+  us only through puppeteer's browser download. It gains a second dated entry in
+  `osv-scanner.toml`. Worth being precise, because the shape is easy to misread:
+  the existing ignore did not expire and did not stop working. A **second
+  advisory** (`GHSA-7pqw-9j4j-h8q3`, published 2026-08-17) was filed against a
+  package whose version had not moved. Kept as its own entry rather than
+  widening the first to the package, so the next advisory — which may well have
+  a fix — still turns the job red.
+
+- **Cleared the eight OSV advisories the dependency gate was reporting.**
+  `browserslist` 4.28.2 → 4.28.8 (GHSA-73wf-gq98-2v4g, GHSA-c83g-rgw3-j3cx),
+  `fast-uri` 3.1.5 → 3.1.7 (four 7.5 advisories) and `postcss-selector-parser`
+  6.1.2 → 6.1.4 and 7.1.1 → 7.1.6 (GHSA-w9m9-85wc-3x92 at both lockfile
+  versions).
+
+  All dev-only, and all lockfile-only — no declared range moved. Raising
+  `browserslist` raised its own dependency floor, so `baseline-browser-mapping`,
+  `caniuse-lite`, `electron-to-chromium`, `node-releases` and
+  `update-browserslist-db` moved with it. `osv-scanner` now reports no issues,
+  with `osv-scanner.toml`'s single dated `extract-zip` ignore unchanged. (#235)
+
 ## [2.2.0] — 2026-08-27
 
 ### Added

@@ -25,6 +25,7 @@ import {
   assertLabelAssociated,
   assertRovingTabindex,
   getAccessibleName,
+  implicitRole,
   isInAccessibilityTree,
   isKeyboardFocusable,
 } from './helpers/a11y';
@@ -616,16 +617,10 @@ describe('Accessibility contracts (no external a11y libs)', () => {
           <input type="checkbox" />
         </>,
       );
-      expect(require('./helpers/a11y').implicitRole(container.querySelector('button'))).toBe(
-        'button',
-      );
-      expect(require('./helpers/a11y').implicitRole(container.querySelector('a'))).toBe('link');
-      expect(require('./helpers/a11y').implicitRole(container.querySelector('nav'))).toBe(
-        'navigation',
-      );
-      expect(require('./helpers/a11y').implicitRole(container.querySelector('input'))).toBe(
-        'checkbox',
-      );
+      expect(implicitRole(container.querySelector('button'))).toBe('button');
+      expect(implicitRole(container.querySelector('a'))).toBe('link');
+      expect(implicitRole(container.querySelector('nav'))).toBe('navigation');
+      expect(implicitRole(container.querySelector('input'))).toBe('checkbox');
     });
   });
 });

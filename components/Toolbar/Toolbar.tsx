@@ -29,11 +29,17 @@ type ToolbarChild = React.ReactElement<any>;
 const Toolbar: React.FC<ToolbarProps> = ({ label, ariaLabelledby, orientation, children }) => {
   const items = Children.toArray(children).filter(Boolean) as ToolbarChild[];
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
-  const [focusIndex, setFocusIndex] = useState(() =>
-    items.findIndex((c) => !c.props?.disabled) >= 0
-      ? items.findIndex((c) => !c.props?.disabled)
-      : 0,
-  );
+  // The tab stop starts on the first item a keyboard can actually use. Both
+  // forms of unavailable count: the native `disabled` prop, and
+  // `aria-disabled`, which is how this library marks an item that stays
+  // focusable and discoverable. Reading only the first would put the tab stop
+  // on an `aria-disabled` item whenever it happened to be first.
+  const isUnavailable = (c: ToolbarChild) =>
+    !!c.props?.disabled || String(c.props?.['aria-disabled']) === 'true';
+  const [focusIndex, setFocusIndex] = useState(() => {
+    const first = items.findIndex((c) => !isUnavailable(c));
+    return first >= 0 ? first : 0;
+  });
 
   // Clamped at render rather than trusted: the stored index survives a change to
   // the collection, and if it now points past the end nothing gets tabIndex 0 --
@@ -42,7 +48,12 @@ const Toolbar: React.FC<ToolbarProps> = ({ label, ariaLabelledby, orientation, c
 
   const focusable = (i: number) => {
     const el = itemRefs.current[i];
-    return !!el && !(el as HTMLButtonElement).disabled && !el.getAttribute?.('aria-disabled');
+    if (!el || (el as HTMLButtonElement).disabled) return false;
+    // Compare against "true" rather than testing the attribute for presence.
+    // React renders `aria-disabled={false}` as the string "false", which is
+    // truthy, so a presence test read a control the consumer had explicitly
+    // marked available as unavailable and dropped it from arrow-key traversal.
+    return el.getAttribute?.('aria-disabled') !== 'true';
   };
 
   const findNext = (from: number, dir: number) => {
@@ -102,7 +113,11 @@ const Toolbar: React.FC<ToolbarProps> = ({ label, ariaLabelledby, orientation, c
           },
           onFocus: (e: React.FocusEvent) => {
             child.props.onFocus?.(e);
-            setFocusIndex(i);
+            // An unavailable item can still take focus -- that is the point of
+            // `aria-disabled` -- but it must not take the tab stop with it, or
+            // the next Tab into the toolbar lands on a control that does
+            // nothing. The stop stays where the keyboard left it.
+            if (focusable(i)) setFocusIndex(i);
           },
         }),
       )}

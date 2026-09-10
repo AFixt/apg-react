@@ -36,3 +36,14 @@ body {
   color: var(--apg-color-error);
   font-weight: var(--apg-font-weight-bold);
 }
+
+/*
+ * The link back to the demo index, rendered on every page by `mount`. It sits
+ * after the demo so it is the last thing in the tab order, where it cannot
+ * displace anything the pattern under test owns.
+ */
+.demo-set-nav {
+  margin: 2rem 1.5rem 1.5rem;
+  padding-block-start: 1rem;
+  font-size: 0.875rem;
+}

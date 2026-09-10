@@ -5,7 +5,7 @@
  * @param {Object} props - The component props.
  * @param {boolean} props.isOpen - Indicates whether the modal dialog is open or not.
  * @param {function} props.onClose - The function to be called when the modal dialog is closed.
- * @param {string} [props.ariaLabel] - The ARIA label for the modal dialog.
+ * @param {string} [props.ariaLabelledby] - The ID of the element that labels the modal dialog.
  * @param {string} [props.ariaDescribedby] - The ID of the element that describes the modal dialog.
  * @param {ReactNode} props.children - The content to be rendered inside the modal dialog.
  * @param {Object} [props.initialFocusRef] - The ref to the initial focusable element inside the modal dialog.

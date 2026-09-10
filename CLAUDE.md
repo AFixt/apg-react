@@ -28,6 +28,8 @@ demos, and four test layers (unit, accessibility, stylesheet, E2E).
 - **Build library:** `npm run build` (produces `dist/` with CJS, ESM, CSS, and
   `.d.ts`)
 - **Lint markdown:** `npm run markdownlint`
+- **Find unused files, exports and dependencies:** `npm run knip` (also part of
+  `npm run check`)
 
 ## Architecture
 

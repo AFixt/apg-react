@@ -10,7 +10,7 @@ const menus = [
       { id: 'new', label: 'New' },
       { id: 'open', label: 'Open' },
       { id: 'save', label: 'Save' },
-      { id: 'save-as', label: 'Save As' },
+      { id: 'save-as', label: 'Save As', disabled: true },
     ],
   },
   {
@@ -37,6 +37,17 @@ const menus = [
 /**
  * Menubar demo: File/Edit/View menus with item labels matching apg-qa's
  * menubar use cases.
+ *
+ * File > Save As is aria-disabled: arrow keys, Home/End and type-ahead still
+ * reach it -- APG keeps a disabled menuitem in the menu and in the roving
+ * tabindex so it stays discoverable -- but activating it does nothing, by
+ * Enter, Space or click, and the submenu stays open.
+ *
+ * It goes on this page rather than a per-state page of its own because it is
+ * the last File item and disabled items stay focusable, so every existing
+ * menubar case that walks or wraps through the File submenu is unaffected.
+ *
+ * Addressed by `apg-qa` as `menubar-error`.
  */
 function MenubarDemo(): React.ReactElement {
   return (

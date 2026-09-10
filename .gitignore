@@ -62,3 +62,6 @@ sessions
 
 # Claude Code local config (not committed)
 .claude/
+
+# Local scratch: release announcement drafts, not part of the project.
+release_announcement/

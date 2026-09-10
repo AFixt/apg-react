@@ -165,16 +165,6 @@ export function assertHasAccessibleName(el, context = '') {
 }
 
 /**
- * Asserts the element has a given role (explicit role attribute, or implicit).
- */
-export function assertRole(el, expected) {
-  const role = el.getAttribute('role') || implicitRole(el);
-  if (role !== expected) {
-    throw new Error(`Expected role="${expected}" but got role="${role}" on ${el.tagName}`);
-  }
-}
-
-/**
  * For components whose ARIA contract includes a boolean state attribute
  * (e.g. aria-expanded, aria-checked), verify the attribute is present and
  * has a valid value.

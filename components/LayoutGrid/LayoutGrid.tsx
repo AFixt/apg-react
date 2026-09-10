@@ -32,7 +32,7 @@ import React, { useRef, useState } from 'react';
 import './LayoutGrid.css';
 
 /** A single navigable item in a LayoutGrid. */
-export interface LayoutGridItem {
+interface LayoutGridItem {
   /** Link text, and the item's accessible name. */
   label: string;
   /** Link target. */
@@ -40,7 +40,7 @@ export interface LayoutGridItem {
 }
 
 /** Props for the LayoutGrid component. */
-export interface LayoutGridProps {
+interface LayoutGridProps {
   /** Accessible name for the grid. Used as `aria-label` unless `labelledBy` is given. */
   label?: string;
   /** Id of an existing visible element that names the grid. Takes precedence over `label`. */

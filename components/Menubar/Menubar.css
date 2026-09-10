@@ -125,3 +125,14 @@
     outline-offset: -2px;
   }
 }
+
+/*
+ * aria-disabled rather than the native disabled attribute keeps the item in the
+ * menu and in the roving tabindex, so arrow keys still reach it and a keyboard
+ * user can discover why it is unavailable. The styling has to carry that
+ * meaning on its own.
+ */
+.menubar-menuitem.is-disabled {
+  opacity: 65%;
+  cursor: not-allowed;
+}

@@ -142,9 +142,7 @@ const tabTo = async (page, selector, maxTabs = 10) => {
 };
 
 module.exports = {
-  getBrowser,
   openStory,
-  storyUrl,
   injectA11yHelpers,
   emulateForcedColors,
   tabTo,

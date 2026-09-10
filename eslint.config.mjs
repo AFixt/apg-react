@@ -26,6 +26,14 @@ export default tseslint.config(
       'coverage/**',
       'storybook-static/**',
       'node_modules/**',
+      // Local, gitignored, and not part of the project. `.claude/` in
+      // particular can hold a whole second checkout (an agent worktree), and
+      // linting one turns a clean branch into hundreds of errors that CI --
+      // which checks out fresh -- never sees. The failure is one-directional:
+      // it only ever invents problems, which is the direction that erodes
+      // trust in the local gate.
+      '.claude/**',
+      'release_announcement/**',
       '**/*.generated.*',
     ],
   },
