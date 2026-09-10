@@ -7,6 +7,8 @@ This project adheres to
 
 ## [Unreleased]
 
+## [2.3.0] — 2026-09-09
+
 ### Added
 
 - **`toolbar-disabled.html`**, a per-state toolbar demo (`toolbar_disabled_url`
@@ -171,6 +173,26 @@ This project adheres to
   with no code change here. 4.0.0 and 5.0.0 are published but are both breaking
   parser majors, so moving to them is its own change. (#235)
 
+- **The Storybook packages are back on a single version.** `npm update` moved
+  ten `@storybook/addon-*` packages _backwards_, 8.6.18 → 8.6.14, because their
+  `latest` dist-tag still points at 8.6.14 while 8.6.18 is published. Left
+  alone, a dependency-hygiene change would have downgraded the tree and split
+  the family across two versions. `addon-essentials` and `addon-interactions`
+  now declare `^8.6.18` like their siblings, and all 25 Storybook packages
+  resolve to 8.6.18 — tidier than before, where `addon-interactions` alone sat
+  at 8.6.14.
+
+  Also refreshed within their existing ranges: `jest` and
+  `jest-environment-jsdom` 30.4.x → 30.5.1, `babel-jest` 30.4.1 → 30.5.1,
+  `react`, `react-dom` and `react-test-renderer` 18.2.0 → 18.3.1, `rollup`
+  4.60.4 → 4.63.1, `@rollup/plugin-commonjs` 29.0.2 → 29.0.3,
+  `@testing-library/react` 16.3.2 → 16.3.3, `eslint-plugin-jsdoc` 63.3.2 →
+  63.3.3, `react-router-dom` 7.18.2 → 7.18.3.
+
+  No major-version upgrade is included. ESLint 10, Storybook 10, React 19, Babel
+  8 and the rest each carry breaking changes and deserve their own change rather
+  than riding along with a security fix. (#243 follow-up)
+
 ### Fixed
 
 - **The local gate no longer walks gitignored directories.** `.gitignore` lists
@@ -296,28 +318,6 @@ This project adheres to
   package whose version had not moved. Kept as its own entry rather than
   widening the first to the package, so the next advisory — which may well have
   a fix — still turns the job red.
-
-### Changed
-
-- **The Storybook packages are back on a single version.** `npm update` moved
-  ten `@storybook/addon-*` packages _backwards_, 8.6.18 → 8.6.14, because their
-  `latest` dist-tag still points at 8.6.14 while 8.6.18 is published. Left
-  alone, a dependency-hygiene change would have downgraded the tree and split
-  the family across two versions. `addon-essentials` and `addon-interactions`
-  now declare `^8.6.18` like their siblings, and all 25 Storybook packages
-  resolve to 8.6.18 — tidier than before, where `addon-interactions` alone sat
-  at 8.6.14.
-
-  Also refreshed within their existing ranges: `jest` and
-  `jest-environment-jsdom` 30.4.x → 30.5.1, `babel-jest` 30.4.1 → 30.5.1,
-  `react`, `react-dom` and `react-test-renderer` 18.2.0 → 18.3.1, `rollup`
-  4.60.4 → 4.63.1, `@rollup/plugin-commonjs` 29.0.2 → 29.0.3,
-  `@testing-library/react` 16.3.2 → 16.3.3, `eslint-plugin-jsdoc` 63.3.2 →
-  63.3.3, `react-router-dom` 7.18.2 → 7.18.3.
-
-  No major-version upgrade is included. ESLint 10, Storybook 10, React 19, Babel
-  8 and the rest each carry breaking changes and deserve their own change rather
-  than riding along with a security fix. (#243 follow-up)
 
 - **Cleared the eight OSV advisories the dependency gate was reporting.**
   `browserslist` 4.28.2 → 4.28.8 (GHSA-73wf-gq98-2v4g, GHSA-c83g-rgw3-j3cx),
