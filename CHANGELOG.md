@@ -11,6 +11,16 @@ This project adheres to
 
 ### Added
 
+- **`docs/RELEASING.md`**, the release runbook, with **publish as a named step**
+  and a verification after it. The procedure previously existed only in the
+  Context section of ADR 0008 — a record of a decision rather than somewhere
+  anyone cutting a release would look, and immutable once merged, so it could
+  not serve as a living procedure either. The publish step was the casualty:
+  `v2.0.0`, `v2.1.0` and `v2.2.0` were each tagged and GitHub-released without
+  ever reaching the registry, because nothing in the process fails when
+  publishing is skipped. Every step carries a note on why its check exists
+  rather than restating the command. (#226)
+
 - **`toolbar-disabled.html`**, a per-state toolbar demo (`toolbar_disabled_url`
   in apg-qa) whose Strikethrough control is `aria-disabled` and skipped by
   roving focus, so apg-qa's `toolbar-error` has a page to run against. It gets a
@@ -194,6 +204,18 @@ This project adheres to
   than riding along with a security fix. (#243 follow-up)
 
 ### Fixed
+
+- **`npm run build` cleans `dist/` first, so a stale declaration cannot ship.**
+  `rollup -c` wrote into whatever `dist/` already existed and `files` ships
+  `dist` wholesale, so a renamed or deleted source left its old `.d.ts` behind
+  indefinitely and it went into the tarball — 51 files published where 49 were
+  correct, including one declaration from a directory renamed to `_internal/`
+  and another under an older camelCase name. Nothing imports them, so this was
+  cruft rather than breakage, but it is silent and cumulative, and stale
+  declarations can confuse editor type resolution. It only ever bit whoever
+  published from a long-lived working copy, which is why CI never saw it.
+  `__tests__/package-no-router.test.js` now fails on any `dist/` directory with
+  no matching source. (#225)
 
 - **The local gate no longer walks gitignored directories.** `.gitignore` lists
   `.claude/` and `release_announcement/`, but ESLint, markdownlint-cli2 and Jest
