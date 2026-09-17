@@ -10,8 +10,19 @@ import { mount } from './mount';
  * "Print dialog opened" text and a Close button that clears the flag again.
  * The Mute button demonstrates the toggle variant — the component owns
  * `aria-pressed` internally, so the demo only supplies the initial state and
- * mirrors it in a status line for sighted users. Submit is permanently
- * disabled, which is the case where activation must have no effect at all.
+ * mirrors it in a status line for sighted users.
+ *
+ * Submit is permanently unavailable, and demonstrates `disabledStyle="aria"`
+ * rather than the `'native'` default. The APG's reasoning is that a natively
+ * disabled button leaves the tab order and the accessibility tree's interactive
+ * surface, so a keyboard or screen-reader user never discovers the control
+ * exists — let alone why it is unavailable. The aria variant keeps it focusable
+ * and reports `aria-disabled="true"`, while the component still suppresses the
+ * action.
+ *
+ * Keeping it reachable is only useful if the reason is reachable too, so the
+ * explanation is associated with the button through `ariaDescribedby` rather
+ * than left as nearby text a screen-reader user would have to go hunting for.
  */
 function ButtonDemo(): React.ReactElement {
   const [printDialogOpen, setPrintDialogOpen] = useState(false);
@@ -40,7 +51,14 @@ function ButtonDemo(): React.ReactElement {
         <p>{muted ? 'Muted' : 'Unmuted'}</p>
       </div>
       <div className="demo-section">
-        <Button label="Submit" isDisabled action={() => setFormSubmitted(true)} />
+        <Button
+          label="Submit"
+          isDisabled
+          disabledStyle="aria"
+          ariaDescribedby="submit-unavailable"
+          action={() => setFormSubmitted(true)}
+        />
+        <p id="submit-unavailable">Complete every required field before submitting.</p>
         {formSubmitted && <p>Form submitted</p>}
       </div>
     </main>
