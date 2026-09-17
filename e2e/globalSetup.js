@@ -6,7 +6,7 @@
 const path = require('path');
 const http = require('http');
 const fs = require('fs');
-const puppeteer = require('puppeteer');
+const { getPuppeteer } = require('./puppeteer');
 const { resolveStaticPath } = require('./resolveStaticPath');
 
 const PORT = process.env.E2E_PORT || 6007;
@@ -78,6 +78,7 @@ function findChrome() {
 module.exports = async function globalSetup() {
   const server = await startServer();
   const executablePath = findChrome();
+  const puppeteer = await getPuppeteer();
   const browser = await puppeteer.launch({
     headless: 'new',
     executablePath,

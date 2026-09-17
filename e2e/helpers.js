@@ -2,9 +2,10 @@
  * E2E test helpers — bridge to the Puppeteer browser launched in globalSetup
  * and Storybook's story URL format.
  */
-const puppeteer = require('puppeteer');
+const { getPuppeteer } = require('./puppeteer');
 
 async function getBrowser() {
+  const puppeteer = await getPuppeteer();
   return puppeteer.connect({
     browserWSEndpoint: process.env.E2E_BROWSER_WS_ENDPOINT,
   });
