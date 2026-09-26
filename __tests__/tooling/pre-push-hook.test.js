@@ -179,7 +179,9 @@ describe('.husky/pre-push secret gate block', () => {
 
     expect(res.status).toBe(0);
     expect(res.stderr).toMatch(/present but not executable[\s\S]*SKIPPED/);
-    expect(res.stdout).toBe('');
+    // Not `toBe('')`: the rest of this hook prints its own warning to stdout
+    // when lychee is not installed, as on CI runners.
+    expect(res.stdout).not.toMatch(/not executable|SKIPPED/);
     expect(ran('gate-stdin')).toBe(false);
     expect(readWork('tail-stdin')).toBe(refs);
   });
