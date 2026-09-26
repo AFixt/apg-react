@@ -7,6 +7,16 @@ This project adheres to
 
 ## [Unreleased]
 
+### Security
+
+- The pre-push hook runs the fleet-security secret gate
+  (`~/.fleet-security/bin/pre-push-secrets`) before its other checks, scoped to
+  the commits being pushed. It passes git's remote name and URL to the gate,
+  replays the pushed refs to the rest of the hook, skips silently when the gate
+  is not installed and warns when it is installed but not executable.
+  `__tests__/tooling/pre-push-hook.test.js` runs the hook under `sh -e` with a
+  stub gate to pin that behaviour.
+
 ## [2.3.0] — 2026-09-09
 
 ### Added

@@ -312,8 +312,11 @@ Git hooks (installed automatically via Husky's `prepare` script):
 - **pre-commit** — lint-staged (ESLint, Prettier, Stylelint, markdownlint on
   staged files only) + typecheck of staged TS + trufflehog.
 - **commit-msg** — commitlint with `@commitlint/config-conventional`.
-- **pre-push** — runs the full `check` suite + tests + `dupes` +
-  `license:check` + optional link check.
+- **pre-push** — first the fleet-security secret gate
+  (`~/.fleet-security/bin/pre-push-secrets`) over the commits being pushed, when
+  it is installed; then the full `check` suite + tests + `dupes` +
+  `license:check` + optional link check. A secret-gate false positive is marked
+  inline with `trufflehog:ignore`, not pushed past with `--no-verify`.
 - **post-merge** — reinstall + `npm audit` when `package-lock.json` changes
   after a pull.
 
