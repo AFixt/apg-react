@@ -53,8 +53,7 @@ else
 fi
 
 # Run the same gates CI runs, plus duplication + license + link checks.
-# Tests and E2E are left to CI (E2E needs a Storybook build).
-# To bypass: git push --no-verify
+# E2E is left to CI (it needs a Storybook build).
 
 npm run check || exit 1
 npm test || exit 1
