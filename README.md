@@ -320,14 +320,17 @@ Git hooks (installed automatically via Husky's `prepare` script):
 - **post-merge** — reinstall + `npm audit` when `package-lock.json` changes
   after a pull.
 
-Bypass a hook with `--no-verify` (use sparingly).
+Hooks are not bypassed with `--no-verify`, which would skip every check in the
+hook, not only the one that failed. Fix the underlying failure instead.
 
-Scheduled workflows:
+Workflows besides CI (`ci.yml`); none are scheduled:
 
-- **`.github/workflows/security.yml`** (Mondays 06:00 UTC) — CodeQL,
-  OSV-Scanner, Semgrep OWASP Top 10, npm audit.
-- **`.github/workflows/docs.yml`** (Mondays 07:00 UTC) — lychee link check
-  across Markdown.
+- **`.github/workflows/security.yml`** (pull requests and pushes to `main` and
+  `develop`, and on demand) — CodeQL, OSV-Scanner over the full dependency tree,
+  Semgrep OWASP Top 10. `npm audit` runs in `ci.yml`, on PRs to `main` and
+  `develop`.
+- **`.github/workflows/docs.yml`** (pull requests to `main` and `develop` that
+  touch Markdown or `docs/`, and on demand) — lychee link check across Markdown.
 
 See `docs/adr/` for tooling decisions (why Jest not Vitest, why Rollup not Vite,
 etc.).
