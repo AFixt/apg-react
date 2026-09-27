@@ -323,11 +323,12 @@ Git hooks (installed automatically via Husky's `prepare` script):
 Hooks are not bypassed with `--no-verify`, which would skip every check in the
 hook, not only the one that failed. Fix the underlying failure instead.
 
-Other workflows (none are scheduled):
+Workflows besides CI (`ci.yml`); none are scheduled:
 
 - **`.github/workflows/security.yml`** (pull requests and pushes to `main` and
   `develop`, and on demand) — CodeQL, OSV-Scanner over the full dependency tree,
-  Semgrep OWASP Top 10. `npm audit` gates every PR in `ci.yml`.
+  Semgrep OWASP Top 10. `npm audit` runs in `ci.yml`, on PRs to `main` and
+  `develop`.
 - **`.github/workflows/docs.yml`** (pull requests to `main` and `develop` that
   touch Markdown or `docs/`, and on demand) — lychee link check across Markdown.
 
