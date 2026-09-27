@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 
 # Lint + format staged files; typecheck only staged TS; scan recent history for verified secrets.
-# Do not bypass this with `git commit --no-verify`: fix what it reports. A
-# trufflehog false positive is marked on that line with an inline
-# `trufflehog:ignore` comment.
+# Do not bypass this with `git commit --no-verify`: fix what it reports. The
+# secret scan below runs with --only-verified, so it fails only on a credential
+# the provider confirmed is live: remove it from the commit and rotate it.
 
 npx lint-staged || exit 1
 
