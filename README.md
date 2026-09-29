@@ -310,7 +310,8 @@ npm run security      # npm audit + OSV-Scanner + trufflehog
 Git hooks (installed automatically via Husky's `prepare` script):
 
 - **pre-commit** — lint-staged (ESLint, Prettier, Stylelint, markdownlint on
-  staged files only) + typecheck of staged TS + trufflehog.
+  staged files only) + typecheck of staged TS + a trufflehog scan of the staged
+  content (`scripts/run-trufflehog.sh`, which also works in a git worktree).
 - **commit-msg** — commitlint with `@commitlint/config-conventional`.
 - **pre-push** — first the fleet-security secret gate
   (`~/.fleet-security/bin/pre-push-secrets`) over the commits being pushed, when

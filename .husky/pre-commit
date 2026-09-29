@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-# Lint + format staged files; typecheck only staged TS; scan recent history for verified secrets.
+# Lint + format staged files; typecheck only staged TS; scan the staged content for verified secrets.
 # Do not bypass this with `git commit --no-verify`: fix what it reports. The
 # secret scan below runs with --only-verified, so it fails only on a credential
 # the provider confirmed is live: remove it from the commit and rotate it.
@@ -10,11 +10,9 @@ npx lint-staged || exit 1
 # Typecheck only the staged TS files for speed.
 npx tsc-files --noEmit || exit 1
 
-# Trufflehog is optional — warn if missing rather than block.
-# Install locally with `bash scripts/bootstrap.sh` or `brew install trufflehog`.
-if command -v trufflehog >/dev/null 2>&1; then
-  trufflehog git file://. --since-commit HEAD --only-verified --fail || exit 1
-else
-  echo "warning: trufflehog not installed — skipping secret scan."
-  echo "         install with 'brew install trufflehog' or 'bash scripts/bootstrap.sh'"
-fi
+# Scan exactly what is staged for this commit (#260). The script writes the
+# index version of each staged file to a temp dir and scans that, which also
+# works in a git worktree. Trufflehog is optional: the script warns and exits 0
+# when it is missing. Install with `bash scripts/bootstrap.sh` or
+# `brew install trufflehog`.
+TRUFFLEHOG_MODE=staged bash scripts/run-trufflehog.sh || exit 1
