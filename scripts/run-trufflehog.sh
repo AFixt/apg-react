@@ -65,6 +65,13 @@ else
   # <path>/.git/index, which is a file in a worktree. The common git dir holds
   # every ref and commit whichever checkout this runs from, and --bare tells
   # trufflehog not to look for a working tree there.
-  GIT_COMMON_DIR="$(git rev-parse --path-format=absolute --git-common-dir)"
-  trufflehog git "file://${GIT_COMMON_DIR}" --bare "$RESULTS_FLAG" --fail --no-update
+  #
+  # Named so it cannot shadow git's own GIT_COMMON_DIR if that is exported.
+  COMMON_DIR_PATH="$(git rev-parse --path-format=absolute --git-common-dir)"
+
+  # trufflehog's git source shells out to `git clone`. If this runs under a
+  # git hook, that clone would inherit GIT_INDEX_FILE / GIT_DIR / GIT_WORK_TREE
+  # and could write its index over the one git staged, so scrub them.
+  env -u GIT_INDEX_FILE -u GIT_DIR -u GIT_WORK_TREE -u GIT_COMMON_DIR \
+    trufflehog git "file://${COMMON_DIR_PATH}" --bare "$RESULTS_FLAG" --fail --no-update
 fi
