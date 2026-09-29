@@ -1,9 +1,12 @@
 #!/usr/bin/env sh
 
-# Lint + format staged files; typecheck only staged TS; scan the staged content for verified secrets.
+# Lint + format staged files; typecheck only staged TS; scan the staged content for secrets.
 # Do not bypass this with `git commit --no-verify`: fix what it reports. The
-# secret scan below runs with --only-verified, so it fails only on a credential
-# the provider confirmed is live: remove it from the commit and rotate it.
+# secret scan below reports verified and "unknown" results: it fails on a
+# credential the provider confirmed is live, and also when verification could
+# not complete (e.g. offline), because a scan that could not decide is not a
+# clean one (AFixt/detect-features#112). Remove the credential from the commit
+# and rotate it.
 
 npx lint-staged || exit 1
 
