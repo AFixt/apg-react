@@ -16,6 +16,13 @@ This project adheres to
   is not installed and warns when it is installed but not executable.
   `__tests__/tooling/pre-push-hook.test.js` runs the hook under `sh -e` with a
   stub gate to pin that behaviour.
+- The CI secret scan (`.github/workflows/ci.yml`, `secrets` job) runs TruffleHog
+  with `--results=verified,unknown` instead of `--only-verified`. A candidate
+  whose verification could not finish (connection refused, timeout or provider
+  error) is filed as `unknown`, which `--only-verified` dropped, so the job
+  passed a secret it never checked. Such a result now fails the job;
+  `unverified` results (the provider said the key is dead) stay excluded. The
+  job is renamed `TruffleHog (verified and unknown secrets)` to match (#262).
 
 ## [2.3.0] — 2026-09-09
 

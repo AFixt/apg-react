@@ -13,16 +13,16 @@ permissions:
 
 jobs:
   secrets:
-    name: TruffleHog (verified secrets)
+    name: TruffleHog (verified and unknown secrets)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           fetch-depth: 0
-      - name: Scan for verified secrets
+      - name: Scan for verified and unknown secrets
         uses: trufflesecurity/trufflehog@bcfcf73aaf4759d4dadc2783177c245a02792318 # v3.97.0
         with:
-          extra_args: --only-verified
+          extra_args: --results=verified,unknown
 
   usecases:
     name: Validate use cases
