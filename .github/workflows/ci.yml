@@ -22,6 +22,11 @@ jobs:
       - name: Scan for verified and unknown secrets
         uses: trufflesecurity/trufflehog@bcfcf73aaf4759d4dadc2783177c245a02792318 # v3.97.0
         with:
+          # The SHA above pins only the action's wrapper script. Its `version`
+          # input defaults to `latest`, so without this line CI runs whatever
+          # ghcr.io/trufflesecurity/trufflehog:latest is that day (#264). Keep it
+          # equal to the SHA's release when the action is bumped.
+          version: 3.97.0
           extra_args: --results=verified,unknown
 
   usecases:
