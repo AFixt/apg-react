@@ -23,6 +23,11 @@ This project adheres to
   passed a secret it never checked. Such a result now fails the job;
   `unverified` results (the provider said the key is dead) stay excluded. The
   job is renamed `TruffleHog (verified and unknown secrets)` to match (#262).
+- The CI secret scan pins the TruffleHog scanner with `version: 3.97.0`. The
+  action's commit SHA pins only its wrapper script, whose `version` input
+  defaults to `latest`, so CI had been running whatever
+  `ghcr.io/trufflesecurity/trufflehog:latest` was that day. The version must be
+  bumped together with the action SHA (#264).
 
 ## [2.3.0] — 2026-09-09
 
