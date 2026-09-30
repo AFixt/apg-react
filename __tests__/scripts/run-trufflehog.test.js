@@ -199,9 +199,13 @@ function scan(cwd, mode, env = WIDE) {
       killGroup(child.pid);
       reject(deadlineError('run-trufflehog.sh'));
     }, SCAN_DEADLINE);
+    // Decode as streams so a multi-byte character (trufflehog's banner is
+    // emoji) split across two chunks is not mangled into U+FFFD.
     let output = '';
-    child.stdout.on('data', (chunk) => (output += chunk.toString()));
-    child.stderr.on('data', (chunk) => (output += chunk.toString()));
+    child.stdout.setEncoding('utf8');
+    child.stderr.setEncoding('utf8');
+    child.stdout.on('data', (chunk) => (output += chunk));
+    child.stderr.on('data', (chunk) => (output += chunk));
     child.on('error', (error) => {
       clearTimeout(timer);
       reject(error);
