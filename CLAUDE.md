@@ -169,6 +169,13 @@ requests `axe-core`, no axe-core code is installed — `npm ls axe-core` will sh
 `axe-core@npm:empty-npm-package`. The override is a safety net, not a licence to
 add axe-dependent tooling: the rules above still apply.
 
+`npm run check:no-axe` (`scripts/check-no-axe.mjs`, part of `npm run check` and
+so of the pre-push hook) enforces both: it reads `package-lock.json` and fails
+if any `axe-core` or `@axe-core/*` entry resolves to a real axe tarball, or if
+`package.json` declares `axe-core`, `@axe-core/*`, `jest-axe`,
+`@types/jest-axe`, `vitest-axe`, `cypress-axe`, `axe-playwright` or
+`axe-puppeteer` directly.
+
 ## @afixt scoped packages & NPM_TOKEN
 
 If this project installs any `@afixt/*` scoped packages, npm authentication is

@@ -235,6 +235,7 @@ export default tseslint.config(
       'e2e/jest.config.js',
       '.storybook/**/*.{js,ts}',
       '__mocks__/**/*.js',
+      'scripts/**/*.mjs',
     ],
     languageOptions: {
       globals: { ...globals.node },
