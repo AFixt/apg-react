@@ -94,7 +94,7 @@ Four layers run under Jest, plus a use-case suite driven by an external runner:
    interaction per file in the DSL of `@afixt/usecase-runner`. Targets each
    component's Storybook story and is meant to be run via the runner (which
    generates Playwright specs) rather than Jest. Validate without running:
-   `npx --yes @afixt/usecase-runner validate usecases/`.
+   `npm run validate:usecases`, which pins the runner version CI uses.
 
 Configuration:
 
