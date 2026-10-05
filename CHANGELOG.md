@@ -29,6 +29,22 @@ This project adheres to
   `ghcr.io/trufflesecurity/trufflehog:latest` was that day. The version must be
   bumped together with the action SHA (#264).
 
+### Fixed
+
+- **`validate:usecases` is pinned to `@afixt/usecase-runner` 1.0.1.** Since
+  2026-09-21 every version the registry had carried, 3.0.0 included, has
+  returned 404, so the **Validate use cases** job failed on every run and
+  checked nothing. 1.0.1, published 2026-10-04, is now the only version on the
+  registry. The number is lower than 3.0.0, but the package is a current build:
+  it validates all 216 `.uc.yaml` files and still rejects an invalid one. The
+  pin stays exact for the reason given under 2.3.0.
+
+  1.0.1 is younger than the 7 days `.npmrc`'s `min-release-age` requires, so
+  until 2026-10-11 npm 11.10+ refuses it locally with `ETARGET`. Until then, run
+  `npm_config_min_release_age=0 npm run validate:usecases` for a local check;
+  `.npmrc` is unchanged. CI is unaffected: Node 22's npm 10 ignores the setting.
+  (#258)
+
 ## [2.3.0] — 2026-09-09
 
 ### Added
