@@ -1,0 +1,17 @@
+# Paths markdownlint-cli must not lint (gitignore syntax). markdownlint-cli
+# reads this file on every invocation -- `npm run markdownlint`,
+# `markdownlint:fix`, lint-staged and a direct run alike -- so the exclusions
+# live here rather than as `--ignore` flags on one command line (#269).
+node_modules/
+# Local and gitignored -- see the matching note in eslint.config.mjs.
+# A `.claude/worktrees/` agent checkout carries both its own Markdown and
+# a vendored `node_modules/` full of it; excluding the directory covers
+# both (#242).
+.claude/
+release_announcement/
+dist/
+build/
+coverage/
+storybook-static/
+CHANGELOG.md
+.github/PULL_REQUEST_TEMPLATE.md

@@ -2,13 +2,13 @@
  * Tooling contract: the local gate must not walk gitignored directories.
  *
  * `.gitignore` lists `.claude/` and `release_announcement/`, so git already
- * agrees they are not part of the project. ESLint, markdownlint-cli2 and Jest
+ * agrees they are not part of the project. ESLint, markdownlint and Jest
  * do not consult it, and each has its own reason to descend anyway:
  *
  *   - `.claude/worktrees/<agent>/` can hold a *whole second checkout* of this
  *     repo, complete with its own `node_modules/` and `__tests__/`.
- *   - markdownlint-cli2's `#node_modules` command-line glob anchors at the top
- *     level, so the vendored `node_modules/` inside that checkout is linted.
+ *   - markdownlint's `**\/*.md` glob descends into that checkout and lints
+ *     its Markdown, vendored `node_modules/` READMEs included.
  *   - Jest's `testMatch` finds `__tests__/**` in that second checkout exactly
  *     as readily as the real one.
  *
@@ -24,9 +24,9 @@
  * See #242.
  *
  * Where a tool exposes its own predicate, these assertions run it rather than
- * checking how the config is spelled. markdownlint-cli2 exposes none and its
- * config is JSONC (comments, trailing commas), so that one is a text contract
- * on the config file — the approach the stylesheet contract tests already take,
+ * checking how the config is spelled. markdownlint-cli exposes none, so that
+ * one is a text contract on its ignore file (`.markdownlintignore`, which it
+ * reads on every invocation, #269) — the approach the stylesheet contract tests already take,
  * for the same reason: the thing that matters is a relationship no runtime
  * check in this suite can see.
  */
@@ -134,13 +134,16 @@ describe('tooling ignores gitignored local directories (#242)', () => {
     });
   });
 
-  describe('markdownlint-cli2', () => {
-    const config = fs.readFileSync(path.join(ROOT, '.markdownlint-cli2.jsonc'), 'utf8');
+  describe('markdownlint-cli', () => {
+    const ignoreLines = fs
+      .readFileSync(path.join(ROOT, '.markdownlintignore'), 'utf8')
+      .split('\n')
+      .map((line) => line.trim());
 
-    it.each(['".claude/"', '"release_announcement/"'])(
-      'excludes %s in the config file rather than only on the command line',
+    it.each(['.claude/', 'release_announcement/'])(
+      'excludes %s in the ignore file rather than only on the command line',
       (entry) => {
-        expect(config).toContain(entry);
+        expect(ignoreLines).toContain(entry);
       },
     );
   });

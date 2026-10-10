@@ -28,6 +28,19 @@ This project adheres to
   defaults to `latest`, so CI had been running whatever
   `ghcr.io/trufflesecurity/trufflehog:latest` was that day. The version must be
   bumped together with the action SHA (#264).
+- Markdown is linted with `markdownlint-cli` 0.49.1 (exact) instead of
+  `markdownlint-cli2` 0.23.2, which reached `braces` 3.0.3 (GHSA-vfj7-8cjw-p6xm,
+  no patched release) through `micromatch` and `globby`. It runs the same
+  markdownlint 0.41.1 engine. The rules moved from `.markdownlint-cli2.jsonc` to
+  `.markdownlint.jsonc` unchanged, and the exclusions to `.markdownlintignore`,
+  which every invocation reads (the npm scripts and lint-staged alike). The same
+  19 files are linted. `babel-jest` moves from 29 to 30 to match `jest` 30,
+  which drops its Jest 29 `micromatch` path too. `braces` still reaches the tree
+  through `stylelint` 17, which has no release without it (#269). Overrides
+  scoped to `markdownlint-cli` lift `js-yaml` to 5.4.1+ and `katex` to 0.18.2+,
+  the root `smol-toml` override moves to 1.9.0+, and `npm audit fix` took
+  in-range fixes for `fast-uri`, `shell-quote`, `source-map-js` and
+  `brace-expansion`.
 
 ### Fixed
 

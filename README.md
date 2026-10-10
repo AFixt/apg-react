@@ -300,7 +300,7 @@ npm run knip          # Knip: unused files, exports and dependencies
 npm run stylelint     # Stylelint on all CSS (incl. a11y rules)
 npm run format        # Prettier --write
 npm run format:check  # Prettier --check (CI gate)
-npm run markdownlint  # markdownlint-cli2 on all Markdown
+npm run markdownlint  # markdownlint-cli on all Markdown
 npm run dupes         # jscpd duplicate detection
 npm run license:check # production-dep license allowlist
 npm run size          # size-limit bundle budgets
