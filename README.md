@@ -4,7 +4,7 @@
 [![npm](https://img.shields.io/npm/v/@afixt/apg-react)](https://www.npmjs.com/package/@afixt/apg-react)
 [![Storybook](https://img.shields.io/badge/storybook-live%20demo-ff4785)](https://afixt.github.io/apg-react/)
 
-**Accessible React components implementing every pattern in the
+**Accessible React components for the patterns in the
 [W3C ARIA Authoring Practices Guide (APG)](https://www.w3.org/WAI/ARIA/apg/patterns/).**
 
 Each component ships with the full APG keyboard-interaction model, correct ARIA
@@ -56,6 +56,10 @@ Components are tree-shakeable; only what you import will land in your bundle.
 
 Components are organized by the APG pattern they implement. Follow each link for
 the official APG documentation.
+
+Two APG patterns have no component in this library:
+[Landmarks](https://www.w3.org/WAI/ARIA/apg/patterns/landmarks/) and
+[Table](https://www.w3.org/WAI/ARIA/apg/patterns/table/).
 
 ### Widgets
 
