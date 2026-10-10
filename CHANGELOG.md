@@ -31,6 +31,12 @@ This project adheres to
 
 ### Fixed
 
+- The package no longer claims to implement **every** APG pattern. The
+  `package.json` description (also the npm description) and the README tagline
+  said "implementing every pattern" in the APG, but the library has no Table or
+  Landmarks component. Both now read "for the patterns in" the APG, and the
+  README's Components section names the two patterns it does not cover. The npm
+  description changes with the next publish. (#270)
 - **`validate:usecases` is pinned to `@afixt/usecase-runner` 1.0.1.** Since
   2026-09-21 every version the registry had carried, 3.0.0 included, has
   returned 404, so the **Validate use cases** job failed on every run and
