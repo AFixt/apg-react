@@ -2,6 +2,9 @@
 # reads this file on every invocation -- `npm run markdownlint`,
 # `markdownlint:fix`, lint-staged and a direct run alike -- so the exclusions
 # live here rather than as `--ignore` flags on one command line (#269).
+# When every file it is given is ignored (a commit that stages only
+# CHANGELOG.md, say), markdownlint-cli prints its usage text and exits 0;
+# that is not an error.
 node_modules/
 # Local and gitignored -- see the matching note in eslint.config.mjs.
 # A `.claude/worktrees/` agent checkout carries both its own Markdown and
