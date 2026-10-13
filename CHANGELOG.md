@@ -7,8 +7,24 @@ This project adheres to
 
 ## [Unreleased]
 
+## [2.3.1] — 2026-10-12
+
+A patch release: no component API changes. It corrects the npm description
+(#270) and carries the security, tooling and demo fixes merged since 2.3.0.
+
 ### Security
 
+- puppeteer moves to 25, which drops `extract-zip` and with it the four high
+  advisories rooted in its symlink path traversal (GHSA-jmr9-qjv8-65gv). No
+  override could fix it: extract-zip's latest release is inside the advisory
+  range. puppeteer is a development dependency for the E2E suite only (#252,
+  #253).
+- The pre-commit secret scan scans the staged content (the index version of each
+  staged file) instead of `--since-commit HEAD`, which scanned no staged change
+  at all and failed in a git worktree (#260, #261).
+- `npm run check:no-axe` (`scripts/check-no-axe.mjs`, part of `npm run check`)
+  fails if `package-lock.json` resolves `axe-core` or `@axe-core/*` to a real
+  tarball, or if `package.json` declares an axe package directly (#266, #267).
 - The pre-push hook runs the fleet-security secret gate
   (`~/.fleet-security/bin/pre-push-secrets`) before its other checks, scoped to
   the commits being pushed. It passes git's remote name and URL to the gate,
@@ -44,6 +60,14 @@ This project adheres to
 
 ### Fixed
 
+- The button demo renders its Submit button with `disabledStyle="aria"`, so the
+  demo shows the variant the APG recommends there: it stays in the tab order and
+  reports `aria-disabled="true"` (#250, #251).
+- The pre-commit hook no longer suggests `--no-verify`, and says a secret it
+  finds is live and must be rotated. The README drops the same advice and
+  describes the workflows' real triggers (#256, #257, #259).
+- The carousel docs record why the demo's two remaining audit findings stay
+  (#234, #254).
 - The package no longer claims to implement **every** APG pattern. The
   `package.json` description (also the npm description) and the README tagline
   said "implementing every pattern" in the APG, but the library has no Table or
