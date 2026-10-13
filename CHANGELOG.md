@@ -31,7 +31,7 @@ A patch release: no component API changes. It corrects the npm description
   replays the pushed refs to the rest of the hook, skips silently when the gate
   is not installed and warns when it is installed but not executable.
   `__tests__/tooling/pre-push-hook.test.js` runs the hook under `sh -e` with a
-  stub gate to pin that behaviour.
+  stub gate to pin that behaviour (#255).
 - The CI secret scan (`.github/workflows/ci.yml`, `secrets` job) runs TruffleHog
   with `--results=verified,unknown` instead of `--only-verified`. A candidate
   whose verification could not finish (connection refused, timeout or provider
