@@ -54,3 +54,29 @@ reason = "extract-zip via puppeteer's browser download; no fix published. Blocke
 id = "GHSA-7pqw-9j4j-h8q3"
 ignoreUntil = 2026-11-26
 reason = "extract-zip symlink arbitrary file write; no fix published. Same package and same blocked puppeteer >= 25 upgrade as GHSA-jmr9-qjv8-65gv above. See #137."
+
+# braces 3.0.3, GHSA-vfj7-8cjw-p6xm (CVE-2026-93687, high): stack-exhaustion
+# DoS through deeply nested brace patterns. No fixed release exists -- the
+# advisory covers <= 3.0.3 and 3.0.3 is the latest braces -- so neither a bump
+# nor an `overrides` entry can clear it.
+#
+# #271 swapped markdownlint-cli2 for markdownlint-cli, which removed one path.
+# What remains is dev-only:
+#
+#   stylelint 17.12.0 -> micromatch 4.0.8 -> braces   (also via fast-glob/globby)
+#   jscpd 4.2.4 -> @jscpd/finder -> fast-glob -> micromatch (same copy)
+#
+# Both expand only globs this repository supplies: the `stylelint` script's
+# '**/*.css' with .gitignore, .jscpd.json, and the staged paths lint-staged
+# passes. Nothing published depends on it (`npm ls braces --omit=dev` is
+# empty; react/react-dom are peers). jscpd 5.4.0 would drop its own path, but
+# not stylelint's, so it would not clear this; see #269.
+#
+# Accepted until 2026-12-02, the fleet window for this advisory. Re-check then
+# for a fixed braces or a stylelint that drops micromatch, and delete this
+# entry rather than extending it without a new review. Pinned by
+# __tests__/tooling/osvConfig.test.js.
+[[IgnoredVulns]]
+id = "GHSA-vfj7-8cjw-p6xm"
+ignoreUntil = 2026-12-02
+reason = "braces 3.0.3, no fixed release; dev-only via stylelint 17 and jscpd 4 (micromatch), expanding only repo-controlled globs. Accepted until 2026-12-02. See #269."

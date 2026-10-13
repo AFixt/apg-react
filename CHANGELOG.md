@@ -9,6 +9,13 @@ This project adheres to
 
 ### Security
 
+- `osv-scanner.toml` accepts braces 3.0.3, GHSA-vfj7-8cjw-p6xm, until
+  2026-12-02. braces has no fixed release, and after the markdownlint-cli swap
+  (#271) it remains only in the development tree, through stylelint 17 and jscpd
+  4 (micromatch), which expand only this repository's own globs.
+  `__tests__/tooling/osvConfig.test.js` pins the entry, requires an issue-citing
+  reason and a date on every entry, and fails once braces leaves the lockfile
+  (#269).
 - The pre-push hook runs the fleet-security secret gate
   (`~/.fleet-security/bin/pre-push-secrets`) before its other checks, scoped to
   the commits being pushed. It passes git's remote name and URL to the gate,
