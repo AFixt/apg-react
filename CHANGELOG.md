@@ -7,22 +7,38 @@ This project adheres to
 
 ## [Unreleased]
 
+## [2.3.1] — 2026-10-12
+
+A patch release: no component API changes. It corrects the npm description
+(#270) and carries the security, tooling and demo fixes merged since 2.3.0.
+
 ### Security
 
+- puppeteer moves to 25, which drops `extract-zip` and with it the four high
+  advisories rooted in its symlink path traversal (GHSA-jmr9-qjv8-65gv). No
+  override could fix it: extract-zip's latest release is inside the advisory
+  range. puppeteer is a development dependency for the E2E suite only (#252,
+  #253).
+- The pre-commit secret scan scans the staged content (the index version of each
+  staged file) instead of `--since-commit HEAD`, which scanned no staged change
+  at all and failed in a git worktree (#260, #261).
+- `npm run check:no-axe` (`scripts/check-no-axe.mjs`, part of `npm run check`)
+  fails if `package-lock.json` resolves `axe-core` or `@axe-core/*` to a real
+  tarball, or if `package.json` declares an axe package directly (#266, #267).
 - `osv-scanner.toml` accepts braces 3.0.3, GHSA-vfj7-8cjw-p6xm, until
   2026-12-02. braces has no fixed release, and after the markdownlint-cli swap
   (#271) it remains only in the development tree, through stylelint 17 and jscpd
   4 (micromatch), which expand only this repository's own globs.
   `__tests__/tooling/osvConfig.test.js` pins the entry, requires an issue-citing
   reason and a date on every entry, and fails once braces leaves the lockfile
-  (#269).
+  (#269, #273).
 - The pre-push hook runs the fleet-security secret gate
   (`~/.fleet-security/bin/pre-push-secrets`) before its other checks, scoped to
   the commits being pushed. It passes git's remote name and URL to the gate,
   replays the pushed refs to the rest of the hook, skips silently when the gate
   is not installed and warns when it is installed but not executable.
   `__tests__/tooling/pre-push-hook.test.js` runs the hook under `sh -e` with a
-  stub gate to pin that behaviour.
+  stub gate to pin that behaviour (#255).
 - The CI secret scan (`.github/workflows/ci.yml`, `secrets` job) runs TruffleHog
   with `--results=verified,unknown` instead of `--only-verified`. A candidate
   whose verification could not finish (connection refused, timeout or provider
@@ -51,6 +67,14 @@ This project adheres to
 
 ### Fixed
 
+- The button demo renders its Submit button with `disabledStyle="aria"`, so the
+  demo shows the variant the APG recommends there: it stays in the tab order and
+  reports `aria-disabled="true"` (#250, #251).
+- The pre-commit hook no longer suggests `--no-verify`, and says a secret it
+  finds is live and must be rotated. The README drops the same advice and
+  describes the workflows' real triggers (#256, #257, #259).
+- The carousel docs record why the demo's two remaining audit findings stay
+  (#234, #254).
 - The package no longer claims to implement **every** APG pattern. The
   `package.json` description (also the npm description) and the README tagline
   said "implementing every pattern" in the APG, but the library has no Table or
