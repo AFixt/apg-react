@@ -4,9 +4,9 @@
  * The OSV job in security.yml runs `osv-scanner --config=osv-scanner.toml`,
  * and an `[[IgnoredVulns]]` entry silences an advisory there. Each one must
  * carry an `ignoreUntil` date and a `reason`, so it cannot quietly become
- * permanent. The braces acceptance (GHSA-vfj7-8cjw-p6xm, #269) is pinned to
- * its 2026-12-02 fleet window, and must leave the file in the same change that
- * takes braces out of the lockfile.
+ * permanent. Entries whose advisory no longer applies are retired (#275) and
+ * must not come back: osv-scanner only warns about an unused ignore, so a dead
+ * entry would otherwise sit there silencing a re-published advisory unseen.
  *
  * The TOML is read as text: the three keys used here are single-line
  * `key = value` pairs, and pulling in a TOML parser for that would add a
@@ -16,7 +16,17 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..', '..');
-const BRACES = 'GHSA-vfj7-8cjw-p6xm';
+/**
+ * Ignores retired in #275, with why each one no longer applies.
+ */
+const RETIRED = {
+  // extract-zip, via puppeteer's browser download. puppeteer 25 (#253) drops
+  // extract-zip, so neither advisory has anything left to match.
+  'GHSA-jmr9-qjv8-65gv': 'extract-zip',
+  'GHSA-7pqw-9j4j-h8q3': 'extract-zip',
+  // braces <= 3.0.3 (#269). The advisory was withdrawn on 2026-10-23.
+  'GHSA-vfj7-8cjw-p6xm': 'braces (advisory withdrawn)',
+};
 
 /**
  * The `[[IgnoredVulns]]` tables, each reduced to its id/ignoreUntil/reason.
@@ -49,7 +59,6 @@ const lockfile = JSON.parse(fs.readFileSync(path.join(ROOT, 'package-lock.json')
 
 describe('osv-scanner.toml accepted advisories', () => {
   it('gives every entry an advisory id, an issue-citing reason and a date', () => {
-    expect(entries.length).toBeGreaterThan(0);
     for (const entry of entries) {
       expect(entry.id).toMatch(/^(GHSA|CVE)-/);
       expect(entry.reason).toMatch(/#\d+/);
@@ -57,19 +66,14 @@ describe('osv-scanner.toml accepted advisories', () => {
     }
   });
 
-  it('accepts braces GHSA-vfj7-8cjw-p6xm until 2026-12-02, citing #269', () => {
-    const braces = entries.find((entry) => entry.id === BRACES);
-    expect(braces).toBeDefined();
-    expect(braces.ignoreUntil).toBe('2026-12-02');
-    expect(braces.reason).toMatch(/#269/);
+  it.each(Object.entries(RETIRED))('does not ignore retired advisory %s (%s)', (id) => {
+    expect(entries.map((entry) => entry.id)).not.toContain(id);
   });
 
-  it('keeps the braces entry only while braces is in the lockfile', () => {
+  it('has no extract-zip left in the lockfile for those ignores to cover', () => {
     const inLockfile = Object.keys(lockfile.packages).some((key) =>
-      key.endsWith('node_modules/braces'),
+      key.endsWith('node_modules/extract-zip'),
     );
-    // When this fails because braces has left the tree, delete the entry and
-    // the braces test above: the acceptance has nothing left to accept.
-    expect(entries.some((entry) => entry.id === BRACES)).toBe(inLockfile);
+    expect(inLockfile).toBe(false);
   });
 });
