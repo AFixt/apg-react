@@ -6,77 +6,18 @@
 # so every entry in package-lock.json is marked dev, and excluding the dev group
 # left the scanner nothing to look at. The job could not fail. That is resolved
 # in #137: the toolchain advisories it was hiding have been fixed, and the
-# scanner now sees all 1350 packages.
+# scanner now sees every package.
 #
-# The one entry below is a specific, dated ignore naming a single advisory, not
-# a category. If it stops being true, the job goes red, which is the point.
-
-# extract-zip: unvalidated symlink path traversal. No fixed version exists --
-# the package is unmaintained -- and it reaches us only through puppeteer's
-# browser download step:
+# It currently accepts nothing. Any future entry must be a specific, dated
+# `[[IgnoredVulns]]` naming a single advisory -- an `id`, an `ignoreUntil` date
+# and a `reason` citing the issue -- never a package or a category, so that if
+# it stops being true the job goes red. __tests__/tooling/osvConfig.test.js
+# enforces that shape.
 #
-#   puppeteer -> @puppeteer/browsers -> extract-zip
+# Retired in #275, because osv-scanner reported each as an unused ignore and a
+# dead entry would silently swallow the advisory if it were ever re-published:
 #
-# Not reachable from anything this repo builds or publishes. It runs once, in
-# the E2E job, unpacking an archive fetched from Chrome for Testing over TLS --
-# not an untrusted artifact. The real fix is puppeteer >= 25, which drops
-# extract-zip entirely; that upgrade is blocked because puppeteer 25 is
-# ESM-only ("type": "module", with `require` pointing at the ESM entry) and the
-# E2E suite is CommonJS Jest, so importing it fails to parse. Migrating the E2E
-# layer to ESM is the prerequisite and is deliberately not bundled into a
-# dependency-hygiene change.
-#
-# Review by 2026-11-26. If the E2E suite has moved to ESM by then, bump
-# puppeteer and delete this entry rather than extending the date.
-[[IgnoredVulns]]
-id = "GHSA-jmr9-qjv8-65gv"
-ignoreUntil = 2026-11-26
-reason = "extract-zip via puppeteer's browser download; no fix published. Blocked on migrating the CommonJS E2E suite to ESM for puppeteer >= 25. See #137."
-
-# The same defect in the same package, re-reported under a second ID:
-# "extract-zip allows arbitrary file writes through symlink archive entries",
-# CVSS 8.1, published 2026-08-17, affecting <= 2.0.1 with `first_patched`
-# still null. Everything written above applies to it unchanged -- same
-# package, same single reachable path, same absent fix, same prerequisite.
-#
-# Worth being precise about why this entry is here, because the shape is easy
-# to misread: the entry above did not expire and did not stop working. A new
-# advisory was published against a package whose version had not moved, which
-# is the one way a clean scan turns red with no change to this repository.
-#
-# Deliberately a second entry rather than a widened one. An ignore keyed to
-# the package would also swallow the next advisory, including one that does
-# have a fix -- which is the failure this file's policy exists to prevent.
-#
-# Same review date on purpose: both disappear together when puppeteer >= 25
-# lands, and neither should be extended on its own.
-[[IgnoredVulns]]
-id = "GHSA-7pqw-9j4j-h8q3"
-ignoreUntil = 2026-11-26
-reason = "extract-zip symlink arbitrary file write; no fix published. Same package and same blocked puppeteer >= 25 upgrade as GHSA-jmr9-qjv8-65gv above. See #137."
-
-# braces 3.0.3, GHSA-vfj7-8cjw-p6xm (CVE-2026-93687, high): stack-exhaustion
-# DoS through deeply nested brace patterns. No fixed release exists -- the
-# advisory covers <= 3.0.3 and 3.0.3 is the latest braces -- so neither a bump
-# nor an `overrides` entry can clear it.
-#
-# #271 swapped markdownlint-cli2 for markdownlint-cli, which removed one path.
-# What remains is dev-only:
-#
-#   stylelint 17.12.0 -> micromatch 4.0.8 -> braces   (also via fast-glob/globby)
-#   jscpd 4.2.4 -> @jscpd/finder -> fast-glob -> micromatch (same copy)
-#
-# Both expand only globs this repository supplies: the `stylelint` script's
-# '**/*.css' with .gitignore, .jscpd.json, and the staged paths lint-staged
-# passes. Nothing published depends on it (`npm ls braces --omit=dev` is
-# empty; react/react-dom are peers). jscpd 5.4.0 would drop its own path, but
-# not stylelint's, so it would not clear this; see #269.
-#
-# Accepted until 2026-12-02, the fleet window for this advisory. Re-check then
-# for a fixed braces or a stylelint that drops micromatch, and delete this
-# entry rather than extending it without a new review. Pinned by
-# __tests__/tooling/osvConfig.test.js.
-[[IgnoredVulns]]
-id = "GHSA-vfj7-8cjw-p6xm"
-ignoreUntil = 2026-12-02
-reason = "braces 3.0.3, no fixed release; dev-only via stylelint 17 and jscpd 4 (micromatch), expanding only repo-controlled globs. Accepted until 2026-12-02. See #269."
+#   GHSA-jmr9-qjv8-65gv, GHSA-7pqw-9j4j-h8q3  extract-zip, gone from the tree
+#                                             since puppeteer 25 (#253)
+#   GHSA-vfj7-8cjw-p6xm                       braces (#269); the advisory was
+#                                             withdrawn on 2026-10-23
