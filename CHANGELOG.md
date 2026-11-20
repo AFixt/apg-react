@@ -7,6 +7,13 @@ This project adheres to
 
 ## [Unreleased]
 
+### Security
+
+- vite moves from 6.4.4 to 6.4.6, inside the existing `^6.4.3` range. 6.4.4 is
+  the only version affected by GHSA-8g5g-mxqh-grgj (`server.fs.deny` bypassed
+  with queries). vite is a development dependency for Storybook and the demos
+  server only (#280).
+
 ## [2.3.1] — 2026-10-12
 
 A patch release: no component API changes. It corrects the npm description
