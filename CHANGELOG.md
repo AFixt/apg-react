@@ -13,6 +13,13 @@ This project adheres to
   the only version affected by GHSA-8g5g-mxqh-grgj (`server.fs.deny` bypassed
   with queries). vite is a development dependency for Storybook and the demos
   server only (#280).
+- minimatch 9.0.9 and 10.2.6 move to 11.0.8 through a bounded override
+  (`minimatch@>=7.0.0 <11.0.1`), clearing GHSA-g3hv-75wg-m249 (denial of service
+  via globparts amplification), which is fixed only in minimatch 11. minimatch
+  3.1.5 is outside the affected range and stays. eslint-plugin-import-x moves
+  from 4.16.2 to 4.18.1, the first release that accepts minimatch 11 (4.16
+  imports `makeRe`, which minimatch 11 removed). All of it is development
+  tooling only (#283).
 
 ## [2.3.1] — 2026-10-12
 
