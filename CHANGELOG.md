@@ -18,6 +18,13 @@ This project adheres to
   version affected by GHSA-mrhx-c7xc-m3w5. puppeteer is pinned exactly, so this
   needed a deliberate bump. It is a development dependency for the E2E suite
   only, and the suite passes on it (#281).
+- glob moves to 14.0.6 through a `package.json` override, clearing
+  GHSA-3g3m-2fjr-6pw4 (AbortSignal cancellation bypass), which affects every
+  glob from 9.0.0 to 14.0.1 and is fixed only in 14.0.2. It replaces glob 10.5.0
+  (Storybook's react-docgen-typescript plugin, `test-exclude`,
+  `license-checker-rseidelsohn`) and 13.0.6 (Jest 30 internals) with one copy;
+  every consumer calls only `glob`, `globSync` or `glob.sync`, which glob 14
+  still exports. glob is a development dependency only (#282).
 
 ## [2.3.1] — 2026-10-12
 
