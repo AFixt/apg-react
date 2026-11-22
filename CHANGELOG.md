@@ -12,10 +12,10 @@ This project adheres to
 - `package.json` gains an `allowScripts` block that decides every dependency
   install script in the tree. npm 12 runs no install script unless the package
   is named there, so `npm ci` exited 0 with only a warning and a clean machine
-  never got puppeteer's Chromium for the E2E suite. `puppeteer@25.10.0` is
-  granted, pinned to the resolved version so a bump forces the decision to be
-  remade; `@parcel/watcher`, `esbuild`, `fsevents` and `unrs-resolver` are
-  denied by name, since each ships prebuilt binaries (#276, #277).
+  never got puppeteer's Chromium for the E2E suite. puppeteer is granted, pinned
+  to its resolved version so a bump forces the decision to be remade;
+  `@parcel/watcher`, `esbuild`, `fsevents` and `unrs-resolver` are denied by
+  name, since each ships prebuilt binaries (#276, #277).
 
 ### Security
 
@@ -31,8 +31,8 @@ This project adheres to
   GHSA-px85-f4q5-jh77, both code injection into the Storybook dev server),
   markdown-it 14.3.2 to 14.3.3 (GHSA-gfr2-rv44-r23c, GHSA-vfgh-jcmw-g37q), zod
   4.5.4 to 4.6.7 (GHSA-mrhx-c7xc-m3w5; the zod 3.25.76 copy under puppeteer's
-  chromium-bidi is still affected, #281) and fast-uri 3.1.8 to 3.1.9
-  (GHSA-w74x-v6f9-j3xg, GHSA-wjr9-j795-jxcr, GHSA-333x-w4r6-6crp,
+  chromium-bidi stayed until the puppeteer 25.17.0 bump below) and fast-uri
+  3.1.8 to 3.1.9 (GHSA-w74x-v6f9-j3xg, GHSA-wjr9-j795-jxcr, GHSA-333x-w4r6-6crp,
   GHSA-xhq7-xmqj-769h). It also took vite to 6.4.4, since superseded by 6.4.6
   below. All are development dependencies (#279).
 - vite moves from 6.4.4 to 6.4.6, inside the existing `^6.4.3` range. 6.4.4 is
