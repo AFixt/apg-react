@@ -13,6 +13,11 @@ This project adheres to
   the only version affected by GHSA-8g5g-mxqh-grgj (`server.fs.deny` bypassed
   with queries). vite is a development dependency for Storybook and the demos
   server only (#280).
+- puppeteer moves from 25.10.0 to 25.17.0. Its chromium-bidi 157 requires zod
+  `^4.6.5`, which drops the zod 3.25.76 that chromium-bidi 17 pulled in, the
+  version affected by GHSA-mrhx-c7xc-m3w5. puppeteer is pinned exactly, so this
+  needed a deliberate bump. It is a development dependency for the E2E suite
+  only, and the suite passes on it (#281).
 
 ## [2.3.1] — 2026-10-12
 
