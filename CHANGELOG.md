@@ -19,12 +19,58 @@ This project adheres to
   `jest-environment-jsdom` 30.5.2, `react-router-dom` 7.18.5 and `tslib` 2.9.1.
   All are development dependencies (#284).
 
+### Fixed
+
+- `package.json` gains an `allowScripts` block that decides every dependency
+  install script in the tree. npm 12 runs no install script unless the package
+  is named there, so `npm ci` exited 0 with only a warning and a clean machine
+  never got puppeteer's Chromium for the E2E suite. puppeteer is granted, pinned
+  to its resolved version so a bump forces the decision to be remade;
+  `@parcel/watcher`, `esbuild`, `fsevents` and `unrs-resolver` are denied by
+  name, since each ships prebuilt binaries (#276, #277).
+
 ### Security
 
+- postcss-selector-parser moves from 6.1.4 to 6.1.5 for GHSA-rj75-hqrm-r3gf
+  (quadratic selector parsing). `osv-scanner.toml` now accepts nothing: the
+  extract-zip ignores (GHSA-jmr9-qjv8-65gv, GHSA-7pqw-9j4j-h8q3) are retired
+  because extract-zip left the tree with puppeteer 25 (#253), and the braces
+  acceptance (GHSA-vfj7-8cjw-p6xm) because the advisory was withdrawn on
+  2026-10-23. `__tests__/tooling/osvConfig.test.js` keeps the shape check for
+  any future entry and fails if a retired id comes back (#275, #278).
+- `npm audit fix` (no `--force`, lockfile only) takes in-range fixes: storybook
+  and @storybook/core 8.6.18 to 8.6.19 (GHSA-f2ph-cmg5-wxc8, critical, and
+  GHSA-px85-f4q5-jh77, both code injection into the Storybook dev server),
+  markdown-it 14.3.2 to 14.3.3 (GHSA-gfr2-rv44-r23c, GHSA-vfgh-jcmw-g37q), zod
+  4.5.4 to 4.6.7 (GHSA-mrhx-c7xc-m3w5; the zod 3.25.76 copy under puppeteer's
+  chromium-bidi stayed until the puppeteer 25.17.0 bump below) and fast-uri
+  3.1.8 to 3.1.9 (GHSA-w74x-v6f9-j3xg, GHSA-wjr9-j795-jxcr, GHSA-333x-w4r6-6crp,
+  GHSA-xhq7-xmqj-769h). It also took vite to 6.4.4, since superseded by 6.4.6
+  below. All are development dependencies (#279).
 - vite moves from 6.4.4 to 6.4.6, inside the existing `^6.4.3` range. 6.4.4 is
   the only version affected by GHSA-8g5g-mxqh-grgj (`server.fs.deny` bypassed
   with queries). vite is a development dependency for Storybook and the demos
   server only (#280).
+- puppeteer moves from 25.10.0 to 25.17.0. Its chromium-bidi 157 requires zod
+  `^4.6.5`, which drops the zod 3.25.76 that chromium-bidi 17 pulled in, the
+  version affected by GHSA-mrhx-c7xc-m3w5. puppeteer is pinned exactly, so this
+  needed a deliberate bump. It is a development dependency for the E2E suite
+  only, and the suite passes on it (#281).
+- glob moves to 14.0.6 through a `package.json` override, clearing
+  GHSA-3g3m-2fjr-6pw4 (AbortSignal cancellation bypass), which affects every
+  glob from 9.0.0 to 14.0.1 and is fixed only in 14.0.2. It replaces glob 10.5.0
+  (Storybook's react-docgen-typescript plugin, `test-exclude`,
+  `license-checker-rseidelsohn`) and 13.0.6 (Jest 30 internals) with one copy;
+  every consumer calls only `glob`, `globSync` or `glob.sync`, which glob 14
+  still exports. glob is a development dependency only (#282).
+- minimatch 10.2.6 moves to 11.0.8 through a bounded override
+  (`minimatch@>=7.0.0 <11.0.1`), clearing GHSA-g3hv-75wg-m249 (denial of service
+  via globparts amplification), which is fixed only in minimatch 11. It covers
+  the copies under typescript-eslint, eslint-plugin-import-x,
+  eslint-plugin-sonarjs, markdownlint-cli and test-exclude. minimatch 3.1.5 is
+  outside the affected range and stays. eslint-plugin-import-x moves from 4.16.2
+  to 4.18.1, the first release that accepts minimatch 11 (4.16 imports `makeRe`,
+  which minimatch 11 removed). All of it is development tooling only (#283).
 
 ## [2.3.1] — 2026-10-12
 
