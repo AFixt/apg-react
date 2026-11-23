@@ -7,6 +7,18 @@ This project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- The lockfile takes the in-range updates `npm outdated` reported. No declared
+  range moved, and every version taken is at least 7 days old. The
+  `@storybook/*` packages now all resolve to 8.6.19, matching `storybook`
+  itself; they had lagged at 8.6.18, and `@storybook/react`, `react-vite` and
+  `test` had to be re-resolved together because they pin each other exactly. The
+  library build takes `rollup` 4.68.3 and `@rollup/plugin-typescript` 12.3.1,
+  and stays inside its size limits. Also `@babel/preset-env` 7.29.14,
+  `jest-environment-jsdom` 30.5.2, `react-router-dom` 7.18.5 and `tslib` 2.9.1.
+  All are development dependencies (#284).
+
 ### Fixed
 
 - `package.json` gains an `allowScripts` block that decides every dependency
